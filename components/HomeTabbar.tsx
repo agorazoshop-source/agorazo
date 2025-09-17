@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { getCategories } from "@/lib/sanity/queries";
+import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 
 interface CategoryItem {
@@ -28,7 +28,16 @@ const HomeTabbar = ({ selectedTab, onTabSelect }: Props) => {
   useEffect(() => {
     async function loadCategories() {
       try {
-        const data = await getCategories();
+        const query = `*[_type == "category"] | order(title asc) {
+          _id,
+          title,
+          slug,
+          description,
+          image,
+          "productCount": count(*[_type == "product" && references(^._id)])
+        }`;
+
+        const data = await client.fetch(query);
 
         // Sort categories by title
         const sortedCategories = data.sort(
