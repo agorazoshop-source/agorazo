@@ -1,5 +1,7 @@
 import { defineQuery } from "next-sanity";
 
+const PRODUCTS_QUERY = defineQuery(`*[_type == "product"] | order(name asc) `);
+
 const BRANDS_QUERY = defineQuery(`*[_type=='brand'] | order(name asc) `);
 
 const LATEST_BLOG_QUERY = defineQuery(
@@ -182,6 +184,7 @@ const GET_USER_ADDRESSES =
   }
 }`);
 export {
+  PRODUCTS_QUERY,
   BRANDS_QUERY,
   LATEST_BLOG_QUERY,
   DEAL_PRODUCTS,

@@ -6,14 +6,14 @@ import LatestBlog from "@/components/LatestBlog";
 import ProductGrid from "@/components/ProductGrid";
 import ShopByBrands from "@/components/ShopByBrands";
 import MovingPromoBanner from "@/components/MovingPromoBanner";
-import { getCategories } from "@/sanity/queries";
+import { getCategories, getProducts } from "@/sanity/queries";
 import { activeBanner } from "@/constants/bannerConfig";
 
 import React from "react";
 
 const Home = async () => {
   const categories = await getCategories(6);
-
+  const products = await getProducts();
   return (
     <div className="bg-shop-light-pink">
       {/* <Container>
@@ -27,7 +27,7 @@ const Home = async () => {
       </div>
 
       <Container>
-        <ProductGrid products={[]} />
+        <ProductGrid products={products} />
         <HomeCategories categories={categories} />
         {/* <ShopByBrands /> */}
         <LatestBlog />

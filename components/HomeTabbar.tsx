@@ -140,7 +140,7 @@ const HomeTabbar = ({ selectedTab, onTabSelect }: Props) => {
                     style={{ width: `${width}px` }}
                   />
                 ))
-              : categories.length > 0
+              : categories?.length > 0
                 ? categories.map((item) => {
                     const style = getCategoryStyle(
                       item.title,
@@ -159,34 +159,7 @@ const HomeTabbar = ({ selectedTab, onTabSelect }: Props) => {
                       </button>
                     );
                   })
-                : // Fallback to hardcoded values if no categories found
-                  [
-                    { title: "Fashion", value: "fashion" },
-                    { title: "Electronics", value: "electronics" },
-                    { title: "Home & Kitchen", value: "home-kitchen" },
-                    {
-                      title: "Beauty & Personal Care",
-                      value: "beauty-personal-care",
-                    },
-                    { title: "Sports & Outdoors", value: "sports-outdoors" },
-                  ].map((item) => {
-                    const style = getCategoryStyle(
-                      item.title,
-                      selectedTab === item.title
-                    );
-                    return (
-                      <button
-                        onClick={() => onTabSelect(item.title)}
-                        key={item.title}
-                        className={`border ${style.borderColor} ${style.bgColor} ${style.textColor} px-6 py-4 rounded-2xl transition-all duration-300 transform hover:scale-105 flex flex-col items-center gap-2 min-w-[120px] shadow-md hover:shadow-lg`}
-                      >
-                        {style.icon}
-                        <span className="text-sm font-semibold">
-                          {item.title}
-                        </span>
-                      </button>
-                    );
-                  })}
+                : null}
           </div>
         </div>
       </div>

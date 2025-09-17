@@ -1,5 +1,6 @@
 import { sanityFetch } from "../lib/live";
 import {
+  PRODUCTS_QUERY,
   BLOG_CATEGORIES,
   BRAND_QUERY,
   BRANDS_QUERY,
@@ -16,6 +17,16 @@ import {
   SINGLE_BLOG_QUERY,
 } from "./query";
 import { groq } from "next-sanity";
+
+const getProducts = async () => {
+  try {
+    const { data } = await sanityFetch({ query: PRODUCTS_QUERY });
+    return data ?? [];
+  } catch (error) {
+    console.log("Error fetching products:", error);
+    return [];
+  }
+};
 
 const getCategories = async (quantity?: number) => {
   try {
@@ -175,7 +186,10 @@ export const getMyOrders = async (userId: string) => {
 
 export const getUserWishlist = async (userId: string) => {
   try {
-    const { data } = await sanityFetch({ query: GET_USER_WISHLIST, params: { userId } });
+    const { data } = await sanityFetch({
+      query: GET_USER_WISHLIST,
+      params: { userId },
+    });
     return data || null;
   } catch (error) {
     console.error("Error fetching user wishlist:", error);
@@ -185,7 +199,10 @@ export const getUserWishlist = async (userId: string) => {
 
 export const getUserCart = async (userId: string) => {
   try {
-    const { data } = await sanityFetch({ query: GET_USER_CART, params: { userId } });
+    const { data } = await sanityFetch({
+      query: GET_USER_CART,
+      params: { userId },
+    });
     return data || null;
   } catch (error) {
     console.error("Error fetching user cart:", error);
@@ -194,9 +211,11 @@ export const getUserCart = async (userId: string) => {
 };
 
 export const getUserAddresses = async (userId: string) => {
-
   try {
-    const { data } = await sanityFetch({ query: GET_USER_ADDRESSES, params: { userId } });
+    const { data } = await sanityFetch({
+      query: GET_USER_ADDRESSES,
+      params: { userId },
+    });
     return data || null;
   } catch (error) {
     console.error("Error fetching user addresses:", error);
@@ -216,4 +235,5 @@ export {
   getBlogCategories,
   getOthersBlog,
   getReelByProductSlug,
+  getProducts,
 };

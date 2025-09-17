@@ -6,19 +6,22 @@ export const siteConfig = {
     text: "Agora", // First part of the logo text
     highlight: "zo", // Highlighted part of the logo text (e.g., the 't' in 'Shopcart')
   },
-  description: "Your one-stop destination for quality products at affordable prices",
-  
+  description:
+    "Your one-stop destination for quality products at affordable prices",
+
   // SEO and Metadata
   seo: {
-    title: "Agorazo online store", // Default title
-    titleTemplate: "%s - Agorazo online store", // %s will be replaced with page title
-    description: "Agorazo online store, Your one stop shop for all your needs",
-    keywords: "ecommerce, online shopping, products, fashion, electronics, home goods",
+    title: "Agorazo", // Default title
+    titleTemplate: "%s - Agorazo", // %s will be replaced with page title
+    description: "Agorazo, Your one stop shop for all your needs",
+    keywords:
+      "ecommerce, online shopping, products, fashion, electronics, home goods",
     // Use a data URL to avoid image component issues
-    ogImage: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='630' viewBox='0 0 1200 630'%3E%3Crect width='1200' height='630' fill='%23f8f9fa'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' font-family='sans-serif' font-size='64' font-weight='bold' fill='%23212529'%3EAgorazo%3C/text%3E%3C/svg%3E",
+    ogImage:
+      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='630' viewBox='0 0 1200 630'%3E%3Crect width='1200' height='630' fill='%23f8f9fa'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' font-family='sans-serif' font-size='64' font-weight='bold' fill='%23212529'%3EAgorazo%3C/text%3E%3C/svg%3E",
     twitterHandle: "@agorazo",
   },
-  
+
   // Contact Information
   contact: {
     email: "autometa.ai200@gmail.com",
@@ -26,30 +29,40 @@ export const siteConfig = {
     address: "Visakhapatnam, India",
     workingHours: "Mon - Sat: 10:00 AM - 7:00 PM",
   },
-  
+
   // Social Media Links
   socialMedia: [
     // { title: "Youtube", href: "https://www.youtube.com/agorazo", icon: "Youtube" },
     // { title: "Github", href: "https://www.github.com/agorazo", icon: "Github" },
-    { title: "Linkedin", href: "https://www.linkedin.com/company/agorazo", icon: "Linkedin" },
+    {
+      title: "Linkedin",
+      href: "https://www.linkedin.com/company/agorazo",
+      icon: "Linkedin",
+    },
     // { title: "Facebook", href: "https://www.facebook.com/agorazo", icon: "Facebook" },
-    { title: "Instagram", href: "https://www.instagram.com/agorazo", icon: "Instagram" },
+    {
+      title: "Instagram",
+      href: "https://www.instagram.com/agorazo",
+      icon: "Instagram",
+    },
   ],
-  
+
   // Company Information
   company: {
     name: "Agorazo Inc.",
     foundedYear: 2023,
-    about: "Discover curated collections at Agorazo, blending style and comfort to elevate your living spaces.",
-    mission: "To provide high-quality products that enhance our customers' lives while offering exceptional service and value.",
+    about:
+      "Discover curated collections at Agorazo, blending style and comfort to elevate your living spaces.",
+    mission:
+      "To provide high-quality products that enhance our customers' lives while offering exceptional service and value.",
   },
-  
+
   // Legal
   legal: {
     copyright: `© ${new Date().getFullYear()} Agorazo. All rights reserved.`,
     privacyPolicy: "/privacy",
     termsOfService: "/terms",
-  }
+  },
 };
 
 // Navigation Links
