@@ -8,14 +8,14 @@ export default function ReelNotFound() {
         The reel you're looking for doesn't exist or may have been removed.
       </p>
       <div className="flex gap-4">
-        <Link 
-          href="/reels" 
+        <Link
+          href="/videos"
           className="bg-shop_light_green text-white px-6 py-2 rounded-lg hover:bg-shop_dark_green transition-colors"
         >
           Browse Reels
         </Link>
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           className="border border-gray-300 px-6 py-2 rounded-lg hover:bg-gray-50 transition-colors"
         >
           Back to Home
@@ -23,4 +23,4 @@ export default function ReelNotFound() {
       </div>
     </div>
   );
-} 
+}

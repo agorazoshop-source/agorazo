@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { ProductReel } from "@/types/ProductReel";
+import { ProductReel } from "@/types/index";
 import { useInView } from "react-intersection-observer";
 import { PlayIcon, Heart, Volume2Icon, VolumeXIcon } from "lucide-react";
 import SanityImage from "../SanityImage";
@@ -16,7 +16,11 @@ interface ReelCardProps {
   isPressed?: boolean;
 }
 
-export default function ReelCard({ reel, onProductOpen, isPressed = false }: ReelCardProps) {
+export default function ReelCard({
+  reel,
+  onProductOpen,
+  isPressed = false,
+}: ReelCardProps) {
   const [playing, setPlaying] = useState(false);
   const [likesCount, setLikesCount] = useState(reel.likes || 0);
   const [isLiking, setIsLiking] = useState(false);
@@ -26,7 +30,8 @@ export default function ReelCard({ reel, onProductOpen, isPressed = false }: Ree
     threshold: 0.7,
   });
   const { isSignedIn } = useUser();
-  const { toggleReelLike, isReelLiked, globalMuted, setGlobalMuted } = useStore();
+  const { toggleReelLike, isReelLiked, globalMuted, setGlobalMuted } =
+    useStore();
   const liked = isSignedIn && isReelLiked(reel._id);
 
   // Control video playback based on visibility
@@ -37,8 +42,9 @@ export default function ReelCard({ reel, onProductOpen, isPressed = false }: Ree
         if (!wasInView.current) {
           videoRef.current.currentTime = 0;
         }
-        
-        videoRef.current.play()
+
+        videoRef.current
+          .play()
           .then(() => {
             setPlaying(true);
             wasInView.current = true;
@@ -61,7 +67,7 @@ export default function ReelCard({ reel, onProductOpen, isPressed = false }: Ree
       if (playing) {
         videoRef.current.pause();
       } else {
-        videoRef.current.play().catch(e => console.log(e));
+        videoRef.current.play().catch((e) => console.log(e));
       }
       setPlaying(!playing);
     }
@@ -74,23 +80,23 @@ export default function ReelCard({ reel, onProductOpen, isPressed = false }: Ree
 
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    
+
     if (!isSignedIn) {
       toast.error("Please sign in to like reels");
       return;
     }
-    
+
     if (isLiking) return; // Prevent multiple clicks
-    
+
     try {
       setIsLiking(true);
-      
+
       // Update likes count optimistically for better UX
       const newLikesCount = liked ? likesCount - 1 : likesCount + 1;
       setLikesCount(newLikesCount);
-      
+
       const success = await toggleReelLike(reel._id);
-      
+
       if (!success) {
         // Revert optimistic update if failed
         setLikesCount(reel.likes || 0);
@@ -100,7 +106,7 @@ export default function ReelCard({ reel, onProductOpen, isPressed = false }: Ree
       console.error("Error liking reel:", error);
       // Revert optimistic update
       setLikesCount(reel.likes || 0);
-      
+
       if (error instanceof Error) {
         if (error.message.includes("Server is not configured properly")) {
           toast.error("Server needs a write token. Check setup instructions.");
@@ -116,15 +122,15 @@ export default function ReelCard({ reel, onProductOpen, isPressed = false }: Ree
   };
 
   return (
-    <div 
+    <div
       ref={ref}
       className={`relative w-full max-w-[420px] aspect-[9/16] rounded-xl overflow-hidden shadow-lg transition-transform ${
-        isPressed ? 'scale-[0.98]' : 'scale-100'
+        isPressed ? "scale-[0.98]" : "scale-100"
       }`}
       onClick={togglePlayback}
     >
       <div className="absolute inset-0 bg-black/20 z-10" />
-      
+
       <video
         ref={videoRef}
         src={reel.video.url}
@@ -138,7 +144,7 @@ export default function ReelCard({ reel, onProductOpen, isPressed = false }: Ree
       <div className="absolute inset-0 z-20 p-4 flex flex-col justify-between pointer-events-none">
         {/* Top Controls - Header */}
         <div className="flex justify-end items-center">
-          <button 
+          <button
             onClick={toggleMute}
             className="p-2 rounded-full bg-black/20 backdrop-blur-sm pointer-events-auto"
           >
@@ -160,7 +166,7 @@ export default function ReelCard({ reel, onProductOpen, isPressed = false }: Ree
         </div>
 
         {/* Product Info - Footer */}
-        <div 
+        <div
           className="absolute bottom-4 left-0 right-0 px-4 cursor-pointer pointer-events-auto"
           onClick={(e) => {
             e.stopPropagation();
@@ -172,7 +178,7 @@ export default function ReelCard({ reel, onProductOpen, isPressed = false }: Ree
               {reel.product.images?.[0] && (
                 <SanityImage
                   image={reel.product.images[0]}
-                  alt={reel.product.name || 'Product image'}
+                  alt={reel.product.name || "Product image"}
                   width={48}
                   height={48}
                   className="object-cover w-full h-full"
@@ -180,28 +186,32 @@ export default function ReelCard({ reel, onProductOpen, isPressed = false }: Ree
               )}
             </div>
             <div className="flex-1">
-              <h3 className="text-white text-sm font-medium mb-0.5 drop-shadow-sm line-clamp-1">{reel.product.name}</h3>
+              <h3 className="text-white text-sm font-medium mb-0.5 drop-shadow-sm line-clamp-1">
+                {reel.product.name}
+              </h3>
             </div>
           </div>
         </div>
 
         {/* Interaction Buttons */}
         <div className="absolute right-4 bottom-24 flex flex-col gap-3 pointer-events-auto">
-          <button 
+          <button
             onClick={handleLike}
-            className={`transition-all ${isLiking ? 'opacity-50' : ''}`}
+            className={`transition-all ${isLiking ? "opacity-50" : ""}`}
             disabled={isLiking}
           >
-            <Heart 
-              size={26} 
-              className={`transition-colors ${liked ? "text-red-500 fill-red-500" : "text-white"}`} 
+            <Heart
+              size={26}
+              className={`transition-colors ${liked ? "text-red-500 fill-red-500" : "text-white"}`}
             />
-            <span className="text-[10px] text-white block mt-0.5">{likesCount}</span>
+            <span className="text-[10px] text-white block mt-0.5">
+              {likesCount}
+            </span>
           </button>
-          <ShareButton 
+          <ShareButton
             title={reel.product.name}
             description={`Check out this product: ${reel.product.name}`}
-            url={`/reel/${reel.product.slug.current}`}
+            url={`/video/${reel.product.slug.current}`}
             iconOnly
             className="text-white"
           />
@@ -209,4 +219,4 @@ export default function ReelCard({ reel, onProductOpen, isPressed = false }: Ree
       </div>
     </div>
   );
-} 
+}

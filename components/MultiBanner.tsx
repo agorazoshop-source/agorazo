@@ -33,7 +33,7 @@ const MultiBanner = () => {
                 </p>
               </div>
               <Link
-                href="/shop"
+                href="/products"
                 className="inline-flex items-center gap-2 bg-shop_light_green text-white px-4 py-2 md:px-6 md:py-3 rounded-lg font-semibold text-sm md:text-base"
               >
                 Explore Products
@@ -57,7 +57,7 @@ const MultiBanner = () => {
                 </p>
               </div>
               <Link
-                href="/shop?category=bundles"
+                href="/products?category=bundles"
                 className="inline-flex items-center gap-2 bg-white text-shop_dark_green px-3 py-1.5 md:px-5 md:py-2.5 rounded-lg font-semibold text-xs md:text-sm"
               >
                 Shop Now
@@ -124,7 +124,7 @@ const MultiBanner = () => {
               </div>
             </div>
             <Link
-              href="/shop?sort=popular"
+              href="/products?sort=popular"
               className="inline-flex items-center gap-2 text-xs md:text-sm font-semibold mt-2 md:mt-4 self-start text-blue-700"
             >
               Shop Now

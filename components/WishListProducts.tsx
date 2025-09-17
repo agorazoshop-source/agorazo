@@ -86,7 +86,8 @@ const WishListProducts = () => {
                         )}
                       </td>
                       <td className="p-2 capitalize hidden md:table-cell">
-                        {product?.categories?.[0]?.title || "Standard"}
+                        {(product?.categories as any)?.[0]?.title ||
+                          "Digital Product"}
                       </td>
                       <td className="p-2">
                         <PriceFormatter amount={product?.price} />
@@ -147,7 +148,7 @@ const WishListProducts = () => {
             </p>
           </div>
           <Button asChild>
-            <Link href="/shop">Continue Shopping</Link>
+            <Link href="/products">Continue Shopping</Link>
           </Button>
         </div>
       )}

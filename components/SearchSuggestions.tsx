@@ -1,12 +1,12 @@
 "use client";
 
-import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { SearchSuggestion } from '@/hooks/useSearchSuggestions';
-import { urlFor } from '@/sanity/lib/image';
-import PriceFormatter from './PriceFormatter';
-import { Package, Tag, Grid3X3, Search } from 'lucide-react';
+import React from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { SearchSuggestion } from "@/hooks/useSearchSuggestions";
+import { urlFor } from "@/sanity/lib/image";
+import PriceFormatter from "./PriceFormatter";
+import { Package, Tag, Grid3X3, Search } from "lucide-react";
 
 interface SearchSuggestionsProps {
   suggestions: SearchSuggestion[];
@@ -21,17 +21,17 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
   loading,
   onSuggestionClick,
   visible,
-  searchQuery
+  searchQuery,
 }) => {
   if (!visible) return null;
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'product':
+      case "product":
         return <Package className="w-4 h-4 text-blue-500" />;
-      case 'brand':
+      case "brand":
         return <Tag className="w-4 h-4 text-green-500" />;
-      case 'category':
+      case "category":
         return <Grid3X3 className="w-4 h-4 text-purple-500" />;
       default:
         return <Package className="w-4 h-4 text-gray-500" />;
@@ -90,8 +90,8 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
                 </div>
                 {suggestion.price && (
                   <div className="mt-1">
-                    <PriceFormatter 
-                      amount={suggestion.price} 
+                    <PriceFormatter
+                      amount={suggestion.price}
                       className="text-sm font-semibold text-shop_dark_green"
                     />
                   </div>
@@ -104,12 +104,12 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
               </div>
             </Link>
           ))}
-          
+
           {/* View all results option */}
           {suggestions.length > 0 && searchQuery && (
             <div className="border-t border-gray-100">
               <Link
-                href={`/shop?search=${encodeURIComponent(searchQuery)}`}
+                href={`/products?search=${encodeURIComponent(searchQuery)}`}
                 onClick={onSuggestionClick}
                 className="flex items-center justify-center gap-2 px-4 py-3 hover:bg-gray-50 transition-colors duration-150 text-shop_dark_green font-medium"
               >

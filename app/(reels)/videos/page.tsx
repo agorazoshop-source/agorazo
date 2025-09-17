@@ -16,17 +16,20 @@ const reelsQuery = groq`*[_type == "productReel"] {
 
 export const metadata: Metadata = {
   title: "Videos | " + siteConfig.name,
-  description: "Watch short videos of our products in action and shop directly from the videos.",
+  description:
+    "Watch short videos of our products in action and shop directly from the videos.",
   keywords: siteConfig.seo.keywords + ", video, product videos",
   openGraph: {
     title: "Product Videos | " + siteConfig.name,
-    description: "Watch short videos of our products in action and shop directly from the videos.",
+    description:
+      "Watch short videos of our products in action and shop directly from the videos.",
     images: [siteConfig.seo.ogImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "Product Videos | " + siteConfig.name,
-    description: "Watch short videos of our products in action and shop directly from the videos.",
+    description:
+      "Watch short videos of our products in action and shop directly from the videos.",
     creator: siteConfig.seo.twitterHandle,
   },
 };
@@ -36,11 +39,11 @@ export const revalidate = 30; // Revalidate every 30 seconds
 // Async component to handle data fetching
 async function ReelsContent() {
   const firstReel = await client.fetch(reelsQuery);
-  
+
   if (firstReel && firstReel.product?.slug?.current) {
-    redirect(`/reel/${firstReel.product.slug.current}`);
+    redirect(`/video/${firstReel.product.slug.current}`);
   }
-  
+
   // Fallback in case there are no reels
   return (
     <div className="text-center p-8">

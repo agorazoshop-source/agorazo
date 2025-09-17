@@ -13,7 +13,12 @@ interface ProductVideoProps {
   fullHeight?: boolean;
 }
 
-export default function ProductVideo({ videoUrl, className = "", productSlug, fullHeight = false }: ProductVideoProps) {
+export default function ProductVideo({
+  videoUrl,
+  className = "",
+  productSlug,
+  fullHeight = false,
+}: ProductVideoProps) {
   const [playing, setPlaying] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -32,8 +37,9 @@ export default function ProductVideo({ videoUrl, className = "", productSlug, fu
         if (!wasInView.current) {
           videoRef.current.currentTime = 0;
         }
-        
-        videoRef.current.play()
+
+        videoRef.current
+          .play()
           .then(() => {
             setPlaying(true);
             wasInView.current = true;
@@ -57,7 +63,7 @@ export default function ProductVideo({ videoUrl, className = "", productSlug, fu
       if (playing) {
         videoRef.current.pause();
       } else {
-        videoRef.current.play().catch(e => console.log(e));
+        videoRef.current.play().catch((e) => console.log(e));
       }
       setPlaying(!playing);
     }
@@ -70,20 +76,20 @@ export default function ProductVideo({ videoUrl, className = "", productSlug, fu
 
   const navigateToReel = () => {
     if (productSlug) {
-      router.push(`/reel/${productSlug}`);
+      router.push(`/video/${productSlug}`);
     }
   };
 
   return (
-    <div 
+    <div
       ref={ref}
-      className={`relative ${fullHeight ? 'w-full h-full' : 'w-full aspect-[9/16]'} rounded-lg overflow-hidden ${className} cursor-pointer`}
+      className={`relative ${fullHeight ? "w-full h-full" : "w-full aspect-[9/16]"} rounded-lg overflow-hidden ${className} cursor-pointer`}
       onClick={navigateToReel}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
       <div className="absolute inset-0 bg-black/10 z-10" />
-      
+
       <video
         ref={videoRef}
         src={videoUrl}
@@ -104,8 +110,8 @@ export default function ProductVideo({ videoUrl, className = "", productSlug, fu
               <span className="text-xs text-white">View Full</span>
             </div>
           )}
-          
-          <button 
+
+          <button
             onClick={toggleMute}
             className="p-1.5 rounded-full bg-black/20 backdrop-blur-sm pointer-events-auto"
           >
@@ -119,4 +125,4 @@ export default function ProductVideo({ videoUrl, className = "", productSlug, fu
       </div>
     </div>
   );
-} 
+}

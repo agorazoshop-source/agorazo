@@ -108,7 +108,7 @@ const HomeTabbar = ({ selectedTab, onTabSelect }: Props) => {
               : null}
         </div>
         <Link
-          href={"/shop"}
+          href={"/products"}
           className="border-2 p-2 rounded-xl transition-all duration-300 transform hover:scale-105 flex flex-col items-center gap-2 min-w-[100px] shadow-md hover:shadow-lg border-gray-200 bg-white hover:border-shop_light_green"
         >
           <div className="relative w-28 h-28">

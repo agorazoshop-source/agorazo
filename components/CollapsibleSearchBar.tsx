@@ -31,7 +31,7 @@ const CollapsibleSearchBar: React.FC<CollapsibleSearchBarProps> = ({
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+      router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
       setShowSuggestions(false);
       setIsFocused(false);
       onCloseSearch();

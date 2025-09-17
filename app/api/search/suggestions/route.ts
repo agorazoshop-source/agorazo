@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
-import { client } from '@/sanity/lib/client';
+import { NextResponse } from "next/server";
+import { client } from "@/sanity/lib/client";
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const query = searchParams.get('q');
-    
+    const query = searchParams.get("q");
+
     if (!query || query.length < 2) {
       return NextResponse.json([]);
     }
@@ -46,38 +46,38 @@ export async function GET(request: Request) {
       // Add product suggestions
       ...results.products.map((product: any) => ({
         id: product._id,
-        type: 'product',
+        type: "product",
         title: product.name,
-        subtitle: product.brand?.title || 'Product',
+        subtitle: product.brand?.title || "Product",
         url: `/product/${product.slug?.current}`,
         image: product.images?.[0],
-        price: product.price
+        price: product.price,
       })),
       // Add brand suggestions
       ...results.brands.map((brand: any) => ({
         id: brand._id,
-        type: 'brand',
+        type: "brand",
         title: brand.title,
-        subtitle: 'Brand',
-        url: `/shop?brand=${brand.slug?.current}`,
+        subtitle: "Brand",
+        url: `/products?brand=${brand.slug?.current}`,
         image: null,
-        price: null
+        price: null,
       })),
       // Add category suggestions
       ...results.categories.map((category: any) => ({
         id: category._id,
-        type: 'category',
+        type: "category",
         title: category.title,
-        subtitle: 'Category',
+        subtitle: "Category",
         url: `/category/${category.slug?.current}`,
         image: null,
-        price: null
-      }))
+        price: null,
+      })),
     ];
 
     return NextResponse.json(suggestions.slice(0, 8)); // Limit to 8 suggestions
   } catch (error) {
-    console.error('Search suggestions error:', error);
+    console.error("Search suggestions error:", error);
     return NextResponse.json([], { status: 500 });
   }
 }

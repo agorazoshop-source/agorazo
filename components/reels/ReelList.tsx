@@ -232,7 +232,7 @@ export default function ReelList({ reels, initialSlug }: ReelListProps) {
 
       if (currentReel?.product?.slug?.current) {
         // Update URL without full page reload
-        const newUrl = `/reel/${currentReel.product.slug.current}`;
+        const newUrl = `/video/${currentReel.product.slug.current}`;
         if (pathname !== newUrl) {
           window.history.replaceState({}, "", newUrl);
           setSelectedProductId(currentReel.product._id);
