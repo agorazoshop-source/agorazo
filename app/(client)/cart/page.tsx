@@ -80,7 +80,7 @@ const CartPage = () => {
                 {/* Left side - Cart items */}
                 <div className="lg:col-span-2 rounded-lg">
                   <div className="border bg-white rounded-md">
-                    {groupedItems?.map(({ product, quantity }) => {
+                    {groupedItems?.map(({ product }) => {
                       return (
                         <div
                           key={product?._id}
@@ -154,7 +154,7 @@ const CartPage = () => {
                           </div>
                           <div className="flex flex-col items-start justify-between h-36 md:h-44 p-0.5 md:p-1">
                             <PriceFormatter
-                              amount={(product?.price as number) * quantity}
+                              amount={product?.price as number}
                               className="font-bold text-lg"
                             />
                             <QuantityButtons

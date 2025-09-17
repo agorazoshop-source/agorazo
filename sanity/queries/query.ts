@@ -149,8 +149,7 @@ const GET_USER_CART = defineQuery(
         categories,
         status,
         productLink
-      },
-      quantity
+      }
     }
   }`
 );

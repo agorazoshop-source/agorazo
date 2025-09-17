@@ -20,7 +20,6 @@ interface OrderEmailProps {
       price: number;
       productLink?: string;
     };
-    quantity: number;
   }>;
 }
 
@@ -67,7 +66,7 @@ export const sendOrderConfirmationEmail = async ({
                 <h2>Order Details:</h2>
                 ${items.map(item => `
                   <div class="item">
-                    <strong>${item.product.name}</strong> x ${item.quantity}<br>
+                    <strong>${item.product.name}</strong><br>
                     Price: ₹${item.product.price}<br>
                     ${item.product.productLink ? `<a href="${item.product.productLink}" target="_blank" style="color: #007bff; text-decoration: none;">View Product →</a>` : ''}
                   </div>

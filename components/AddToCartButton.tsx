@@ -17,9 +17,9 @@ interface Props {
 }
 
 const AddToCartButton = ({ product, className, disabled }: Props) => {
-  const { addItem, getItemCount } = useStore();
+  const { addItem, items } = useStore();
   const { isSignedIn, isLoaded } = useUser();
-  const itemCount = getItemCount(product?._id);
+  const isInCart = items.some(item => item.product._id === product._id);
   const router = useRouter();
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -29,7 +29,7 @@ const AddToCartButton = ({ product, className, disabled }: Props) => {
   };
   
   // Show view cart button if this specific item is in cart
-  if (itemCount > 0 && isSignedIn) {
+  if (isInCart && isSignedIn) {
     return (
       <Button
         onClick={() => router.push('/cart')}

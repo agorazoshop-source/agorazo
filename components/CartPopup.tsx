@@ -186,7 +186,7 @@ const CartPopup = () => {
 
                   {/* Cart Items */}
                   <div className="max-h-64 overflow-y-auto py-3">
-                    {groupedItems.map(({ product, quantity }) => (
+                    {groupedItems.map(({ product }) => (
                       <div
                         key={product && product._id}
                         className="py-3 border-b border-gray-100/40 last:border-b-0 flex items-center gap-3"
@@ -227,7 +227,7 @@ const CartPopup = () => {
                             <PriceFormatter
                               amount={
                                 product && product.price
-                                  ? product.price * quantity
+                                  ? product.price
                                   : 0
                               }
                               className="text-sm font-semibold"

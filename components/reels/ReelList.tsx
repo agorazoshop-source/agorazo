@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ProductReel } from "@/types/ProductReel";
+import { ProductReel } from "@/types/index";
 import ReelCard from "./ReelCard";
 import { useRouter, usePathname } from "next/navigation";
 import useStore from "@/store";
@@ -401,12 +401,10 @@ export default function ReelList({ reels, initialSlug }: ReelListProps) {
                     />
                   </div>
 
-                  {/* Quantity Selector */}
+                  {/* Add to Cart Controls */}
                   <div className="flex items-center gap-4 mb-4">
-                    <span className="text-sm text-gray-600">Quantity:</span>
                     <QuantityButtons product={selectedProduct} />
                   </div>
-
 
                   {/* Action Buttons */}
                   <div className="mt-auto flex items-center gap-2">

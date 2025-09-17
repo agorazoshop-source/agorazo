@@ -26,7 +26,6 @@ export type {
 // Additional application types
 export interface CartItem {
   product: SanityProduct;
-  quantity: number;
 }
 
 export interface WishlistItem {
@@ -64,7 +63,6 @@ export interface CartStore {
   items: CartItem[];
   addItem: (item: CartItem) => void;
   removeItem: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   getItemCount: () => number;
   getTotalPrice: () => number;
@@ -203,4 +201,3 @@ export type ProductReel = {
   views: number;
   tags: string[];
 };
-

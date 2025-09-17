@@ -4,9 +4,8 @@ import { Product } from "@/sanity.types";
 import useStore from "@/store";
 import React from "react";
 import { Button } from "./ui/button";
-import { Minus, Plus } from "lucide-react";
+import { ShoppingBag, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import toast from "react-hot-toast";
 
 interface Props {
   product: Product;
@@ -14,40 +13,41 @@ interface Props {
 }
 
 const QuantityButtons = ({ product, className }: Props) => {
-  const { addItem, removeItem, getItemCount } = useStore();
-  const itemCount = getItemCount(product?._id);
+  const { addItem, removeItem, items } = useStore();
+  const isInCart = items.some(item => item.product._id === product._id);
 
-  const handleRemoveProduct = () => {
-    removeItem(product?._id);
-    // Toast is handled by the store
-  };
-
-  const handleAddToCart = () => {
-    addItem(product);
-    // Toast is handled by the store
+  const handleToggleCart = () => {
+    if (isInCart) {
+      removeItem(product?._id);
+    } else {
+      addItem(product);
+    }
   };
 
   return (
     <div className={cn("flex items-center gap-1 pb-1 text-base", className)}>
       <Button
-        onClick={handleRemoveProduct}
-        variant="outline"
-        size="icon"
-        disabled={itemCount === 0}
-        className="w-6 h-6 border-[1px] hover:bg-shop_dark_green/20 hoverEffect"
+        onClick={handleToggleCart}
+        variant={isInCart ? "destructive" : "default"}
+        size="sm"
+        className={cn(
+          "flex items-center gap-1",
+          isInCart 
+            ? "bg-red-500 hover:bg-red-600 text-white" 
+            : "bg-shop_dark_green hover:bg-shop_light_green text-white"
+        )}
       >
-        <Minus />
-      </Button>
-      <span className="font-semibold text-sm w-6 text-center text-darkColor">
-        {itemCount}
-      </span>
-      <Button
-        onClick={handleAddToCart}
-        variant="outline"
-        size="icon"
-        className="w-6 h-6 border-[1px] hover:bg-shop_dark_green/20 hoverEffect"
-      >
-        <Plus />
+        {isInCart ? (
+          <>
+            <Trash2 className="w-4 h-4" />
+            Remove
+          </>
+        ) : (
+          <>
+            <ShoppingBag className="w-4 h-4" />
+            Add
+          </>
+        )}
       </Button>
     </div>
   );

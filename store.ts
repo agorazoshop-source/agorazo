@@ -5,7 +5,6 @@ import toast from "react-hot-toast";
 
 export interface CartItem {
   product: Product;
-  quantity: number;
 }
 
 interface StoreState {
@@ -16,7 +15,7 @@ interface StoreState {
   resetCart: () => void;
   getTotalPrice: () => number;
   getSubTotalPrice: () => number;
-  getItemCount: (productId: string) => number;
+  getItemCount: () => number;
   getGroupedItems: () => CartItem[];
   syncCartWithServer: () => Promise<any>;
   loadCartFromServer: () => Promise<any>;
@@ -76,22 +75,15 @@ const useStore = create<StoreState>()(
           );
           
           if (existingItem) {
-            // Item exists, just increase quantity
-            toast.success("Quantity Increased");
-            return {
-              items: state.items.map((item) =>
-                item.product._id === product._id
-                  ? { ...item, quantity: item.quantity + 1 }
-                  : item
-              ),
-            };
+            // Item already exists, show message
+            toast.success("Product already in cart");
+            return state;
           } else {
             // New item being added
             toast.success(`${product?.name?.substring(0, 12)} added to cart`);
             return { 
               items: [...state.items, { 
-                product, 
-                quantity: 1
+                product
               }] 
             };
           }
@@ -112,28 +104,12 @@ const useStore = create<StoreState>()(
             item => item.product._id === productId
           );
           
-          // If item exists and quantity is 1, it will be removed
-          const willBeRemoved = itemToRemove && itemToRemove.quantity === 1;
-          
-          if (willBeRemoved) {
+          if (itemToRemove) {
             toast.success(`${itemToRemove.product.name?.substring(0, 12)} removed`);
-          } else if (itemToRemove) {
-            toast.success("Quantity Decreased");
           }
           
           return {
-            items: state.items.reduce((acc, item) => {
-              const isSameItem = item.product._id === productId;
-              
-              if (isSameItem) {
-                if (item.quantity > 1) {
-                  acc.push({ ...item, quantity: item.quantity - 1 });
-                }
-              } else {
-                acc.push(item);
-              }
-              return acc;
-            }, [] as CartItem[]),
+            items: state.items.filter(item => item.product._id !== productId),
           };
         });
         
@@ -176,7 +152,7 @@ const useStore = create<StoreState>()(
       },
       getTotalPrice: () => {
         return get().items.reduce(
-          (total, item) => total + (item.product.price ?? 0) * item.quantity,
+          (total, item) => total + (item.product.price ?? 0),
           0
         );
       },
@@ -185,20 +161,14 @@ const useStore = create<StoreState>()(
           const price = item.product.price ?? 0;
           const discount = ((item.product.discount ?? 0) * price) / 100;
           const discountedPrice = price + discount;
-          return total + discountedPrice * item.quantity;
+          return total + discountedPrice;
         }, 0);
       },
-      getItemCount: (productId) => {
-        if (!productId) return 0;
-        
-        const item = get().items.find((item) => 
-          item.product._id === productId
-        );
-        
-        return item ? item.quantity : 0;
+      getItemCount: () => {
+        return get().items.length;
       },
       getGroupedItems: () => {
-        // Return items with quantity directly
+        // Return items directly
         return get().items;
       },
       syncCartWithServer: async () => {
