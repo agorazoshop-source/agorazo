@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { ShoppingBag, X, Trash } from "lucide-react";
 import PriceFormatter from "./PriceFormatter";
-import QuantityButtons from "./QuantityButtons";
 import SanityImage from "./SanityImage";
 import { Button } from "./ui/button";
 import Link from "next/link";
@@ -22,15 +21,13 @@ const CartPopup = () => {
   const {
     items,
     getTotalPrice,
-    getSubTotalPrice,
     deleteCartProduct,
-    resetCart,
     isCartPopupVisible,
     setCartPopupVisible,
   } = useStore();
 
   const groupedItems = useStore((state) => state.getGroupedItems());
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalItems = items.reduce((sum, item) => sum + 1, 0);
 
   // Pages where the popup should not appear
   const hiddenOnPages = ["/cart", "/checkout"];
@@ -139,7 +136,7 @@ const CartPopup = () => {
                         {getDisplayText()}
                       </p>
                       <p className="text-sm text-gray-500">
-                        {totalItems} item{totalItems !== 1 ? "s" : ""} •{" "}
+                        {totalItems} digital item{totalItems !== 1 ? "s" : ""} •{" "}
                         <PriceFormatter amount={getTotalPrice()} />
                       </p>
                     </div>
@@ -170,7 +167,7 @@ const CartPopup = () => {
                           Shopping Cart
                         </h3>
                         <span className="text-xs text-gray-500">
-                          {totalItems} item{totalItems !== 1 ? "s" : ""}
+                          {totalItems} digital item{totalItems !== 1 ? "s" : ""}
                         </span>
                       </div>
                     </div>
@@ -220,21 +217,16 @@ const CartPopup = () => {
                           </h4>
                           <div className="flex items-center gap-2 text-xs text-gray-500">
                             <span>
-                              {product?.categories?.[0]?.title || "Standard"}
+                              {(product?.categories as any)?.[0]?.title ||
+                                "Digital Product"}
                             </span>
                           </div>
                           <div className="flex items-center justify-between mt-1">
                             <PriceFormatter
                               amount={
-                                product && product.price
-                                  ? product.price
-                                  : 0
+                                product && product.price ? product.price : 0
                               }
                               className="text-sm font-semibold"
-                            />
-                            <QuantityButtons
-                              product={product}
-                              className="scale-75"
                             />
                           </div>
                         </div>

@@ -5,7 +5,6 @@ import Container from "@/components/Container";
 import ImageView from "@/components/ImageView";
 import ProductVideo from "@/components/ProductVideo";
 import { Video } from "lucide-react";
-import ProductCharacteristics from "@/components/ProductCharacteristics";
 import DeliveryInfo from "@/components/product/DeliveryInfo";
 import ProductInteractiveSection from "@/components/product/ProductInteractiveSection";
 
@@ -20,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!product) {
     return {
-      title: 'Product Not Found',
+      title: "Product Not Found",
     };
   }
 
@@ -33,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: product.images?.[0] ? [{ url: product.images[0].url }] : [],
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: product.name,
       description: product.description,
       images: product.images?.[0] ? [product.images[0].url] : [],
@@ -46,7 +45,7 @@ export default async function SingleProductPage({ params }: Props) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
   const productReel = await getReelByProductSlug(slug);
-  
+
   if (!product) {
     return notFound();
   }
@@ -78,7 +77,7 @@ export default async function SingleProductPage({ params }: Props) {
         }}
       />
 
-      <div className="bg-white py-3 md:py-2">
+      <div className="bg-white min-h-screen py-3 md:py-2">
         <Container>
           <div className="flex flex-col gap-8">
             {/* Media Section */}
@@ -89,13 +88,13 @@ export default async function SingleProductPage({ params }: Props) {
                   <ImageView images={product.images} isStock={product.stock} />
                 )}
               </div>
-              
+
               {/* Product Video - Desktop */}
               {productReel && productReel.video && (
                 <div className="hidden md:block md:col-span-3">
                   <div className="h-[500px] border border-gray-100 rounded-lg overflow-hidden">
-                    <ProductVideo 
-                      videoUrl={productReel.video.url} 
+                    <ProductVideo
+                      videoUrl={productReel.video.url}
                       className="h-full w-full object-cover"
                       productSlug={productSlug}
                       fullHeight={true}
@@ -110,8 +109,8 @@ export default async function SingleProductPage({ params }: Props) {
               <div className="md:hidden">
                 <div className="relative bg-gray-50 rounded-lg overflow-hidden">
                   <div className="aspect-video w-full">
-                    <ProductVideo 
-                      videoUrl={productReel.video.url} 
+                    <ProductVideo
+                      videoUrl={productReel.video.url}
                       className="w-full h-full object-cover"
                       productSlug={productSlug}
                       fullHeight={false}
@@ -128,22 +127,11 @@ export default async function SingleProductPage({ params }: Props) {
               </div>
             )}
 
-            {/* Product Info Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              {/* Main Info - Left Column */}
-              <div className="lg:col-span-8">
+            {/* Product Info Section - Redesigned Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Main Product Details - Takes up 2/3 of the space */}
+              <div className="lg:col-span-2">
                 <ProductInteractiveSection product={product} />
-              </div>
-
-              {/* Additional Info - Right Column */}
-              <div className="lg:col-span-4">
-                <div className="space-y-3">
-                  {/* Characteristics Card */}
-                  <ProductCharacteristics product={product}/>
-
-                  {/* Delivery & Returns */}
-                  <DeliveryInfo />
-                </div>
               </div>
             </div>
           </div>

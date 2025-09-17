@@ -8,7 +8,6 @@ import useStore from "@/store";
 import toast from "react-hot-toast";
 import ProductImageCarousel from "../ProductImageCarousel";
 import { urlFor } from "@/sanity/lib/image";
-import QuantityButtons from "../QuantityButtons";
 import PriceView from "../PriceView";
 import { client } from "@/sanity/lib/client";
 import { useUser } from "@clerk/nextjs";
@@ -399,11 +398,6 @@ export default function ReelList({ reels, initialSlug }: ReelListProps) {
                       discount={selectedProduct.discount}
                       className="text-2xl font-bold"
                     />
-                  </div>
-
-                  {/* Add to Cart Controls */}
-                  <div className="flex items-center gap-4 mb-4">
-                    <QuantityButtons product={selectedProduct} />
                   </div>
 
                   {/* Action Buttons */}

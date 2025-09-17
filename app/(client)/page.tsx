@@ -3,7 +3,7 @@ import HomeBanner from "@/components/HomeBanner";
 import MultiBanner from "@/components/MultiBanner";
 import HomeCategories from "@/components/HomeCategories";
 import LatestBlog from "@/components/LatestBlog";
-import FeaturedProductsByCategory from "@/components/FeaturedProductsByCategory";
+import ProductGrid from "@/components/ProductGrid";
 import ShopByBrands from "@/components/ShopByBrands";
 import MovingPromoBanner from "@/components/MovingPromoBanner";
 import { getCategories } from "@/sanity/queries";
@@ -27,7 +27,7 @@ const Home = async () => {
       </div>
 
       <Container>
-        <FeaturedProductsByCategory />
+        <ProductGrid products={[]} />
         <HomeCategories categories={categories} />
         {/* <ShopByBrands /> */}
         <LatestBlog />

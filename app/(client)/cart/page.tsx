@@ -10,7 +10,6 @@ import EmptyCart from "@/components/EmptyCart";
 import NoAccess from "@/components/NoAccess";
 import PriceFormatter from "@/components/PriceFormatter";
 import ProductSideMenu from "@/components/ProductSideMenu";
-import QuantityButtons from "@/components/QuantityButtons";
 import Title from "@/components/Title";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -120,7 +119,6 @@ const CartPage = () => {
                                     {product?.status || "Standard"}
                                   </span>
                                 </p>
-
                               </div>
                               <div className="flex items-center gap-2">
                                 <TooltipProvider>
@@ -157,9 +155,9 @@ const CartPage = () => {
                               amount={product?.price as number}
                               className="font-bold text-lg"
                             />
-                            <QuantityButtons
-                              product={product}
-                            />
+                            <div className="text-sm text-gray-500 mt-2">
+                              Digital Product
+                            </div>
                           </div>
                         </div>
                       );
