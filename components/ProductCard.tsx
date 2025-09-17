@@ -18,7 +18,7 @@ import useStore from "@/store";
 
 const ProductCard = ({ product }: { product: Product }) => {
   const router = useRouter();
-  const isAnyVariantInCart = useStore((state) => 
+  const isProductInCart = useStore((state) => 
     state.items.some(item => item.product._id === product._id)
   );
 
@@ -26,7 +26,7 @@ const ProductCard = ({ product }: { product: Product }) => {
   const renderActionButton = () => {
     if (product.hasSizes) {
       // For products with sizes, show either "View Cart" or "Select Size" button
-      if (isAnyVariantInCart) {
+      if (isProductInCart) {
         return (
           <Button
             onClick={() => router.push('/cart')}

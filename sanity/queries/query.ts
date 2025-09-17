@@ -51,7 +51,8 @@ const BRAND_QUERY = defineQuery(`*[_type == "product" && slug.current == $slug]{
   "brandName": brand->title
 }`);
 
-const MY_ORDERS_QUERY = defineQuery(`*[_type == 'order' && customer.clerkUserId == $userId] | order(createdAt desc) {
+const MY_ORDERS_QUERY =
+  defineQuery(`*[_type == 'order' && customer.clerkUserId == $userId] | order(createdAt desc) {
   ...,
   items[] {
     ...,
@@ -117,7 +118,8 @@ const OTHERS_BLOG_QUERY = defineQuery(`*[
   }
 }`);
 
-const GET_USER_WISHLIST = defineQuery(`*[_type == "userWishlist" && userId == $userId][0] {
+const GET_USER_WISHLIST =
+  defineQuery(`*[_type == "userWishlist" && userId == $userId][0] {
   ...,
   items[] {
     ...,
@@ -155,9 +157,11 @@ const GET_USER_CART = defineQuery(
       quantity,
       size
     }
-  }`);
+  }`
+);
 
-const GET_USER_ADDRESSES = defineQuery(`*[_type == "userAddresses" && clerkUserId == $userId][0] {
+const GET_USER_ADDRESSES =
+  defineQuery(`*[_type == "userAddresses" && clerkUserId == $userId][0] {
   _id,
   _type,
   clerkUserId,

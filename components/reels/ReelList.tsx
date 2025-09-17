@@ -97,7 +97,6 @@ export default function ReelList({ reels, initialSlug }: ReelListProps) {
             price,
             discount,
             stock,
-            variant,
             status,
             images,
             slug,

@@ -8,8 +8,8 @@ import type {
   UserAddressType,
   Product as SanityProduct,
   BannerType,
-  SanityUserAddress
-} from '@/sanity/schemaTypes/types';
+  SanityUserAddress,
+} from "@/sanity/schemaTypes/types";
 
 // Re-export types with aliases to avoid conflicts
 export type {
@@ -56,7 +56,7 @@ export interface CheckoutMetadata {
 export interface AppliedCoupon {
   code: string;
   discount: number;
-  type: 'percentage' | 'fixed';
+  type: "percentage" | "fixed";
   value: number;
 }
 
@@ -97,13 +97,13 @@ export interface PaginatedResponse<T> {
 }
 
 // Form Types
-export interface AddressFormData extends Omit<SanityUserAddress, '_key'> {
+export interface AddressFormData extends Omit<SanityUserAddress, "_key"> {
   _key?: string;
 }
 
 // Utility Types
-export type LoadingState = 'idle' | 'loading' | 'success' | 'error';
-export type PaymentMethod = 'prepaid'; // 'cod' |
+export type LoadingState = "idle" | "loading" | "success" | "error";
+export type PaymentMethod = "prepaid"; // 'cod' |
 
 export interface UserAddress {
   _key: string;
@@ -127,7 +127,7 @@ export interface UserAddressDocument {
   clerkUserId: string;
   addresses: UserAddress[];
   updatedAt: string;
-} 
+}
 
 export interface AddressInfo {
   name: string;
@@ -142,7 +142,7 @@ export interface AddressInfo {
   phoneNumber: string;
 }
 
-export interface Product extends SanityProduct  {
+export interface Product extends SanityProduct {
   _id: string;
   _type: "product";
   name: string;
@@ -207,10 +207,10 @@ export type ProductReel = {
   likes: number;
   views: number;
   tags: string[];
-} 
+};
 
 export type ProductSize = {
   _key: string;
   size: string;
   isEnabled: boolean;
-}
+};

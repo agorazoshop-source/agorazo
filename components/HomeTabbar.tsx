@@ -138,7 +138,7 @@ const HomeTabbar = ({ selectedTab, onTabSelect }: Props) => {
                 );
               })
             ) : (
-              // Fallback to hardcoded values if no variants found
+              // Fallback to hardcoded values if no categories found
               [
                 { title: "Fashion", value: "fashion" },
                 { title: "Electronics", value: "electronics" },

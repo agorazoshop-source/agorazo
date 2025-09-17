@@ -11,12 +11,11 @@ import toast from "react-hot-toast";
 import PriceFormatter from "./PriceFormatter";
 import AddToCartButton from "./AddToCartButton";
 import SanityImage from "./SanityImage";
-import CategoryDisplay from "./CategoryDisplay";
 
 const WishListProducts = () => {
   const [visibleProducts, setVisibleProducts] = useState(7);
   const { favoriteProduct, removeFromFavorite, resetFavorite } = useStore();
-  
+
   const loadMore = () => {
     setVisibleProducts((prev) => Math.min(prev + 5, favoriteProduct.length));
   };
@@ -40,7 +39,9 @@ const WishListProducts = () => {
               <thead className="border-b">
                 <tr className="bg-black/5">
                   <th className="p-2 text-left">Image</th>
-                  <th className="p-2 text-left hidden md:table-cell">Category</th>
+                  <th className="p-2 text-left hidden md:table-cell">
+                    Category
+                  </th>
                   <th className="p-2 text-left hidden md:table-cell">Type</th>
                   <th className="p-2 text-left hidden md:table-cell">Status</th>
                   <th className="p-2 text-left">Price</th>
@@ -85,7 +86,7 @@ const WishListProducts = () => {
                         )}
                       </td>
                       <td className="p-2 capitalize hidden md:table-cell">
-                        <CategoryDisplay categories={product?.categories} />
+                        {product?.categories?.[0]?.title || "Standard"}
                       </td>
                       <td
                         className={`p-2 w-24 ${

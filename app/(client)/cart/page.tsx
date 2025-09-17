@@ -3,14 +3,13 @@
 import {
   createCheckoutSession,
   Metadata,
-  AddressInfo
+  AddressInfo,
 } from "@/actions/createCheckoutSession";
 import Container from "@/components/Container";
 import EmptyCart from "@/components/EmptyCart";
 import NoAccess from "@/components/NoAccess";
 import PriceFormatter from "@/components/PriceFormatter";
 import ProductSideMenu from "@/components/ProductSideMenu";
-import CategoryDisplay from "@/components/CategoryDisplay";
 import QuantityButtons from "@/components/QuantityButtons";
 import Title from "@/components/Title";
 import { Button } from "@/components/ui/button";
@@ -38,7 +37,7 @@ const CartPage = () => {
     getItemCount,
     getSubTotalPrice,
     resetCart,
-    loadCartFromServer
+    loadCartFromServer,
   } = useStore();
   const [loading, setLoading] = useState(false);
   const groupedItems = useStore((state) => state.getGroupedItems());
@@ -84,7 +83,7 @@ const CartPage = () => {
                     {groupedItems?.map(({ product, size, quantity }) => {
                       return (
                         <div
-                          key={`${product?._id}-${size || 'default'}`}
+                          key={`${product?._id}-${size || "default"}`}
                           className="border-b p-2.5 last:border-b-0 flex items-center justify-between gap-5"
                         >
                           <div className="flex flex-1 items-start gap-2 h-36 md:h-44">
@@ -109,9 +108,9 @@ const CartPage = () => {
                                   {product?.name}
                                 </h2>
                                 <p className="text-sm capitalize">
-                                  Variant:{" "}
+                                  Category:{" "}
                                   <span className="font-semibold">
-                                    <CategoryDisplay categories={product?.categories} />
+                                    {product?.categories?.[0]?.title || "Standard"}
                                   </span>
                                 </p>
                                 <p className="text-sm capitalize">
@@ -120,29 +119,43 @@ const CartPage = () => {
                                     {product?.status || "Standard"}
                                   </span>
                                 </p>
-                                
+
                                 {/* Show size information if product has sizes */}
                                 {product.hasSizes && (
                                   <div className="mt-1">
-                                    <p className="text-sm mb-1">Size: <span className="font-semibold">{size || "Not selected"}</span></p>
+                                    <p className="text-sm mb-1">
+                                      Size:{" "}
+                                      <span className="font-semibold">
+                                        {size || "Not selected"}
+                                      </span>
+                                    </p>
                                     <div className="flex flex-wrap gap-1">
-                                      {product.sizes?.filter(s => s.isEnabled).map((sizeObj) => (
-                                        <button
-                                          key={sizeObj._key}
-                                          onClick={() => {
-                                            deleteCartProduct(product._id, size);
-                                            useStore.getState().addItem(product, sizeObj.size);
-                                            toast.success(`Size updated to ${sizeObj.size}`);
-                                          }}
-                                          className={`px-2 py-0.5 text-xs border rounded ${
-                                            size === sizeObj.size
-                                              ? "border-gray-900 bg-gray-900 text-white"
-                                              : "border-gray-200 text-gray-900"
-                                          }`}
-                                        >
-                                          {sizeObj.size}
-                                        </button>
-                                      ))}
+                                      {product.sizes
+                                        ?.filter((s) => s.isEnabled)
+                                        .map((sizeObj) => (
+                                          <button
+                                            key={sizeObj._key}
+                                            onClick={() => {
+                                              deleteCartProduct(
+                                                product._id,
+                                                size
+                                              );
+                                              useStore
+                                                .getState()
+                                                .addItem(product, sizeObj.size);
+                                              toast.success(
+                                                `Size updated to ${sizeObj.size}`
+                                              );
+                                            }}
+                                            className={`px-2 py-0.5 text-xs border rounded ${
+                                              size === sizeObj.size
+                                                ? "border-gray-900 bg-gray-900 text-white"
+                                                : "border-gray-200 text-gray-900"
+                                            }`}
+                                          >
+                                            {sizeObj.size}
+                                          </button>
+                                        ))}
                                     </div>
                                   </div>
                                 )}
@@ -182,8 +195,8 @@ const CartPage = () => {
                               amount={(product?.price as number) * quantity}
                               className="font-bold text-lg"
                             />
-                            <QuantityButtons 
-                              product={product} 
+                            <QuantityButtons
+                              product={product}
                               selectedSize={size}
                             />
                           </div>
@@ -205,7 +218,9 @@ const CartPage = () => {
                 <div>
                   <div className="lg:col-span-1">
                     <div className="bg-white p-6 rounded-lg shadow-sm">
-                      <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+                      <h2 className="text-xl font-semibold mb-4">
+                        Order Summary
+                      </h2>
                       <div className="space-y-4">
                         <div className="flex items-center justify-between">
                           <span>Subtotal</span>
@@ -243,7 +258,8 @@ const CartPage = () => {
                         </Button>
 
                         <p className="text-xs text-gray-500 mt-4 text-center">
-                          By proceeding, you agree to our Terms of Service and Privacy Policy
+                          By proceeding, you agree to our Terms of Service and
+                          Privacy Policy
                         </p>
                       </div>
                     </div>

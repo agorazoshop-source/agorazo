@@ -18,7 +18,7 @@ const ProductGrid = ({ products: initialProducts }: ProductGridProps) => {
   const [loading, setLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState("");
   const [products, setProducts] = useState(initialProducts);
-  
+
   // Updated query to match products by category reference title
   const query = `*[_type == "product" && references(*[_type == "category" && title == $category]._id)] | order(name asc){
     ...,"categories": categories[]->title
@@ -27,7 +27,7 @@ const ProductGrid = ({ products: initialProducts }: ProductGridProps) => {
   useEffect(() => {
     // Only fetch products if a tab is selected
     if (!selectedTab) return;
-    
+
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -45,7 +45,7 @@ const ProductGrid = ({ products: initialProducts }: ProductGridProps) => {
   return (
     <Container className="flex flex-col px-2 lg:px-0 my-10">
       <HomeTabbar selectedTab={selectedTab} onTabSelect={setSelectedTab} />
-      { loading ? (
+      {loading ? (
         <NoProductAvailable selectedTab={selectedTab} />
       ) : products?.length ? (
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5 mt-4 sm:mt-8">
