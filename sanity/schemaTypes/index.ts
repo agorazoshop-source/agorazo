@@ -10,6 +10,7 @@ import { productReelType } from "./productReelType";
 import { couponType } from "./couponType";
 import { userCartType } from "./userCartType";
 import { userWishlistType } from "./userWishlistType";
+import { homeSectionType } from "./homeSectionType";
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -24,5 +25,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     userWishlistType,
     userCartType,
     couponType,
+    homeSectionType,
   ],
 };

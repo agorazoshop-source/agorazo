@@ -29,7 +29,7 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
       {/* Main header */}
       <div className="py-3">
         <Container>

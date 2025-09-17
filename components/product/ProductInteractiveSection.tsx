@@ -67,6 +67,19 @@ const ProductInteractiveSection = ({
       <div className="w-full space-y-4">
         {/* Add to Cart Button */}
         <AddToCartButton product={product} className="w-full" />
+
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+          <h3 className="font-semibold text-amber-800 mb-2 flex items-center gap-2">
+            <span className="text-amber-600">ℹ️</span>
+            Important Notice
+          </h3>
+          <p className="text-sm text-amber-700 leading-relaxed">
+            This is a digital product. Once purchased, you'll receive instant
+            access to download your files. Please review the product details
+            carefully before purchase, as digital products are non-refundable
+            due to their nature.
+          </p>
+        </div>
       </div>
     </div>
   );

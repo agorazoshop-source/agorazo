@@ -11,10 +11,10 @@ import {
 const MultiBanner = () => {
   return (
     <div className="py-2 md:py-4 max-w-7xl mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 md:gap-6 min-h-[300px] md:min-h-[500px]">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 md:gap-6 min-h-[300px] md:min-h-[350px]">
         {/* Main Banner - Takes 2 columns (larger) */}
         <div className="lg:col-span-2">
-          <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white rounded-2xl p-4 md:p-8 h-full min-h-[300px] md:min-h-[500px] flex flex-col justify-center relative overflow-hidden shadow-xl">
+          <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white rounded-2xl p-4 md:p-8 h-full min-h-[300px] md:min-h-[350px] flex flex-col justify-center relative overflow-hidden shadow-xl">
             {/* Background pattern */}
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-10 right-10 w-32 h-32 border border-white rounded-full"></div>
@@ -45,7 +45,7 @@ const MultiBanner = () => {
 
         {/* Middle Banner - Agorazo Bundles (smaller) */}
         <div className="lg:col-span-1">
-          <div className="bg-gradient-to-br from-shop_light_green via-emerald-500 to-shop_dark_green text-white rounded-2xl p-4 md:p-6 h-full min-h-[180px] md:min-h-[500px] flex flex-col justify-center relative overflow-hidden shadow-lg">
+          <div className="bg-gradient-to-br from-shop_light_green via-emerald-500 to-shop_dark_green text-white rounded-2xl p-4 md:p-6 h-full min-h-[180px] md:min-h-[350px] flex flex-col justify-center relative overflow-hidden shadow-lg">
             <div className="space-y-2 md:space-y-4 z-10">
               <Package className="w-8 h-8 md:w-10 md:h-10 text-white drop-shadow-lg" />
               <div>
@@ -80,7 +80,7 @@ const MultiBanner = () => {
         {/* Right Column - Two stacked banners (takes 2 columns) */}
         <div className="lg:col-span-2 space-y-3 md:space-y-6">
           {/* Landing Pages Banner */}
-          <div className="bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 text-gray-800 rounded-2xl p-4 md:p-6 min-h-[180px] md:min-h-[240px] flex flex-col justify-between relative overflow-hidden shadow-md">
+          <div className="bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 text-gray-800 rounded-2xl p-4 md:p-6 min-h-[180px] md:min-h-[160px] flex flex-col justify-between relative overflow-hidden shadow-md">
             <div className="space-y-2 md:space-y-4 z-10">
               <Monitor className="w-8 h-8 md:w-10 md:h-10 text-gray-700" />
               <div>
@@ -111,7 +111,7 @@ const MultiBanner = () => {
           </div>
 
           {/* Best Sellers Banner */}
-          <div className="bg-gradient-to-br from-blue-100 via-blue-50 to-blue-200 text-blue-900 rounded-2xl p-4 md:p-6 min-h-[180px] md:min-h-[240px] flex flex-col justify-between relative overflow-hidden shadow-md">
+          <div className="bg-gradient-to-br from-blue-100 via-blue-50 to-blue-200 text-blue-900 rounded-2xl p-4 md:p-6 min-h-[180px] md:min-h-[160px] flex flex-col justify-between relative overflow-hidden shadow-md">
             <div className="space-y-2 md:space-y-4 z-10">
               <ArrowRight className="w-8 h-8 md:w-10 md:h-10 text-blue-700" />
               <div>

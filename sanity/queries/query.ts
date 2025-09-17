@@ -176,6 +176,31 @@ const GET_USER_ADDRESSES =
     isDefault
   }
 }`);
+
+const HOME_SECTIONS_QUERY = defineQuery(
+  `*[_type == "homeSection" && isActive == true] | order(coalesce(displayOrder, 999) asc) {
+    _id,
+    title,
+    subtitle,
+    displayOrder,
+    maxProducts,
+    "products": products[]->{
+      _id,
+      name,
+      slug,
+      images,
+      price,
+      discount,
+      status,
+      productLink,
+      categories[]->{
+        _id,
+        title,
+        slug
+      }
+    }
+  }`
+);
 export {
   PRODUCTS_QUERY,
   BRANDS_QUERY,
@@ -192,4 +217,5 @@ export {
   GET_USER_WISHLIST,
   GET_USER_CART,
   GET_USER_ADDRESSES,
+  HOME_SECTIONS_QUERY,
 };

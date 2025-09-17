@@ -76,9 +76,9 @@ export default async function SingleProductPage({ params }: Props) {
         }}
       />
 
-      <div className="bg-white min-h-screen py-3 md:py-2">
+      <div className="bg-white pb-12 py-2">
         <Container>
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-8 mt-2">
             {/* Media Section */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
               {/* Main Product Image */}
@@ -129,6 +129,67 @@ export default async function SingleProductPage({ params }: Props) {
               {/* Main Product Details - Takes up 2/3 of the space */}
               <div className="lg:col-span-2">
                 <ProductInteractiveSection product={product as any} />
+              </div>
+
+              {/* Sidebar - Takes up 1/3 of the space */}
+              <div className="lg:col-span-1">
+                <div className="sticky top-4 space-y-6">
+                  {/* Digital Product Benefits */}
+                  <div className="bg-gradient-to-br from-green-50 to-green-50 rounded-lg p-4 border border-green-100">
+                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                      <span className="text-green-600">⚡</span>
+                      Instant Digital Delivery
+                    </h3>
+                    <ul className="space-y-2 text-sm text-gray-600">
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        Get immediate access to your files after purchase.
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        Lifetime access to your files
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        No waiting, no shipping fees!
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        Get Email with the files link instantly
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Purchase Protection */}
+                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                      <span className="text-green-600">🛡️</span>
+                      Secure Purchase
+                    </h3>
+                    <div className="space-y-3 text-sm">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                          <span className="text-green-600 font-bold text-xs">
+                            ✓
+                          </span>
+                        </div>
+                        <span className="text-gray-600">
+                          SSL Encrypted Payment
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                          <span className="text-blue-600 font-bold text-xs">
+                            📧
+                          </span>
+                        </div>
+                        <span className="text-gray-600">
+                          Email Delivery Confirmation
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

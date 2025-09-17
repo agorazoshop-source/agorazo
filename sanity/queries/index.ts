@@ -9,6 +9,7 @@ import {
   GET_USER_ADDRESSES,
   GET_USER_CART,
   GET_USER_WISHLIST,
+  HOME_SECTIONS_QUERY,
   LATEST_BLOG_QUERY,
   MY_ORDERS_QUERY,
   OTHERS_BLOG_QUERY,
@@ -223,6 +224,17 @@ export const getUserAddresses = async (userId: string) => {
   }
 };
 
+const getHomeSections = async () => {
+  try {
+    const { data } = await sanityFetch({ query: HOME_SECTIONS_QUERY });
+    console.log("Home sections data:", data);
+    return data ?? [];
+  } catch (error) {
+    console.error("Error fetching home sections:", error);
+    return [];
+  }
+};
+
 export {
   getCategories,
   getAllBrands,
@@ -236,4 +248,5 @@ export {
   getOthersBlog,
   getReelByProductSlug,
   getProducts,
+  getHomeSections,
 };

@@ -43,7 +43,7 @@ const ProductGrid = ({ products: initialProducts }: ProductGridProps) => {
   }, [selectedTab, query]);
 
   return (
-    <Container className="flex flex-col px-2 lg:px-0 my-10">
+    <Container className="flex flex-col px-0 my-10">
       <HomeTabbar selectedTab={selectedTab} onTabSelect={setSelectedTab} />
       {loading ? (
         <NoProductAvailable selectedTab={selectedTab} />
