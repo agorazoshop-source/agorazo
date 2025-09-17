@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * This configuration is used to for the Sanity Studio that's mounted on the `/app/studio/[[...tool]]/page.tsx` route
+ * This configuration is used to for the Sanity Studio that’s mounted on the `/app/studio/[[...tool]]/page.tsx` route
  */
 
 import { visionTool } from "@sanity/vision";
@@ -17,7 +17,6 @@ export default defineConfig({
   basePath: "/studio",
   projectId,
   dataset,
-  apiVersion,
   // Add and edit the content schema in the './sanity/schemaTypes' folder
   schema,
   plugins: [
@@ -26,10 +25,4 @@ export default defineConfig({
     // https://www.sanity.io/docs/the-vision-plugin
     visionTool({ defaultApiVersion: apiVersion }),
   ],
-  // Add studio configuration for better compatibility
-  studio: {
-    components: {
-      logo: () => null, // Hide the default Sanity logo
-    },
-  },
 });

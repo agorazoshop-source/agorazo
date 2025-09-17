@@ -20,8 +20,10 @@ export const blogType = defineType({
     }),
     defineField({
       name: "author",
-      type: "reference",
-      to: { type: "author" },
+      type: "string",
+      title: "Author",
+      initialValue: "Agorazo",
+      readOnly: true,
     }),
     defineField({
       name: "mainImage",
@@ -56,7 +58,7 @@ export const blogType = defineType({
   preview: {
     select: {
       title: "title",
-      author: "author.name",
+      author: "author",
       media: "mainImage",
       isLatest: "isLatest",
     },

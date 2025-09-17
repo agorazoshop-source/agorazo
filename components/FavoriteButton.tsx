@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { SignInButton } from "@clerk/nextjs";
 import { Button } from "./ui/button";
+import toast from "react-hot-toast";
 
 const FavoriteButton = ({
   showProduct = false,
@@ -19,12 +20,12 @@ const FavoriteButton = ({
   const { isSignedIn, isLoaded } = useUser();
   const [existingProduct, setExistingProduct] = useState<Product | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  
+
   // Debug authentication status
   useEffect(() => {
     console.log("Auth status:", { isSignedIn, isLoaded });
   }, [isSignedIn, isLoaded]);
-  
+
   useEffect(() => {
     if (isSignedIn) {
       const availableItem = favoriteProduct.find(
@@ -36,16 +37,25 @@ const FavoriteButton = ({
     }
   }, [product, favoriteProduct, isSignedIn]);
 
-  const handleFavorite = async (e: React.MouseEvent<HTMLButtonElement | HTMLSpanElement>) => {
+  const handleFavorite = async (
+    e: React.MouseEvent<HTMLButtonElement | HTMLSpanElement>
+  ) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!isLoaded || !isSignedIn) return;
-    
+
     setIsProcessing(true);
-    
+
     if (product?._id) {
       try {
+        // Show toast before the action
+        toast.success(
+          existingProduct
+            ? "Product removed from wishlist"
+            : "Product added to wishlist"
+        );
+
         await addToFavorite(product);
       } catch (error) {
         console.error("Error handling favorite:", error);
@@ -54,11 +64,12 @@ const FavoriteButton = ({
       }
     }
   };
-  
+
   // For the header wishlist icon
   if (!showProduct) {
-    const wishlistCount = isSignedIn && favoriteProduct?.length ? favoriteProduct.length : 0;
-    
+    const wishlistCount =
+      isSignedIn && favoriteProduct?.length ? favoriteProduct.length : 0;
+
     const icon = (
       <div className="relative">
         <Heart className="w-5 h-5 hover:text-shop_light_green hoverEffect" />
@@ -67,7 +78,7 @@ const FavoriteButton = ({
         </span>
       </div>
     );
-    
+
     // Always use Link regardless of authentication status
     return (
       <Link href="/wishlist" className="group relative">
@@ -75,7 +86,7 @@ const FavoriteButton = ({
       </Link>
     );
   }
-  
+
   // For product wishlist button when user is not signed in
   if (!isSignedIn) {
     return (
@@ -86,18 +97,18 @@ const FavoriteButton = ({
       </SignInButton>
     );
   }
-  
+
   // For product wishlist button when user is signed in
   return (
     <button
       onClick={handleFavorite}
       disabled={isProcessing}
-      className="p-1.5 border border-shop_light_green/80 hover:border-shop_light_green rounded-sm group hover:text-shop_light_green hoverEffect"
+      className="p-1.5 border border-shop_light_green/80 hover:border-shop_light_green rounded-sm group hover:text-shop_light_green hoverEffect text-white"
     >
       {existingProduct ? (
         <Heart
-          fill="#3b9c3c"
-          className="text-shop_light_green/80 group-hover:text-shop_light_green hoverEffect w-5 h-5"
+          fill="#ef4444"
+          className="text-red-500 group-hover:text-red-600 hoverEffect w-5 h-5"
         />
       ) : (
         <Heart className="text-shop_light_green/80 group-hover:text-shop_light_green hoverEffect w-5 h-5" />

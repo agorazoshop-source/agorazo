@@ -2,7 +2,7 @@
 import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { emptyCart } from "@/images";
+import { emptyCart } from "@/public";
 import Image from "next/image";
 
 export default function EmptyCart() {

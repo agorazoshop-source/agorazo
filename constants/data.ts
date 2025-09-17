@@ -68,10 +68,9 @@ export const siteConfig = {
 // Navigation Links
 export const headerData = [
   { title: "Home", href: "/" },
-  { title: "All Products", href: "/shop" },
+  { title: "Products", href: "/shop" },
   { title: "Videos", href: "/reels" },
   { title: "Blog", href: "/blog" },
-  // { title: "Hot Deal", href: "/deal" },
   { title: "Contact", href: "/contact" },
 ];
 

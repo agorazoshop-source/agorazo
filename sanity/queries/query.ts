@@ -90,10 +90,6 @@ const GET_ALL_BLOG = defineQuery(
 const SINGLE_BLOG_QUERY = defineQuery(
   `*[_type == "blog" && slug.current == $slug][0]{
   ..., 
-    author->{
-    name,
-    image,
-  },
   blogcategories[]->{
     title,
     "slug": slug.current,
@@ -119,10 +115,7 @@ const OTHERS_BLOG_QUERY = defineQuery(`*[
   title,
   mainImage,
   slug,
-  author->{
-    name,
-    image,
-  },
+  author,
   categories[]->{
     title,
     "slug": slug.current,

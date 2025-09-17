@@ -20,17 +20,15 @@ const Home = async () => {
         <HomeBanner />
       </Container> */}
 
-      <MovingPromoBanner {...activeBanner} />
-      {/* Multi Banner Section */}
-      <div className="bg-white py-8">
-        <MultiBanner />
-      </div>
-
       <Container>
+        <MovingPromoBanner {...activeBanner} />
+        {/* Multi Banner Section */}
+        <div className="bg-white">
+          <MultiBanner />
+        </div>
+
         <ProductGrid products={products} />
         <HomeCategories categories={categories} />
-        {/* <ShopByBrands /> */}
-        <LatestBlog />
       </Container>
 
       {/* Moving Promotional Banner */}

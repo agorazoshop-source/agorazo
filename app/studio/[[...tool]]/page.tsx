@@ -12,6 +12,7 @@ import config from "../../../sanity.config";
 
 // Use dynamic rendering for Sanity Studio to avoid chunk loading issues
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export { metadata, viewport } from "next-sanity/studio";
 

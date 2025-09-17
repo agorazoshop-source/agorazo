@@ -31,7 +31,7 @@
 }
 
 .animate-marquee-circular {
-  animation: marquee-circular 30s linear infinite;
+  animation: marquee-circular 100s linear infinite;
 }
 
 .animate-shimmer {

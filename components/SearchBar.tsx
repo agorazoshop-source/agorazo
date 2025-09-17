@@ -12,7 +12,7 @@ const SearchBar = () => {
   const [isFocused, setIsFocused] = useState(false);
   const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
-  
+
   const { suggestions, loading } = useSearchSuggestions(searchQuery);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -45,21 +45,24 @@ const SearchBar = () => {
   // Close suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
         setShowSuggestions(false);
         setIsFocused(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   // Handle keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
+    if (e.key === "Escape") {
       setShowSuggestions(false);
       setIsFocused(false);
     }
@@ -76,9 +79,7 @@ const SearchBar = () => {
             onFocus={handleInputFocus}
             onKeyDown={handleKeyDown}
             placeholder="Search for products, brands, categories..."
-            className={`w-full pl-12 pr-4 py-3 border border-gray-200 rounded-full bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-shop_light_green focus:border-transparent transition-all duration-200 text-sm ${
-              showSuggestions ? 'rounded-b-none' : ''
-            }`}
+            className={`w-full pl-12 pr-4 py-3 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-shop_light_green focus:border-transparent transition-all duration-200 text-sm `}
           />
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
           <button
@@ -89,7 +90,7 @@ const SearchBar = () => {
           </button>
         </div>
       </form>
-      
+
       <SearchSuggestions
         suggestions={suggestions}
         loading={loading}

@@ -1,15 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { getCategories } from "@/lib/sanity/queries";
-import {
-  Smartphone,
-  Shirt,
-  Home,
-  Palette,
-  Dumbbell,
-  ShoppingBag,
-} from "lucide-react";
+import { urlFor } from "@/sanity/lib/image";
 
 interface CategoryItem {
   _id: string;
@@ -19,6 +13,7 @@ interface CategoryItem {
   };
   description?: string;
   productCount?: number;
+  image?: any;
 }
 
 interface Props {
@@ -29,70 +24,6 @@ interface Props {
 const HomeTabbar = ({ selectedTab, onTabSelect }: Props) => {
   const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Function to get icon and colors based on category title
-  const getCategoryStyle = (title: string, isSelected: boolean) => {
-    const titleLower = title?.toLowerCase() || "";
-
-    if (titleLower.includes("fashion") || titleLower.includes("clothing")) {
-      return {
-        icon: <Shirt className="w-6 h-6" />,
-        bgColor: isSelected ? "bg-pink-500" : "bg-pink-100 hover:bg-pink-200",
-        textColor: isSelected ? "text-white" : "text-pink-700",
-        borderColor: isSelected ? "border-pink-500" : "border-pink-200",
-      };
-    } else if (
-      titleLower.includes("electronics") ||
-      titleLower.includes("phone")
-    ) {
-      return {
-        icon: <Smartphone className="w-6 h-6" />,
-        bgColor: isSelected ? "bg-blue-500" : "bg-blue-100 hover:bg-blue-200",
-        textColor: isSelected ? "text-white" : "text-blue-700",
-        borderColor: isSelected ? "border-blue-500" : "border-blue-200",
-      };
-    } else if (titleLower.includes("home") || titleLower.includes("kitchen")) {
-      return {
-        icon: <Home className="w-6 h-6" />,
-        bgColor: isSelected
-          ? "bg-green-500"
-          : "bg-green-100 hover:bg-green-200",
-        textColor: isSelected ? "text-white" : "text-green-700",
-        borderColor: isSelected ? "border-green-500" : "border-green-200",
-      };
-    } else if (
-      titleLower.includes("beauty") ||
-      titleLower.includes("personal")
-    ) {
-      return {
-        icon: <Palette className="w-6 h-6" />,
-        bgColor: isSelected
-          ? "bg-purple-500"
-          : "bg-purple-100 hover:bg-purple-200",
-        textColor: isSelected ? "text-white" : "text-purple-700",
-        borderColor: isSelected ? "border-purple-500" : "border-purple-200",
-      };
-    } else if (
-      titleLower.includes("sports") ||
-      titleLower.includes("outdoors")
-    ) {
-      return {
-        icon: <Dumbbell className="w-6 h-6" />,
-        bgColor: isSelected
-          ? "bg-emerald-500"
-          : "bg-emerald-100 hover:bg-emerald-200",
-        textColor: isSelected ? "text-white" : "text-emerald-700",
-        borderColor: isSelected ? "border-emerald-500" : "border-emerald-200",
-      };
-    } else {
-      return {
-        icon: <ShoppingBag className="w-6 h-6" />,
-        bgColor: isSelected ? "bg-gray-500" : "bg-gray-100 hover:bg-gray-200",
-        textColor: isSelected ? "text-white" : "text-gray-700",
-        borderColor: isSelected ? "border-gray-500" : "border-gray-200",
-      };
-    }
-  };
 
   useEffect(() => {
     async function loadCategories() {
@@ -127,48 +58,72 @@ const HomeTabbar = ({ selectedTab, onTabSelect }: Props) => {
   const placeholderWidths = [100, 120, 90, 110, 95];
 
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center flex-wrap gap-3 sm:gap-5 justify-between">
-      <div className="w-full sm:w-auto overflow-x-auto scrollbar-hide">
-        <div className="flex items-center gap-1.5 text-sm font-semibold min-w-max">
-          <div className="flex items-center gap-2 md:gap-3 pb-1">
-            {isLoading
-              ? // Loading placeholders with fixed widths
-                placeholderWidths.map((width, index) => (
-                  <div
-                    key={index}
-                    className="border border-shop_light_green/30 px-4 py-1.5 md:px-6 md:py-2 rounded-full bg-gray-100 animate-pulse"
-                    style={{ width: `${width}px` }}
-                  />
-                ))
-              : categories?.length > 0
-                ? categories.map((item) => {
-                    const style = getCategoryStyle(
-                      item.title,
-                      selectedTab === item.title
-                    );
-                    return (
-                      <button
-                        onClick={() => onTabSelect(item.title)}
-                        key={item._id}
-                        className={`border ${style.borderColor} ${style.bgColor} ${style.textColor} px-6 py-4 rounded-2xl transition-all duration-300 transform hover:scale-105 flex flex-col items-center gap-2 min-w-[120px] shadow-md hover:shadow-lg`}
-                      >
-                        {style.icon}
-                        <span className="text-sm font-semibold">
-                          {item.title}
-                        </span>
-                      </button>
-                    );
-                  })
-                : null}
-          </div>
+    <div className="w-full overflow-x-auto scrollbar-hide">
+      <div className="flex items-center gap-2 md:gap-3 pb-1 justify-between min-w-max">
+        <div className="flex items-center gap-2 md:gap-3">
+          {isLoading
+            ? // Loading placeholders with fixed widths
+              placeholderWidths.map((width, index) => (
+                <div
+                  key={index}
+                  className="border border-shop_light_green/30 px-8 py-1.5 md:px-12 md:py-16 rounded-lg bg-gray-100 animate-pulse"
+                  style={{ width: `${width}px` }}
+                />
+              ))
+            : categories?.length > 0
+              ? categories.map((item) => {
+                  const isSelected = selectedTab === item.title;
+                  return (
+                    <button
+                      onClick={() => onTabSelect(item.title)}
+                      key={item._id}
+                      className={`border-2 p-2 rounded-xl transition-all duration-300 transform hover:scale-105 flex flex-col items-center gap-2 min-w-[100px] shadow-md hover:shadow-lg ${
+                        isSelected
+                          ? "border-shop_dark_green bg-shop_light_green/10"
+                          : "border-gray-200 bg-white hover:border-shop_light_green"
+                      }`}
+                    >
+                      <div className="relative w-28 h-28">
+                        {item.image ? (
+                          <Image
+                            src={urlFor(item.image).url()}
+                            alt={item.title}
+                            fill
+                            className="object-cover rounded-lg"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-shop_light_green rounded-full flex items-center justify-center">
+                            <span className="text-white font-bold text-xs">
+                              {item.title.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <span className="text-xs font-medium text-center text-gray-700">
+                        {item.title}
+                      </span>
+                    </button>
+                  );
+                })
+              : null}
         </div>
+        <Link
+          href={"/shop"}
+          className="border-2 p-2 rounded-xl transition-all duration-300 transform hover:scale-105 flex flex-col items-center gap-2 min-w-[100px] shadow-md hover:shadow-lg border-gray-200 bg-white hover:border-shop_light_green"
+        >
+          <div className="relative w-28 h-28">
+            <Image
+              src={"/digital.png"}
+              alt="All Products"
+              fill
+              className="object-cover rounded-lg"
+            />
+          </div>
+          <span className="text-xs font-medium text-center text-gray-700">
+            All Products
+          </span>
+        </Link>
       </div>
-      <Link
-        href={"/shop"}
-        className="border border-darkColor px-4 py-1 rounded-full hover:bg-shop_light_green hover:text-white hover:border-shop_light_green hoverEffect self-end sm:self-auto"
-      >
-        All Products
-      </Link>
     </div>
   );
 };

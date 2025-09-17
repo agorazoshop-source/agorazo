@@ -144,15 +144,17 @@ export default function ReelList({ reels, initialSlug }: ReelListProps) {
 
   const handleAddToWishlist = async (product: any) => {
     if (product._id) {
-      await addToFavorite(product);
       const isInWishlist = favoriteProduct.some(
         (item) => item._id === product._id
       );
+
       toast.success(
         isInWishlist
-          ? "Product removed successfully!"
-          : "Product added successfully!"
+          ? "Product removed from wishlist"
+          : "Product added to wishlist"
       );
+
+      await addToFavorite(product);
     }
   };
 
@@ -384,10 +386,7 @@ export default function ReelList({ reels, initialSlug }: ReelListProps) {
                       </p>
                     </div>
                     <div className="flex items-center gap-2 justify-end">
-                      <FavoriteButton
-                        showProduct={true}
-                        product={selectedProduct}
-                      />
+                      <FavoriteButton product={selectedProduct} showProduct />
                     </div>
                   </div>
 

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { X, Gift, Sparkles } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { X, Gift, Sparkles } from "lucide-react";
 
 interface MovingPromoBannerProps {
   text?: string;
@@ -9,7 +9,7 @@ interface MovingPromoBannerProps {
   textColor?: string;
   closeable?: boolean;
   autoHide?: number; // Auto hide after X seconds
-  icon?: 'gift' | 'sparkles' | 'emoji' | 'none';
+  icon?: "gift" | "sparkles" | "emoji" | "none";
 }
 
 const MovingPromoBanner: React.FC<MovingPromoBannerProps> = ({
@@ -18,7 +18,7 @@ const MovingPromoBanner: React.FC<MovingPromoBannerProps> = ({
   textColor = "text-white",
   closeable = true,
   autoHide,
-  icon = 'emoji'
+  icon = "emoji",
 }) => {
   const [isVisible, setIsVisible] = useState(true);
 
@@ -35,28 +35,28 @@ const MovingPromoBanner: React.FC<MovingPromoBannerProps> = ({
 
   // Check if banner was previously dismissed (localStorage)
   useEffect(() => {
-    const dismissed = localStorage.getItem('promo-banner-dismissed');
-    if (dismissed === 'true') {
+    const dismissed = localStorage.getItem("promo-banner-dismissed");
+    if (dismissed === "true") {
       setIsVisible(false);
     }
   }, []);
 
   const handleClose = () => {
     setIsVisible(false);
-    localStorage.setItem('promo-banner-dismissed', 'true');
+    localStorage.setItem("promo-banner-dismissed", "true");
   };
 
   if (!isVisible) return null;
 
   const getIcon = () => {
     switch (icon) {
-      case 'gift':
+      case "gift":
         return <Gift className="w-4 h-4 mr-2" />;
-      case 'sparkles':
+      case "sparkles":
         return <Sparkles className="w-4 h-4 mr-2" />;
-      case 'emoji':
+      case "emoji":
         return null; // Emojis are included in text
-      case 'none':
+      case "none":
         return null;
       default:
         return null;
@@ -64,8 +64,10 @@ const MovingPromoBanner: React.FC<MovingPromoBannerProps> = ({
   };
 
   return (
-    <div className={`py-4`}>
-      <div className={`relative bg-gradient-to-r ${bgGradient} ${textColor} overflow-hidden z-40 max-w-7xl mx-auto px-4 rounded-lg`}>
+    <div className={`pt-4`}>
+      <div
+        className={`relative bg-gradient-to-r ${bgGradient} ${textColor} overflow-hidden z-40 max-w-7xl mx-auto px-4 rounded-xl`}
+      >
         {/* Moving text container */}
         <div className="relative h-12 flex items-center overflow-hidden">
           <div className="flex animate-marquee-circular whitespace-nowrap">
@@ -113,7 +115,7 @@ const MovingPromoBanner: React.FC<MovingPromoBannerProps> = ({
 
         {/* Background animation overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer"></div>
-        
+
         {/* Subtle pulse effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/3 to-transparent animate-pulse opacity-50"></div>
       </div>

@@ -5,7 +5,6 @@ import Container from "./Container";
 import Title from "./Title";
 import CategoryList from "./shop/CategoryList";
 import { useSearchParams } from "next/navigation";
-import BrandList from "./shop/BrandList";
 import PriceList from "./shop/PriceList";
 import { client } from "@/sanity/lib/client";
 import { Loader2 } from "lucide-react";
@@ -14,11 +13,9 @@ import ProductCard from "./ProductCard";
 
 interface Props {
   categories: Category[];
-  brands: BRANDS_QUERYResult;
 }
-const Shop = ({ categories, brands }: Props) => {
+const Shop = ({ categories }: Props) => {
   const searchParams = useSearchParams();
-  const brandParams = searchParams?.get("brand");
   const categoryParams = searchParams?.get("category");
   const searchQuery = searchParams?.get("search");
   const [products, setProducts] = useState<Product[]>([]);
@@ -26,41 +23,93 @@ const Shop = ({ categories, brands }: Props) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(
     categoryParams || null
   );
-  const [selectedBrand, setSelectedBrand] = useState<string | null>(
-    brandParams || null
-  );
   const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
+
+  // Debug URL parameters
+  console.log("Shop component URL params:", {
+    categoryParams,
+    searchQuery,
+    selectedCategory,
+  });
   const fetchProducts = async () => {
     setLoading(true);
     try {
       let minPrice = 0;
-      let maxPrice = 10000;
+      let maxPrice = 100000;
       if (selectedPrice) {
         const [min, max] = selectedPrice.split("-").map(Number);
         minPrice = min;
         maxPrice = max;
       }
-      const query = `
-      *[_type == 'product' 
-        && (!defined($selectedCategory) || references(*[_type == "category" && slug.current == $selectedCategory]._id))
-        && (!defined($selectedBrand) || references(*[_type == "brand" && slug.current == $selectedBrand]._id))
-        && (!defined($searchQuery) || (
+
+      // If no filters are selected, show all products
+      if (!selectedCategory && !searchQuery && !selectedPrice) {
+        const allProductsQuery = `*[_type == 'product'] | order(name asc) {
+          ...,"categories": categories[]->title
+        }`;
+        const data = await client.fetch(
+          allProductsQuery,
+          {},
+          { next: { revalidate: 0 } }
+        );
+        console.log("All products fetched:", data);
+        setProducts(data);
+        return;
+      }
+
+      console.log("Applying filters:", {
+        selectedCategory,
+        searchQuery,
+        selectedPrice,
+        minPrice,
+        maxPrice,
+      });
+
+      // Build query dynamically based on available filters
+      let query = `*[_type == 'product'`;
+
+      // Add category filter if selected
+      if (selectedCategory) {
+        query += ` && references(*[_type == "category" && slug.current == $selectedCategory]._id)`;
+      }
+
+      // Add search filter if search query exists
+      if (searchQuery) {
+        query += ` && (
           name match $searchTerm ||
           description match $searchTerm ||
           brand->title match $searchTerm ||
           categories[]->title match $searchTerm
-        ))
-        && price >= $minPrice && price <= $maxPrice
-      ] 
-      | order(name asc) {
-        ...,"categories": categories[]->title
+        )`;
       }
-    `;
+
+      // Always add price filter
+      query += ` && defined(price) && price >= $minPrice && price <= $maxPrice`;
+
+      // Add ordering and projection
+      query += `] | order(name asc) {
+        ...,"categories": categories[]->title
+      }`;
+
+      console.log("Generated GROQ query:", query);
+
       const searchTerm = searchQuery ? `${searchQuery}*` : undefined;
       const data = await client.fetch(
         query,
-        { selectedCategory, selectedBrand, searchQuery, searchTerm, minPrice, maxPrice },
+        {
+          selectedCategory,
+          searchQuery,
+          searchTerm,
+          minPrice,
+          maxPrice,
+        },
         { next: { revalidate: 0 } }
+      );
+
+      console.log("Filtered products:", data);
+      console.log(
+        "Products with prices:",
+        data.map((p: Product) => ({ name: p.name, price: p.price }))
       );
       setProducts(data);
     } catch (error) {
@@ -72,7 +121,7 @@ const Shop = ({ categories, brands }: Props) => {
 
   useEffect(() => {
     fetchProducts();
-  }, [selectedCategory, selectedBrand, selectedPrice, searchQuery]);
+  }, [selectedCategory, selectedPrice, searchQuery]);
   return (
     <div className="border-t">
       <Container className="mt-5">
@@ -81,13 +130,10 @@ const Shop = ({ categories, brands }: Props) => {
             <Title className="text-lg uppercase tracking-wide">
               Get the products as your needs
             </Title>
-            {(selectedCategory !== null ||
-              selectedBrand !== null ||
-              selectedPrice !== null) && (
+            {(selectedCategory !== null || selectedPrice !== null) && (
               <button
                 onClick={() => {
                   setSelectedCategory(null);
-                  setSelectedBrand(null);
                   setSelectedPrice(null);
                 }}
                 className="text-shop_dark_green underline text-sm mt-2 font-medium hover:text-darkRed hoverEffect"
@@ -103,11 +149,6 @@ const Shop = ({ categories, brands }: Props) => {
               categories={categories}
               selectedCategory={selectedCategory}
               setSelectedCategory={setSelectedCategory}
-            />
-            <BrandList
-              brands={brands}
-              setSelectedBrand={setSelectedBrand}
-              selectedBrand={selectedBrand}
             />
             <PriceList
               setSelectedPrice={setSelectedPrice}
