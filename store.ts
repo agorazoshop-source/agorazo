@@ -6,18 +6,17 @@ import toast from "react-hot-toast";
 export interface CartItem {
   product: Product;
   quantity: number;
-  size?: string;
 }
 
 interface StoreState {
   items: CartItem[];
-  addItem: (product: Product, size?: string) => void;
-  removeItem: (productId: string, size?: string) => void;
-  deleteCartProduct: (productId: string, size?: string) => void;
+  addItem: (product: Product) => void;
+  removeItem: (productId: string) => void;
+  deleteCartProduct: (productId: string) => void;
   resetCart: () => void;
   getTotalPrice: () => number;
   getSubTotalPrice: () => number;
-  getItemCount: (productId: string, size?: string) => number;
+  getItemCount: (productId: string) => number;
   getGroupedItems: () => CartItem[];
   syncCartWithServer: () => Promise<any>;
   loadCartFromServer: () => Promise<any>;
@@ -68,14 +67,12 @@ const useStore = create<StoreState>()(
           return false;
         }
       },
-      addItem: (product, size) => {
+      addItem: (product) => {
         // Update local state immediately for instant UI feedback
         set((state) => {
-          // For products with sizes, we need to check if the same product with the same size exists
+          // Check if the same product exists
           const existingItem = state.items.find(
-            (item) => 
-              item.product._id === product._id && 
-              (product.hasSizes ? item.size === size : true)
+            (item) => item.product._id === product._id
           );
           
           if (existingItem) {
@@ -83,21 +80,18 @@ const useStore = create<StoreState>()(
             toast.success("Quantity Increased");
             return {
               items: state.items.map((item) =>
-                item.product._id === product._id && 
-                (product.hasSizes ? item.size === size : true)
+                item.product._id === product._id
                   ? { ...item, quantity: item.quantity + 1 }
                   : item
               ),
             };
           } else {
             // New item being added
-            const sizeText = size ? ` (${size})` : '';
-            toast.success(`${product?.name?.substring(0, 12)}${sizeText} added to cart`);
+            toast.success(`${product?.name?.substring(0, 12)} added to cart`);
             return { 
               items: [...state.items, { 
                 product, 
-                quantity: 1, 
-                size: product.hasSizes ? size : undefined 
+                quantity: 1
               }] 
             };
           }
@@ -111,12 +105,11 @@ const useStore = create<StoreState>()(
           console.error("Failed to sync cart after adding item:", error);
         });
       },
-      removeItem: (productId, size) => {
+      removeItem: (productId) => {
         // Update local state immediately for instant UI feedback
         set((state) => {
           const itemToRemove = state.items.find(
-            item => item.product._id === productId && 
-              (item.product.hasSizes ? item.size === size : true)
+            item => item.product._id === productId
           );
           
           // If item exists and quantity is 1, it will be removed
@@ -130,8 +123,7 @@ const useStore = create<StoreState>()(
           
           return {
             items: state.items.reduce((acc, item) => {
-              const isSameItem = item.product._id === productId && 
-                (item.product.hasSizes ? item.size === size : true);
+              const isSameItem = item.product._id === productId;
               
               if (isSameItem) {
                 if (item.quantity > 1) {
@@ -150,12 +142,11 @@ const useStore = create<StoreState>()(
           console.error("Failed to sync cart after removing item:", error);
         });
       },
-      deleteCartProduct: (productId, size) => {
+      deleteCartProduct: (productId) => {
         // Update local state immediately for instant UI feedback
         set((state) => {
           const itemToDelete = state.items.find(
-            item => item.product._id === productId && 
-              (item.product.hasSizes ? item.size === size : true)
+            item => item.product._id === productId
           );
           
           if (itemToDelete) {
@@ -164,9 +155,7 @@ const useStore = create<StoreState>()(
           
           return {
             items: state.items.filter(
-              (item) => 
-                !(item.product._id === productId && 
-                  (item.product.hasSizes ? item.size === size : true))
+              (item) => item.product._id !== productId
             ),
           };
         });
@@ -199,12 +188,11 @@ const useStore = create<StoreState>()(
           return total + discountedPrice * item.quantity;
         }, 0);
       },
-      getItemCount: (productId, size) => {
+      getItemCount: (productId) => {
         if (!productId) return 0;
         
         const item = get().items.find((item) => 
-          item.product._id === productId && 
-          (item.product.hasSizes ? item.size === size : true)
+          item.product._id === productId
         );
         
         return item ? item.quantity : 0;

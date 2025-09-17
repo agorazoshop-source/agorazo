@@ -80,10 +80,10 @@ const CartPage = () => {
                 {/* Left side - Cart items */}
                 <div className="lg:col-span-2 rounded-lg">
                   <div className="border bg-white rounded-md">
-                    {groupedItems?.map(({ product, size, quantity }) => {
+                    {groupedItems?.map(({ product, quantity }) => {
                       return (
                         <div
-                          key={`${product?._id}-${size || "default"}`}
+                          key={product?._id}
                           className="border-b p-2.5 last:border-b-0 flex items-center justify-between gap-5"
                         >
                           <div className="flex flex-1 items-start gap-2 h-36 md:h-44">
@@ -110,7 +110,8 @@ const CartPage = () => {
                                 <p className="text-sm capitalize">
                                   Category:{" "}
                                   <span className="font-semibold">
-                                    {product?.categories?.[0]?.title || "Standard"}
+                                    {product?.categories?.[0]?.title ||
+                                      "Standard"}
                                   </span>
                                 </p>
                                 <p className="text-sm capitalize">
@@ -120,45 +121,6 @@ const CartPage = () => {
                                   </span>
                                 </p>
 
-                                {/* Show size information if product has sizes */}
-                                {product.hasSizes && (
-                                  <div className="mt-1">
-                                    <p className="text-sm mb-1">
-                                      Size:{" "}
-                                      <span className="font-semibold">
-                                        {size || "Not selected"}
-                                      </span>
-                                    </p>
-                                    <div className="flex flex-wrap gap-1">
-                                      {product.sizes
-                                        ?.filter((s) => s.isEnabled)
-                                        .map((sizeObj) => (
-                                          <button
-                                            key={sizeObj._key}
-                                            onClick={() => {
-                                              deleteCartProduct(
-                                                product._id,
-                                                size
-                                              );
-                                              useStore
-                                                .getState()
-                                                .addItem(product, sizeObj.size);
-                                              toast.success(
-                                                `Size updated to ${sizeObj.size}`
-                                              );
-                                            }}
-                                            className={`px-2 py-0.5 text-xs border rounded ${
-                                              size === sizeObj.size
-                                                ? "border-gray-900 bg-gray-900 text-white"
-                                                : "border-gray-200 text-gray-900"
-                                            }`}
-                                          >
-                                            {sizeObj.size}
-                                          </button>
-                                        ))}
-                                    </div>
-                                  </div>
-                                )}
                               </div>
                               <div className="flex items-center gap-2">
                                 <TooltipProvider>
@@ -177,7 +139,7 @@ const CartPage = () => {
                                     <TooltipTrigger>
                                       <Trash
                                         onClick={() => {
-                                          deleteCartProduct(product?._id, size);
+                                          deleteCartProduct(product?._id);
                                         }}
                                         className="w-4 h-4 md:w-5 md:h-5 mr-1 text-gray-500 hover:text-red-600 hoverEffect"
                                       />
@@ -197,7 +159,6 @@ const CartPage = () => {
                             />
                             <QuantityButtons
                               product={product}
-                              selectedSize={size}
                             />
                           </div>
                         </div>

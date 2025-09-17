@@ -16,12 +16,6 @@ const ProductCharacteristics = ({
       </div>
       <div className="p-3 space-y-2">
         <div className="flex justify-between items-center text-xs">
-          <span className="text-gray-500">Brand:</span>
-          <span className="text-gray-700 font-medium">
-            {product?.brand?.title || "N/A"}
-          </span>
-        </div>
-        <div className="flex justify-between items-center text-xs">
           <span className="text-gray-500">Collection:</span>
           <span className="text-gray-700 font-medium">2025</span>
         </div>
@@ -29,16 +23,6 @@ const ProductCharacteristics = ({
           <span className="text-gray-500">Category:</span>
           <span className="text-gray-700 font-medium capitalize">
             {product?.categories?.[0]?.title || "N/A"}
-          </span>
-        </div>
-        <div className="flex justify-between items-center text-xs">
-          <span className="text-gray-500">Stock:</span>
-          <span className="text-gray-700 font-medium">
-            {product?.stock !== undefined
-              ? product.stock > 0
-                ? "Available"
-                : "Out of Stock"
-              : "N/A"}
           </span>
         </div>
       </div>

@@ -147,15 +147,10 @@ const GET_USER_CART = defineQuery(
         price,
         discount,
         categories,
-        stock,
-        brand,
         status,
-        isFeatured,
-        hasSizes,
-        sizes
+        productLink
       },
-      quantity,
-      size
+      quantity
     }
   }`
 );

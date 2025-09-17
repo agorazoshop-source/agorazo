@@ -59,72 +59,15 @@ export const productType = defineType({
       of: [{ type: "reference", to: { type: "category" } }],
     }),
     defineField({
-      name: "hasSizes",
-      title: "Has Size Options?",
-      type: "boolean",
-      description: "Toggle on if this product has different sizes",
-      initialValue: false,
-    }),
-    defineField({
-      name: "sizes",
-      title: "Available Sizes",
-      type: "array",
-      of: [
-        {
-          type: "object",
-          fields: [
-            defineField({
-              name: "size",
-              title: "Size",
-              type: "string",
-              validation: (Rule) => Rule.required(),
-              options: {
-                list: [
-                  { title: "XS", value: "XS" },
-                  { title: "S", value: "S" },
-                  { title: "M", value: "M" },
-                  { title: "L", value: "L" },
-                  { title: "XL", value: "XL" },
-                  { title: "XXL", value: "XXL" },
-                  { title: "XXXL", value: "XXXL" },
-                ],
-              },
-            }),
-            defineField({
-              name: "isEnabled",
-              title: "Enable Size",
-              type: "boolean",
-              description: "Toggle off to mark this size as out of stock",
-              initialValue: true,
-            }),
-          ],
-          preview: {
-            select: {
-              size: "size",
-              isEnabled: "isEnabled",
-            },
-            prepare({ size, isEnabled }) {
-              return {
-                title: `${size} - ${isEnabled ? "Available" : "Out of Stock"}`,
-              };
-            },
-          },
-        },
-      ],
-      hidden: ({ parent }) => !parent?.hasSizes,
-    }),
-    defineField({
-      name: "stock",
-      title: "Stock",
-      type: "number",
-      validation: (Rule) => Rule.min(0),
-      hidden: ({ parent }) => parent?.hasSizes,
-    }),
-    defineField({
-      name: "brand",
-      title: "Brand",
-      type: "reference",
-      to: { type: "brand" },
+      name: "productLink",
+      title: "Product Link",
+      type: "url",
+      description:
+        "External link to the product (e.g., Amazon, manufacturer website)",
+      validation: (Rule) =>
+        Rule.uri({
+          scheme: ["http", "https", "mailto", "tel"],
+        }),
     }),
     defineField({
       name: "status",
@@ -137,13 +80,6 @@ export const productType = defineType({
           { title: "Sale", value: "sale" },
         ],
       },
-    }),
-    defineField({
-      name: "isFeatured",
-      title: "Featured Product",
-      type: "boolean",
-      description: "Toggle to Featured on or off",
-      initialValue: false,
     }),
   ],
   preview: {

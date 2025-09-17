@@ -10,32 +10,20 @@ import toast from "react-hot-toast";
 
 interface Props {
   product: Product;
-  selectedSize?: string;
   className?: string;
 }
 
-const QuantityButtons = ({ product, selectedSize, className }: Props) => {
+const QuantityButtons = ({ product, className }: Props) => {
   const { addItem, removeItem, getItemCount } = useStore();
-  const itemCount = getItemCount(product?._id, selectedSize);
-  const isOutOfStock = product?.stock === 0;
+  const itemCount = getItemCount(product?._id);
 
   const handleRemoveProduct = () => {
-    if (product.hasSizes && !selectedSize) {
-      toast.error("Please select a size");
-      return;
-    }
-    
-    removeItem(product?._id, selectedSize);
+    removeItem(product?._id);
     // Toast is handled by the store
   };
 
   const handleAddToCart = () => {
-    if (product.hasSizes && !selectedSize) {
-      toast.error("Please select a size");
-      return;
-    }
-
-    addItem(product, selectedSize);
+    addItem(product);
     // Toast is handled by the store
   };
 
@@ -45,7 +33,7 @@ const QuantityButtons = ({ product, selectedSize, className }: Props) => {
         onClick={handleRemoveProduct}
         variant="outline"
         size="icon"
-        disabled={itemCount === 0 || isOutOfStock}
+        disabled={itemCount === 0}
         className="w-6 h-6 border-[1px] hover:bg-shop_dark_green/20 hoverEffect"
       >
         <Minus />
@@ -57,7 +45,6 @@ const QuantityButtons = ({ product, selectedSize, className }: Props) => {
         onClick={handleAddToCart}
         variant="outline"
         size="icon"
-        disabled={product.hasSizes && !selectedSize}
         className="w-6 h-6 border-[1px] hover:bg-shop_dark_green/20 hoverEffect"
       >
         <Plus />

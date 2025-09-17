@@ -1,6 +1,5 @@
 import { client } from "@/sanity/lib/client";
 
-
 export async function getCategories(): Promise<any[]> {
   try {
     // Use server-side API route to avoid CORS issues

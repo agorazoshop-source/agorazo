@@ -27,7 +27,6 @@ export type {
 export interface CartItem {
   product: SanityProduct;
   quantity: number;
-  size?: string;
 }
 
 export interface WishlistItem {
@@ -64,8 +63,8 @@ export interface AppliedCoupon {
 export interface CartStore {
   items: CartItem[];
   addItem: (item: CartItem) => void;
-  removeItem: (productId: string, size?: string) => void;
-  updateQuantity: (productId: string, quantity: number, size?: string) => void;
+  removeItem: (productId: string) => void;
+  updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   getItemCount: () => number;
   getTotalPrice: () => number;
@@ -152,12 +151,8 @@ export interface Product extends SanityProduct {
   price: number;
   discount: number;
   categories: string[];
-  stock: number;
-  brand: string;
   status: string;
-  isFeatured: boolean;
-  hasSizes: boolean;
-  sizes: ProductSize[];
+  productLink?: string;
   productReels: ProductReel[];
 }
 
@@ -209,8 +204,3 @@ export type ProductReel = {
   tags: string[];
 };
 
-export type ProductSize = {
-  _key: string;
-  size: string;
-  isEnabled: boolean;
-};

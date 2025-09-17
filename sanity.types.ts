@@ -314,24 +314,13 @@ export type Product = {
     _key: string;
     [internalGroqTypeReferenceTo]?: "category";
   }>;
-  stock?: number;
-  brand?: {
-    title?: string;
-    description?: string;
-  };
   status?: "new" | "hot" | "sale";
-  isFeatured?: boolean;
-  hasSizes?: boolean;
+  productLink?: string;
   colorGroup?: {
     _id: string;
     name: string;
     products: Product[];
   };
-  sizes?: Array<{
-    _key: string;
-    size: string;
-    isEnabled: boolean;
-  }>;
 };
 
 export type Brand = {
@@ -638,15 +627,8 @@ export type DEAL_PRODUCTSResult = Array<{
   price?: number;
   discount?: number;
   categories: Array<string | null> | null;
-  stock?: number;
-  brand?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "brand";
-  };
   status?: "hot" | "new" | "sale";
-  isFeatured?: boolean;
+  productLink?: string;
 }>;
 // Variable: PRODUCT_BY_SLUG_QUERY
 // Query: *[_type == "product" && slug.current == $slug] | order(name asc) [0]
@@ -680,15 +662,8 @@ export type PRODUCT_BY_SLUG_QUERYResult = {
     _key: string;
     [internalGroqTypeReferenceTo]?: "category";
   }>;
-  stock?: number;
-  brand?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "brand";
-  };
   status?: "hot" | "new" | "sale";
-  isFeatured?: boolean;
+  productLink?: string;
 } | null;
 // Variable: BRAND_QUERY
 // Query: *[_type == "product" && slug.current == $slug]{  "brandName": brand->title  }

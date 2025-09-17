@@ -18,39 +18,24 @@ import useStore from "@/store";
 
 const ProductCard = ({ product }: { product: Product }) => {
   const router = useRouter();
-  const isProductInCart = useStore((state) => 
-    state.items.some(item => item.product._id === product._id)
+  const isProductInCart = useStore((state) =>
+    state.items.some((item) => item.product._id === product._id)
   );
 
-  // Render different button based on whether product has sizes
+  // Render action button
   const renderActionButton = () => {
-    if (product.hasSizes) {
-      // For products with sizes, show either "View Cart" or "Select Size" button
-      if (isProductInCart) {
-        return (
-          <Button
-            onClick={() => router.push('/cart')}
-            className={cn(
-              "w-36 rounded-full mt-4 bg-shop_light_green text-white hover:bg-shop_dark_green transition-colors"
-            )}
-          >
-            <ShoppingBag className="mr-2" /> View Cart
-          </Button>
-        );
-      } else {
-        return (
-          <Button
-            onClick={() => router.push(`/product/${product?.slug?.current}`)}
-            className={cn(
-              "w-36 rounded-full mt-4 bg-shop_dark_green/80 text-white hover:bg-shop_dark_green"
-            )}
-          >
-            <Ruler className="h-4 w-4" /> Select Size
-          </Button>
-        );
-      }
+    if (isProductInCart) {
+      return (
+        <Button
+          onClick={() => router.push("/cart")}
+          className={cn(
+            "w-36 rounded-full mt-4 bg-shop_light_green text-white hover:bg-shop_dark_green transition-colors"
+          )}
+        >
+          <ShoppingBag className="mr-2" /> View Cart
+        </Button>
+      );
     } else {
-      // For products without sizes, use the normal AddToCartButton
       return (
         <AddToCartButton product={product} className="w-36 rounded-full mt-4" />
       );
@@ -68,13 +53,12 @@ const ProductCard = ({ product }: { product: Product }) => {
               width={500}
               height={500}
               priority
-              className={`w-full h-64 object-contain overflow-hidden transition-transform bg-shop_light_bg duration-500 
-              ${product?.stock !== 0 ? "group-hover:scale-105" : "opacity-50"}`}
+              className={`w-full h-64 object-contain overflow-hidden transition-transform bg-shop_light_bg duration-500 `}
             />
           </Link>
         )}
         <ProductSideMenu product={product} />
-        
+
         {/* Status Indicators */}
         {product?.status === "sale" ? (
           <div className="absolute top-2 left-2 z-10 flex items-center">
@@ -87,7 +71,6 @@ const ProductCard = ({ product }: { product: Product }) => {
                 />
               </div>
             </div>
-            
           </div>
         ) : product?.status === "hot" ? (
           <Link href={"/deal"} className="absolute top-2 left-2 z-10">
@@ -102,39 +85,29 @@ const ProductCard = ({ product }: { product: Product }) => {
             </div>
           </div>
         ) : null}
-        
-        {/* Size indicator for products with sizes */}
-        {product.hasSizes && (
-          <div className="absolute top-2 right-10 z-10">
-            <div className="rounded-full bg-gray-800/70 p-1 backdrop-blur-sm">
-              <Ruler size={16} className="text-white" />
-            </div>
-          </div>
-        )}
       </div>
       <div className="p-3 flex flex-col gap-1">
         <div className="flex justify-between">
-        {product?.categories && (
-          <p className="uppercase line-clamp-1 text-xs font-medium text-lightText">
-            {product.categories.map((cat) => cat).join(", ")}
-          </p>
-        )}
-        <div className="flex items-center gap-1">
-          <div className="flex items-center">
-            {[...Array(5)].map((_, index) => (
-              <StarIcon
-                key={index}
-                className={
-                  index < 4 ? "text-shop_light_green" : " text-lightText"
-                }
-                fill={index < 4 ? "#93D991" : "#ababab"}
-              />
-            ))}
+          {product?.categories && (
+            <p className="uppercase line-clamp-1 text-xs font-medium text-lightText">
+              {product.categories.map((cat) => cat).join(", ")}
+            </p>
+          )}
+          <div className="flex items-center gap-1">
+            <div className="flex items-center">
+              {[...Array(5)].map((_, index) => (
+                <StarIcon
+                  key={index}
+                  className={
+                    index < 4 ? "text-shop_light_green" : " text-lightText"
+                  }
+                  fill={index < 4 ? "#93D991" : "#ababab"}
+                />
+              ))}
+            </div>
           </div>
         </div>
-        </div>
         <Title className="text-sm line-clamp-1">{product?.name}</Title>
-        
 
         {/* <div className="flex items-center gap-2.5">
           <p className="font-medium">In Stock</p>
@@ -150,7 +123,7 @@ const ProductCard = ({ product }: { product: Product }) => {
           discount={product?.discount}
           className="text-sm"
         />
-        
+
         {renderActionButton()}
       </div>
     </div>

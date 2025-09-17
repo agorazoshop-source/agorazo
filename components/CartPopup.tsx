@@ -186,9 +186,9 @@ const CartPopup = () => {
 
                   {/* Cart Items */}
                   <div className="max-h-64 overflow-y-auto py-3">
-                    {groupedItems.map(({ product, size, quantity }) => (
+                    {groupedItems.map(({ product, quantity }) => (
                       <div
-                        key={product && product._id + "-" + (size || "default")}
+                        key={product && product._id}
                         className="py-3 border-b border-gray-100/40 last:border-b-0 flex items-center gap-3"
                       >
                         {/* Product Image */}
@@ -219,8 +219,9 @@ const CartPopup = () => {
                             {product && product.name}
                           </h4>
                           <div className="flex items-center gap-2 text-xs text-gray-500">
-                            <span>{product?.categories?.[0]?.title || "Standard"}</span>
-                            {size && <span>• Size: {size}</span>}
+                            <span>
+                              {product?.categories?.[0]?.title || "Standard"}
+                            </span>
                           </div>
                           <div className="flex items-center justify-between mt-1">
                             <PriceFormatter
@@ -233,7 +234,6 @@ const CartPopup = () => {
                             />
                             <QuantityButtons
                               product={product}
-                              selectedSize={size}
                               className="scale-75"
                             />
                           </div>
@@ -244,7 +244,7 @@ const CartPopup = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() =>
-                            deleteCartProduct(product && product._id, size)
+                            deleteCartProduct(product && product._id)
                           }
                           className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all duration-200"
                         >
