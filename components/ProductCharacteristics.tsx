@@ -23,7 +23,14 @@ const ProductCharacteristics = ({
         </div>
         <div className="flex justify-between items-center text-xs">
           <span className="text-gray-500">Type:</span>
-          <span className="text-gray-700 font-medium capitalize">{product?.variant?.title || 'N/A'}</span>
+          <span className="text-gray-700 font-medium capitalize">
+            {product?.categories && product.categories.length > 0 
+              ? (typeof product.categories[0] === 'object' && 'title' in product.categories[0] 
+                  ? product.categories[0].title 
+                  : product.categories[0])
+              : 'N/A'
+            }
+          </span>
         </div>
         <div className="flex justify-between items-center text-xs">
           <span className="text-gray-500">Stock:</span>

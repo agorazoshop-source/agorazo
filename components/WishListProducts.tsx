@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 import PriceFormatter from "./PriceFormatter";
 import AddToCartButton from "./AddToCartButton";
 import SanityImage from "./SanityImage";
-import ProductVariantDisplay from "./ProductVariantDisplay";
+import CategoryDisplay from "./CategoryDisplay";
 
 const WishListProducts = () => {
   const [visibleProducts, setVisibleProducts] = useState(7);
@@ -85,7 +85,7 @@ const WishListProducts = () => {
                         )}
                       </td>
                       <td className="p-2 capitalize hidden md:table-cell">
-                        <ProductVariantDisplay variant={product?.variant} />
+                        <CategoryDisplay categories={product?.categories} />
                       </td>
                       <td
                         className={`p-2 w-24 ${

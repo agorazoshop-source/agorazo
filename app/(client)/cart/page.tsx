@@ -10,7 +10,7 @@ import EmptyCart from "@/components/EmptyCart";
 import NoAccess from "@/components/NoAccess";
 import PriceFormatter from "@/components/PriceFormatter";
 import ProductSideMenu from "@/components/ProductSideMenu";
-import ProductVariantDisplay from "@/components/ProductVariantDisplay";
+import CategoryDisplay from "@/components/CategoryDisplay";
 import QuantityButtons from "@/components/QuantityButtons";
 import Title from "@/components/Title";
 import { Button } from "@/components/ui/button";
@@ -111,7 +111,7 @@ const CartPage = () => {
                                 <p className="text-sm capitalize">
                                   Variant:{" "}
                                   <span className="font-semibold">
-                                    <ProductVariantDisplay variant={product?.variant} />
+                                    <CategoryDisplay categories={product?.categories} />
                                   </span>
                                 </p>
                                 <p className="text-sm capitalize">

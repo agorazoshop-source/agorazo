@@ -20,11 +20,6 @@ const DEAL_PRODUCTS = defineQuery(
 const PRODUCT_BY_SLUG_QUERY = defineQuery(
   `*[_type == "product" && slug.current == $slug] | order(name asc) [0] {
     ...,
-    "variant": variant->{
-      title,
-      value,
-      description
-    },
     "brand": brand->{
       title,
       description
@@ -153,7 +148,6 @@ const GET_USER_CART = defineQuery(
         stock,
         brand,
         status,
-        variant,
         isFeatured,
         hasSizes,
         sizes

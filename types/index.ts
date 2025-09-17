@@ -155,7 +155,6 @@ export interface Product extends SanityProduct  {
   stock: number;
   brand: string;
   status: string;
-  variant: string;
   isFeatured: boolean;
   hasSizes: boolean;
   sizes: ProductSize[];

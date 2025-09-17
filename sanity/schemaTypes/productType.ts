@@ -139,13 +139,6 @@ export const productType = defineType({
       },
     }),
     defineField({
-      name: "variant",
-      title: "Product Type",
-      type: "reference",
-      to: { type: "productVariant" },
-      description: "Select a product variant from the list",
-    }),
-    defineField({
       name: "isFeatured",
       title: "Featured Product",
       type: "boolean",

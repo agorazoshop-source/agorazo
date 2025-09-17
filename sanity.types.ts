@@ -309,11 +309,6 @@ export type Product = {
     description?: string;
   };
   status?: "new" | "hot" | "sale";
-  variant?: {
-    title?: string;
-    value?: string;
-    description?: string;
-  };
   isFeatured?: boolean;
   hasSizes?: boolean;
   colorGroup?: {

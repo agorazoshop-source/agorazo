@@ -9,7 +9,7 @@ import { ShoppingBag, X, Trash } from "lucide-react";
 import PriceFormatter from "./PriceFormatter";
 import QuantityButtons from "./QuantityButtons";
 import SanityImage from "./SanityImage";
-import ProductVariantDisplay from "./ProductVariantDisplay";
+import CategoryDisplay from "./CategoryDisplay";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -195,7 +195,7 @@ const CartPopup = () => {
                             {product && product.name}
                           </h4>
                           <div className="flex items-center gap-2 text-xs text-gray-500">
-                            <ProductVariantDisplay variant={product && product.variant} />
+                            <CategoryDisplay categories={product && product.categories} />
                             {size && <span>• Size: {size}</span>}
                           </div>
                           <div className="flex items-center justify-between mt-1">

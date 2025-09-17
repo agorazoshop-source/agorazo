@@ -9,7 +9,6 @@ import { Loader2 } from "lucide-react";
 import Container from "./Container";
 import HomeTabbar from "./HomeTabbar";
 import { Product } from "@/sanity.types";
-import { getProductVariants } from "@/lib/sanity/queries";
 
 interface ProductGridProps {
   products: Product[];

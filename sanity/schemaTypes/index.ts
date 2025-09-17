@@ -10,7 +10,6 @@ import { blogCategoryType } from "./blogCategoryType";
 import { authorType } from "./authorType";
 import { addressType } from "./addressType";
 import { productReelType } from "./productReelType";
-import productVariantType from "./productVariantType";
 import { userAddressType } from "./userAddressType";
 import { couponType } from "./couponType";
 import { userCartType } from "./userCartType";
@@ -30,7 +29,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     authorType,
     addressType,
     productReelType,
-    productVariantType,
     userAddressType,
     userWishlistType,
     userCartType,

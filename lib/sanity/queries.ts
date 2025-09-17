@@ -1,22 +1,5 @@
 import { client } from "@/sanity/lib/client";
 
-export async function getProductVariants() {
-  try {
-    // Use server-side API route to avoid CORS issues
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/product-variants`);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const variants = await response.json();
-    return variants;
-  } catch (error) {                       
-    console.error('Error fetching product variants:', error);
-    return [];
-  }
-} 
 
 export async function getCategories(): Promise<any[]> {
   try {
