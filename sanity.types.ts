@@ -665,7 +665,7 @@ export type DEAL_PRODUCTSResult = Array<{
   status?: "hot" | "new" | "sale";
 }>;
 // Variable: PRODUCT_BY_SLUG_QUERY
-// Query: *[_type == "product" && slug.current == $slug] | order(name asc) [0] {    ...,    "categories": categories[]->{      _id,      title,      slug    },    "brand": brand->{      title,      description    },    "colorGroup": *[_type == "colorGroup" && references(^._id)][0] {      _id,      name,      "products": products[]-> {        _id,        name,        slug,        images,        stock      }    }  }
+// Query: *[_type == "product" && slug.current == $slug] | order(name asc) [0] {    ...,    "images": images[]{      ...,      "url": asset->url    },    "categories": categories[]->{      _id,      title,      slug    },    "brand": brand->{      title,      description    },    "colorGroup": *[_type == "colorGroup" && references(^._id)][0] {      _id,      name,      "products": products[]-> {        _id,        name,        slug,        images,        stock      }    }  }
 export type PRODUCT_BY_SLUG_QUERYResult = {
   _id: string;
   _type: "product";
@@ -674,7 +674,7 @@ export type PRODUCT_BY_SLUG_QUERYResult = {
   _rev: string;
   name?: string;
   slug?: Slug;
-  images?: Array<{
+  images: Array<{
     asset?: {
       _ref: string;
       _type: "reference";
@@ -686,7 +686,8 @@ export type PRODUCT_BY_SLUG_QUERYResult = {
     crop?: SanityImageCrop;
     _type: "image";
     _key: string;
-  }>;
+    url: string | null;
+  }> | null;
   description?: string;
   price?: number;
   discount?: number;
@@ -1042,7 +1043,7 @@ declare module "@sanity/client" {
     "*[_type=='brand'] | order(name asc) ": BRANDS_QUERYResult;
     " *[_type == 'blog' && isLatest == true]|order(name asc){\n      ...,\n      blogcategories[]->{\n      title\n    }\n    }": LATEST_BLOG_QUERYResult;
     "*[_type == 'product' && status == 'hot'] | order(name asc){\n    ...,\"categories\": categories[]->title\n  }": DEAL_PRODUCTSResult;
-    "*[_type == \"product\" && slug.current == $slug] | order(name asc) [0] {\n    ...,\n    \"categories\": categories[]->{\n      _id,\n      title,\n      slug\n    },\n    \"brand\": brand->{\n      title,\n      description\n    },\n    \"colorGroup\": *[_type == \"colorGroup\" && references(^._id)][0] {\n      _id,\n      name,\n      \"products\": products[]-> {\n        _id,\n        name,\n        slug,\n        images,\n        stock\n      }\n    }\n  }": PRODUCT_BY_SLUG_QUERYResult;
+    "*[_type == \"product\" && slug.current == $slug] | order(name asc) [0] {\n    ...,\n    \"images\": images[]{\n      ...,\n      \"url\": asset->url\n    },\n    \"categories\": categories[]->{\n      _id,\n      title,\n      slug\n    },\n    \"brand\": brand->{\n      title,\n      description\n    },\n    \"colorGroup\": *[_type == \"colorGroup\" && references(^._id)][0] {\n      _id,\n      name,\n      \"products\": products[]-> {\n        _id,\n        name,\n        slug,\n        images,\n        stock\n      }\n    }\n  }": PRODUCT_BY_SLUG_QUERYResult;
     "*[_type == \"productReel\" && product->slug.current == $slug][0] {\n    _id,\n    video {\n      \"url\": asset->url\n    }\n  }": REEL_BY_PRODUCT_SLUG_QUERYResult;
     "*[_type == \"product\" && slug.current == $slug]{\n  \"brandName\": brand->title\n}": BRAND_QUERYResult;
     "*[_type == 'order' && customer.clerkUserId == $userId] | order(createdAt desc) {\n  ...,\n  items[] {\n    ...,\n    product-> {\n      _id,\n      name,\n      images,\n      price,\n      slug\n    }\n  }\n}": MY_ORDERS_QUERYResult;

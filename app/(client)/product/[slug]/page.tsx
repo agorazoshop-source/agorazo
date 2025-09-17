@@ -29,13 +29,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: product.name,
       description: product.description,
-      images: product.images?.[0] ? [{ url: product.images[0].url }] : [],
+      images: product.images?.[0]?.url ? [{ url: product.images[0].url }] : [],
     },
     twitter: {
       card: "summary_large_image",
       title: product.name,
       description: product.description,
-      images: product.images?.[0] ? [product.images[0].url] : [],
+      images: product.images?.[0]?.url ? [product.images[0].url] : [],
     },
   };
 }
@@ -71,7 +71,6 @@ export default async function SingleProductPage({ params }: Props) {
               "@type": "Offer",
               price: product.price,
               priceCurrency: "INR",
-              availability: product.stock > 0 ? "InStock" : "OutOfStock",
             },
           }),
         }}
@@ -84,13 +83,11 @@ export default async function SingleProductPage({ params }: Props) {
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
               {/* Main Product Image */}
               <div className="md:col-span-9">
-                {product.images && (
-                  <ImageView images={product.images} isStock={product.stock} />
-                )}
+                {product.images && <ImageView images={product.images} />}
               </div>
 
               {/* Product Video - Desktop */}
-              {productReel && productReel.video && (
+              {productReel && productReel.video && productReel.video.url && (
                 <div className="hidden md:block md:col-span-3">
                   <div className="h-[500px] border border-gray-100 rounded-lg overflow-hidden">
                     <ProductVideo
@@ -105,7 +102,7 @@ export default async function SingleProductPage({ params }: Props) {
             </div>
 
             {/* Product Video - Mobile */}
-            {productReel && productReel.video && (
+            {productReel && productReel.video && productReel.video.url && (
               <div className="md:hidden">
                 <div className="relative bg-gray-50 rounded-lg overflow-hidden">
                   <div className="aspect-video w-full">
@@ -131,7 +128,7 @@ export default async function SingleProductPage({ params }: Props) {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Main Product Details - Takes up 2/3 of the space */}
               <div className="lg:col-span-2">
-                <ProductInteractiveSection product={product} />
+                <ProductInteractiveSection product={product as any} />
               </div>
             </div>
           </div>
