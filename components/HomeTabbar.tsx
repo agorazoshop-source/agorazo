@@ -19,9 +19,14 @@ interface CategoryItem {
 interface Props {
   selectedTab: string;
   onTabSelect: (tab: string) => void;
+  autoSelectFirst?: boolean;
 }
 
-const HomeTabbar = ({ selectedTab, onTabSelect }: Props) => {
+const HomeTabbar = ({
+  selectedTab,
+  onTabSelect,
+  autoSelectFirst = false,
+}: Props) => {
   const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -41,6 +46,11 @@ const HomeTabbar = ({ selectedTab, onTabSelect }: Props) => {
 
         // Categories are already ordered by creation date from the query
         setCategories(data);
+
+        // Auto-select first category if enabled and no category is currently selected
+        if (autoSelectFirst && data.length > 0 && !selectedTab) {
+          onTabSelect(data[0].title);
+        }
       } catch (error) {
         console.error("Error loading categories:", error);
       } finally {

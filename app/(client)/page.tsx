@@ -27,7 +27,7 @@ const Home = async () => {
         <div className="bg-white">
           <MultiBanner />
         </div>
-        <ProductGrid products={products} />
+        <ProductGrid products={products} autoSelectFirstCategory={true} />
 
         {/* Dynamic Home Sections */}
         {homeSections.map((section: any, index: number) => (

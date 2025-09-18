@@ -45,6 +45,21 @@ const PRODUCT_BY_SLUG_QUERY = defineQuery(
         images,
         stock
       }
+    },
+    "recommendedProducts": recommendedProducts[]->{
+      _id,
+      name,
+      slug,
+      images,
+      price,
+      discount,
+      status,
+      productLink,
+      categories[]->{
+        _id,
+        title,
+        slug
+      }
     }
   }`
 );

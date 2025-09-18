@@ -13,9 +13,13 @@ import Link from "next/link";
 
 interface ProductGridProps {
   products: Product[];
+  autoSelectFirstCategory?: boolean;
 }
 
-const ProductGrid = ({ products: initialProducts }: ProductGridProps) => {
+const ProductGrid = ({
+  products: initialProducts,
+  autoSelectFirstCategory = false,
+}: ProductGridProps) => {
   const [loading, setLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState("");
   const [products, setProducts] = useState(initialProducts);
@@ -61,7 +65,11 @@ const ProductGrid = ({ products: initialProducts }: ProductGridProps) => {
         </div>
       </div>
 
-      <HomeTabbar selectedTab={selectedTab} onTabSelect={setSelectedTab} />
+      <HomeTabbar
+        selectedTab={selectedTab}
+        onTabSelect={setSelectedTab}
+        autoSelectFirst={autoSelectFirstCategory}
+      />
       {loading ? (
         <NoProductAvailable selectedTab={selectedTab} />
       ) : products?.length ? (

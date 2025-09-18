@@ -81,6 +81,16 @@ export const productType = defineType({
         ],
       },
     }),
+    defineField({
+      name: "recommendedProducts",
+      title: "Recommended Products",
+      type: "array",
+      of: [{ type: "reference", to: { type: "product" } }],
+      description:
+        "Select products to recommend to customers viewing this product",
+      validation: (Rule) =>
+        Rule.max(6).error("Maximum 6 recommended products allowed"),
+    }),
   ],
   preview: {
     select: {

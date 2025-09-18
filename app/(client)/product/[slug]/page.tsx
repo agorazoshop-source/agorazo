@@ -7,6 +7,7 @@ import ProductVideo from "@/components/ProductVideo";
 import { Video } from "lucide-react";
 import DeliveryInfo from "@/components/product/DeliveryInfo";
 import ProductInteractiveSection from "@/components/product/ProductInteractiveSection";
+import HomeSection from "@/components/HomeSection";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -195,6 +196,18 @@ export default async function SingleProductPage({ params }: Props) {
           </div>
         </Container>
       </div>
+
+      {/* Recommended Products Section */}
+      {product.recommendedProducts &&
+        product.recommendedProducts.length > 0 && (
+          <HomeSection
+            title="Recommended for You"
+            subtitle="Discover products that complement your selection"
+            products={product.recommendedProducts}
+            maxProducts={50}
+            sectionIndex={0}
+          />
+        )}
     </>
   );
 }
