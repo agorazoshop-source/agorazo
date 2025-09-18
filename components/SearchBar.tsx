@@ -78,7 +78,7 @@ const SearchBar = () => {
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onKeyDown={handleKeyDown}
-            placeholder="Search for products, brands, categories..."
+            placeholder="Search for products, categories, blogs..."
             className={`w-full pl-12 pr-4 py-3 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-shop_light_green focus:border-transparent transition-all duration-200 text-sm `}
           />
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />

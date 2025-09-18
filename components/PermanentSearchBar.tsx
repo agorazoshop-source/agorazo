@@ -76,7 +76,7 @@ const PermanentSearchBar: React.FC<PermanentSearchBarProps> = ({
   };
 
   return (
-    <div className={`relative z-[90] ${className}`} ref={searchRef}>
+    <div className={`relative z-[20] ${className}`} ref={searchRef}>
       <form onSubmit={handleSearch} className="relative">
         <div className="relative">
           <input
@@ -86,7 +86,7 @@ const PermanentSearchBar: React.FC<PermanentSearchBarProps> = ({
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onKeyDown={handleKeyDown}
-            placeholder="Search for products, brands, categories..."
+            placeholder="Search for products, categories, blogs..."
             className="w-full px-4 py-2.5 border border-gray-200 rounded-full bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-shop_light_green focus:border-transparent transition-all duration-200 text-sm"
           />
           <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1">

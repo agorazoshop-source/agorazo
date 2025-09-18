@@ -6,7 +6,7 @@ import Image from "next/image";
 import { SearchSuggestion } from "@/hooks/useSearchSuggestions";
 import { urlFor } from "@/sanity/lib/image";
 import PriceFormatter from "./PriceFormatter";
-import { Package, Tag, Grid3X3, Search } from "lucide-react";
+import { Package, Tag, Grid3X3, Search, FileText } from "lucide-react";
 
 interface SearchSuggestionsProps {
   suggestions: SearchSuggestion[];
@@ -29,10 +29,10 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
     switch (type) {
       case "product":
         return <Package className="w-4 h-4 text-blue-500" />;
-      case "brand":
-        return <Tag className="w-4 h-4 text-green-500" />;
       case "category":
         return <Grid3X3 className="w-4 h-4 text-purple-500" />;
+      case "blog":
+        return <FileText className="w-4 h-4 text-orange-500" />;
       default:
         return <Package className="w-4 h-4 text-gray-500" />;
     }

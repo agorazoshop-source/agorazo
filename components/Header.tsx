@@ -142,7 +142,7 @@ const Header = () => {
 
       {/* Header Menu - Second row - Sticky at top (Desktop only) */}
       <div
-        className={`hidden md:block py-1 border-t border-gray-100 transition-all duration-300 sticky top-0 z-[80] bg-white ${isScrolled ? "shadow-sm" : ""}`}
+        className={`hidden md:block py-1 border-t border-gray-100 transition-all duration-300 sticky top-0 z-[20] bg-white ${isScrolled ? "shadow-sm" : ""}`}
       >
         <Container>
           <div className="hidden md:block">

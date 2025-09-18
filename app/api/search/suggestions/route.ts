@@ -10,31 +10,35 @@ export async function GET(request: Request) {
       return NextResponse.json([]);
     }
 
-    // Search for products, brands, and categories that match the query
+    // Search for products, categories, and blogs that match the query
     const searchQuery = `{
       "products": *[_type == "product" && (
         name match $searchTerm ||
         description match $searchTerm ||
-        brand->title match $searchTerm ||
         categories[]->title match $searchTerm
-      )][0...5] {
+      )][0...4] {
         _id,
         name,
         slug,
         price,
         images,
-        brand->{title},
         categories[]->{title}
       },
-      "brands": *[_type == "brand" && title match $searchTerm][0...3] {
+      "categories": *[_type == "category" && title match $searchTerm][0...2] {
         _id,
         title,
         slug
       },
-      "categories": *[_type == "category" && title match $searchTerm][0...3] {
+      "blogs": *[_type == "blog" && (
+        title match $searchTerm ||
+        body[].children[].text match $searchTerm
+      )][0...2] {
         _id,
         title,
-        slug
+        slug,
+        mainImage,
+        publishedAt,
+        blogcategories[]->{title}
       }
     }`;
 
@@ -48,20 +52,10 @@ export async function GET(request: Request) {
         id: product._id,
         type: "product",
         title: product.name,
-        subtitle: product.brand?.title || "Product",
+        subtitle: "Product",
         url: `/product/${product.slug?.current}`,
         image: product.images?.[0],
         price: product.price,
-      })),
-      // Add brand suggestions
-      ...results.brands.map((brand: any) => ({
-        id: brand._id,
-        type: "brand",
-        title: brand.title,
-        subtitle: "Brand",
-        url: `/products?brand=${brand.slug?.current}`,
-        image: null,
-        price: null,
       })),
       // Add category suggestions
       ...results.categories.map((category: any) => ({
@@ -71,6 +65,16 @@ export async function GET(request: Request) {
         subtitle: "Category",
         url: `/category/${category.slug?.current}`,
         image: null,
+        price: null,
+      })),
+      // Add blog suggestions
+      ...results.blogs.map((blog: any) => ({
+        id: blog._id,
+        type: "blog",
+        title: blog.title,
+        subtitle: blog.blogcategories?.[0]?.title || "Blog",
+        url: `/blog/${blog.slug?.current}`,
+        image: blog.mainImage,
         price: null,
       })),
     ];

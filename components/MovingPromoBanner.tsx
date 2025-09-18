@@ -70,7 +70,7 @@ const MovingPromoBanner: React.FC<MovingPromoBannerProps> = ({
   return (
     <div className={`pt-4`}>
       <div
-        className={`relative bg-gradient-to-r ${bgGradient} ${textColor} overflow-hidden z-40 max-w-7xl mx-auto px-4 rounded-xl`}
+        className={`relative bg-gradient-to-r ${bgGradient} ${textColor} overflow-hidden z-10 max-w-7xl mx-auto px-4 rounded-xl`}
       >
         {/* Moving text container */}
         <div className="relative h-12 flex items-center overflow-hidden">
