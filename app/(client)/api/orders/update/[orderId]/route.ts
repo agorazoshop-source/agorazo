@@ -87,7 +87,7 @@ export async function POST(
 
       // Send confirmation email if order is marked as successful
       let emailStatus = null;
-      if (paymentStatus === "success") {
+      if (paymentStatus === "success" || paymentStatus === "paid") {
         try {
           const emailResult = await sendOrderConfirmationEmail({
             orderId: order.orderNumber,

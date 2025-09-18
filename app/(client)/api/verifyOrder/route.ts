@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { backendClient } from "@/sanity/lib/backendClient";
+import { sendOrderConfirmationEmail } from "@/lib/email";
 
 export interface VerifyBody {
   razorpay_order_id: string;
@@ -42,6 +43,27 @@ export async function POST(request: NextRequest) {
       // If orderId is provided, update the order in Sanity
       if (orderId) {
         try {
+          // First, get the order details to send email
+          const order = await backendClient.fetch(
+            `*[_type == "order" && _id == $orderId][0]{
+              orderNumber,
+              customer,
+              totalAmount,
+              items[] {
+                product-> {
+                  name,
+                  productLink,
+                  slug
+                },
+                price,
+                quantity,
+                size
+              }
+            }`,
+            { orderId }
+          );
+
+          // Update order status
           await backendClient
             .patch(orderId)
             .set({
@@ -53,7 +75,33 @@ export async function POST(request: NextRequest) {
               updatedAt: new Date().toISOString(),
             })
             .commit();
+
+          // Send confirmation email
+          if (order && order.customer && order.customer.email) {
+            try {
+              await sendOrderConfirmationEmail({
+                orderId: order.orderNumber,
+                customerName: order.customer.name,
+                customerEmail: order.customer.email,
+                totalAmount: order.totalAmount,
+                items: order.items.map((item: any) => ({
+                  product: {
+                    name: item.product?.name || "Unknown Product",
+                    price: item.price,
+                    productLink: item.product?.productLink,
+                    slug: item.product?.slug,
+                  },
+                  quantity: item.quantity,
+                  size: item.size,
+                })),
+              });
+            } catch (emailError) {
+              console.error("Email sending failed:", emailError);
+              // Don't fail the payment verification if email fails
+            }
+          }
         } catch (error: any) {
+          console.error("Order update failed:", error);
           // Don't fail the verification if order update fails
         }
       }
