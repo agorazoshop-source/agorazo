@@ -55,13 +55,14 @@ export default function CheckoutPage() {
   );
   const [isCouponLoading, setIsCouponLoading] = useState(false);
   const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
+  const [isPaymentSuccess, setIsPaymentSuccess] = useState(false);
 
   useEffect(() => {
-    // Redirect to cart if cart is empty
-    if (isLoaded && isEmpty) {
+    // Redirect to cart if cart is empty, but not if payment was successful
+    if (isLoaded && isEmpty && !isPaymentSuccess) {
       router.push("/cart");
     }
-  }, [isLoaded, isEmpty, router]);
+  }, [isLoaded, isEmpty, router, isPaymentSuccess]);
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
@@ -159,6 +160,8 @@ export default function CheckoutPage() {
 
   const handleRazorpaySuccess = async (paymentId: string) => {
     try {
+      // Set payment success state before clearing cart to prevent cart redirection
+      setIsPaymentSuccess(true);
       // Clear cart and redirect to success page
       resetCart();
       toast.success("Payment successful! Order confirmed.");
@@ -204,6 +207,7 @@ export default function CheckoutPage() {
           });
 
           if (updateResponse.ok) {
+            setIsPaymentSuccess(true);
             resetCart();
             toast.success("Order confirmed successfully!");
             router.push(`/success?order_id=${orderId}&payment_method=razorpay`);
