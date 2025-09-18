@@ -55,9 +55,11 @@ const OrderDetailDialog: React.FC<OrderDetailsDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="!max-w-4xl max-h-[90vh] overflow-y-scroll">
+      <DialogContent className="!max-w-4xl max-h-[90vh] overflow-y-scroll ">
         <DialogHeader>
-          <DialogTitle>Order Details - {order?.orderNumber}</DialogTitle>
+          <DialogTitle className="text-base sm:text-lg text-start">
+            Order Details - {order?.orderNumber}
+          </DialogTitle>
         </DialogHeader>
         <div className="mt-4 space-y-6">
           {/* Order Information */}
@@ -112,48 +114,39 @@ const OrderDetailDialog: React.FC<OrderDetailsDialogProps> = ({
           {/* Order Items */}
           <div>
             <h3 className="font-semibold mb-3">Order Items</h3>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Product</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Product Link</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {order.items?.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        {item.product?.images && item.product.images[0] && (
-                          <Image
-                            src={urlFor(item.product.images[0]).url()}
-                            alt={item.product.name || "Product"}
-                            width={50}
-                            height={50}
-                            className="rounded-md object-cover"
-                          />
-                        )}
+            <div className="space-y-4">
+              {order.items?.map((item, index) => (
+                <div key={index} className="bg-white border rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    {item.product?.images && item.product.images[0] && (
+                      <Image
+                        src={urlFor(item.product.images[0]).url()}
+                        alt={item.product.name || "Product"}
+                        width={72}
+                        height={72}
+                        className="rounded-md object-cover flex-shrink-0"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between">
                         <Link
                           href={`/product/${item.product?.slug?.current || "#"}`}
-                          className="hover:text-shop_dark_green hover:underline"
+                          className="hover:text-shop_dark_green hover:underline font-semibold text-base block mb-1"
                         >
                           {item.product?.name || "Product"}
                         </Link>
+                        <div className="font-semibold text-base mb-3">
+                          <PriceFormatter amount={item.price} />
+                        </div>
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <PriceFormatter amount={item.price} />
-                    </TableCell>
-                    <TableCell>
                       {order.paymentStatus === "paid" ? (
-                        <div className="space-y-2">
+                        <div>
                           {item.product?.productLink ? (
                             <a
                               href={item.product.productLink}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition-colors text-sm font-medium"
+                              className="inline-flex items-center gap-2 px-3 py-2 bg-green-200 text-green-700 rounded-md hover:bg-green-100 transition-colors text-sm font-medium w-full justify-center"
                             >
                               <span>🔗</span>
                               Product Link
@@ -169,19 +162,22 @@ const OrderDetailDialog: React.FC<OrderDetailsDialogProps> = ({
                           Complete payment to access link
                         </span>
                       )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-                <TableRow>
-                  <TableCell colSpan={2} className="text-right font-semibold">
-                    Total Amount:
-                  </TableCell>
-                  <TableCell className="font-semibold">
-                    <PriceFormatter amount={order.totalAmount} />
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {/* Total Amount */}
+              <div className="bg-gray-50 border rounded-lg p-4">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold text-base">Total Amount:</span>
+                  <PriceFormatter
+                    amount={order.totalAmount}
+                    className="font-semibold text-base"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Contact Support Button */}
