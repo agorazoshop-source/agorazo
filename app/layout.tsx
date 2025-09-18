@@ -59,6 +59,27 @@ export default function RootLayout({
         </head>
         <body className="font-poppins antialiased">
           <SanityLive />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                // Suppress harmless Razorpay warnings
+                (function() {
+                  const originalConsoleError = console.error;
+                  console.error = function(...args) {
+                    const message = args[0]?.toString() || '';
+                    if (
+                      message.includes('x-rtb-fingerprint-id') ||
+                      message.includes('navigator.vibrate') ||
+                      message.includes('cross-origin iframe')
+                    ) {
+                      return; // Suppress these warnings
+                    }
+                    originalConsoleError.apply(console, args);
+                  };
+                })();
+              `,
+            }}
+          />
           {children}
           <Toaster
             position="top-right"

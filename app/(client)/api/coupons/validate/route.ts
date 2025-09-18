@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { client } from "@/sanity/lib/client";
-import { Product } from "@/sanity/schemas/schema";
+import { Product } from "@/sanity/schemaTypes/types";
 
 interface CartItem {
   product: Product & {
     categories?: Array<{
       _ref: string;
-      _type: 'reference';
+      _type: "reference";
     }>;
     price?: number;
   };
@@ -22,7 +22,12 @@ export async function POST(req: Request) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const { code, cartAmount, items }: { code: string; cartAmount: number; items: CartItem[] } = await req.json();
+    const {
+      code,
+      cartAmount,
+      items,
+    }: { code: string; cartAmount: number; items: CartItem[] } =
+      await req.json();
     console.log("Validating coupon:", { code, cartAmount, items });
 
     // Fetch coupon from Sanity
@@ -38,7 +43,10 @@ export async function POST(req: Request) {
 
     if (!coupon) {
       console.log("No coupon found with code:", code);
-      return NextResponse.json({ error: "Invalid coupon code" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid coupon code" },
+        { status: 400 }
+      );
     }
 
     // Check if coupon is expired
@@ -50,16 +58,22 @@ export async function POST(req: Request) {
 
     if (now < validFrom || now > validUntil) {
       console.log("Coupon expired");
-      return NextResponse.json({ error: "Coupon has expired" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Coupon has expired" },
+        { status: 400 }
+      );
     }
 
     // Check minimum cart amount
     if (cartAmount < coupon.minimumAmount) {
-      console.log("Cart amount too low:", { cartAmount, minimumRequired: coupon.minimumAmount });
+      console.log("Cart amount too low:", {
+        cartAmount,
+        minimumRequired: coupon.minimumAmount,
+      });
       return NextResponse.json(
-        { 
-          error: `Minimum cart amount should be ₹${coupon.minimumAmount} to use this coupon`
-        }, 
+        {
+          error: `Minimum cart amount should be ₹${coupon.minimumAmount} to use this coupon`,
+        },
         { status: 400 }
       );
     }
@@ -79,15 +93,17 @@ export async function POST(req: Request) {
 
     // Check if coupon is applicable to all items
     if (coupon.categories && coupon.categories.length > 0) {
-      console.log("Category-specific coupon:", { 
+      console.log("Category-specific coupon:", {
         couponCategories: coupon.categories,
-        cartItemCategories: items.map(item => item.product.categories?.[0]?._ref)
+        cartItemCategories: items.map(
+          (item) => item.product.categories?.[0]?._ref
+        ),
       });
 
       const applicableAmount = items.reduce((total: number, item: CartItem) => {
         const categoryId = item.product.categories?.[0]?._ref;
         if (categoryId && coupon.categories.includes(categoryId)) {
-          return total + ((item.product.price || 0) * item.quantity);
+          return total + (item.product.price || 0) * item.quantity;
         }
         return total;
       }, 0);
@@ -110,7 +126,7 @@ export async function POST(req: Request) {
       discountAmount,
       code: coupon.code,
       type: coupon.discountType,
-      value: coupon.discountValue
+      value: coupon.discountValue,
     });
 
     return NextResponse.json({
@@ -118,11 +134,10 @@ export async function POST(req: Request) {
       discount: discountAmount,
       code: coupon.code,
       type: coupon.discountType,
-      value: coupon.discountValue
+      value: coupon.discountValue,
     });
-
   } catch (error) {
     console.error("[COUPON_VALIDATE]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
-} 
+}

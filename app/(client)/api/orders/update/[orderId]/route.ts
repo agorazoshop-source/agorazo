@@ -10,10 +10,9 @@ export async function POST(
   try {
     const session = await auth();
     if (!session?.userId) {
-      return new NextResponse(
-        JSON.stringify({ error: "Unauthorized" }), 
-        { status: 401 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+      });
     }
 
     // Check if Sanity token is available
@@ -22,7 +21,7 @@ export async function POST(
     } catch (e) {
       console.error("Sanity token error:", e);
       return new NextResponse(
-        JSON.stringify({ error: "Server configuration error" }), 
+        JSON.stringify({ error: "Server configuration error" }),
         { status: 500 }
       );
     }
@@ -30,7 +29,7 @@ export async function POST(
     const { orderId } = params;
     if (!orderId) {
       return new NextResponse(
-        JSON.stringify({ error: "Order ID is required" }), 
+        JSON.stringify({ error: "Order ID is required" }),
         { status: 400 }
       );
     }
@@ -41,7 +40,7 @@ export async function POST(
       body = await req.json();
     } catch (e) {
       return new NextResponse(
-        JSON.stringify({ error: "Invalid request body" }), 
+        JSON.stringify({ error: "Invalid request body" }),
         { status: 400 }
       );
     }
@@ -53,12 +52,17 @@ export async function POST(
       `*[_type == "order" && _id == $orderId][0]{
         ...,
         "items": items[]{
-          ...,
+          _key,
+          quantity,
+          size,
+          price,
           "product": product->{
             _id,
             name,
             price,
-            description
+            description,
+            productLink,
+            slug
           }
         }
       }`,
@@ -66,10 +70,9 @@ export async function POST(
     );
 
     if (!order) {
-      return new NextResponse(
-        JSON.stringify({ error: "Order not found" }), 
-        { status: 404 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Order not found" }), {
+        status: 404,
+      });
     }
 
     // Update order
@@ -79,13 +82,13 @@ export async function POST(
         .set({
           paymentStatus: paymentStatus || order.paymentStatus,
           orderStatus: orderStatus || order.orderStatus,
-          updatedAt: new Date().toISOString()
+          updatedAt: new Date().toISOString(),
         })
         .commit();
 
       // Send confirmation email if order is marked as successful
       let emailStatus = null;
-      if (paymentStatus === 'success') {
+      if (paymentStatus === "success") {
         try {
           const emailResult = await sendOrderConfirmationEmail({
             orderId: order.orderNumber,
@@ -95,39 +98,41 @@ export async function POST(
             items: order.items.map((item: any) => ({
               product: {
                 name: item.product.name,
-                price: item.price || item.product.price
+                price: item.price, // Use the price stored in the order item
+                productLink: item.product.productLink,
+                slug: item.product.slug,
               },
               quantity: item.quantity,
-              size: item.size
-            }))
+              size: item.size,
+            })),
           });
-          emailStatus = emailResult.success ? 'success' : 'failed';
+          emailStatus = emailResult.success ? "success" : "failed";
         } catch (emailError) {
-          console.error('Failed to send confirmation email:', emailError);
-          emailStatus = 'failed';
+          console.error("Failed to send confirmation email:", emailError);
+          emailStatus = "failed";
         }
       }
 
-      return NextResponse.json({ 
-        success: true, 
+      return NextResponse.json({
+        success: true,
         order: result,
-        emailStatus
+        emailStatus,
       });
     } catch (e: any) {
       console.error("Sanity error:", e);
       return new NextResponse(
-        JSON.stringify({ 
-          error: "Database error: " + (e.message || "Failed to update order")
-        }), 
+        JSON.stringify({
+          error: "Database error: " + (e.message || "Failed to update order"),
+        }),
         { status: 500 }
       );
     }
   } catch (error: any) {
     console.error("Error updating order:", error);
     return new NextResponse(
-      JSON.stringify({ 
-        error: error.message || "Failed to update order" 
-      }), 
+      JSON.stringify({
+        error: error.message || "Failed to update order",
+      }),
       { status: 500 }
     );
   }

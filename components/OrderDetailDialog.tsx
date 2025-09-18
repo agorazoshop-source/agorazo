@@ -61,7 +61,7 @@ const OrderDetailDialog: React.FC<OrderDetailsDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="!max-w-4xl max-h-[90vh] overflow-y-scroll ">
+      <DialogContent className="!max-w-4xl max-h-[70vh] overflow-y-scroll ">
         <DialogHeader>
           <DialogTitle className="text-base sm:text-lg text-start">
             Order Details - {order?.orderNumber}
@@ -133,8 +133,7 @@ const OrderDetailDialog: React.FC<OrderDetailsDialogProps> = ({
                         alt={item.product.name || "Product"}
                         width={72}
                         height={72}
-                        className="rounded-md object-cover flex-shrink-0"
-                        style={{ width: "auto", height: "auto" }}
+                        className="rounded-md object-cover flex-shrink-0 w-[72px] h-[72px]"
                       />
                     )}
                     <div className="flex-1 min-w-0">

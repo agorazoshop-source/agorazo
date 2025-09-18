@@ -1,7 +1,6 @@
 "use server";
 
 import stripe from "@/lib/stripe";
-import { Address } from "@/sanity.types";
 import { urlFor } from "@/sanity/lib/image";
 import { CartItem } from "@/store";
 import Stripe from "stripe";
@@ -34,14 +33,14 @@ export interface GroupedCartItems {
 }
 
 function getImageUrl(image: any): string {
-  if (!image) return '';
-  if (typeof image === 'string') return image;
+  if (!image) return "";
+  if (typeof image === "string") return image;
   if (image.url) return image.url;
   try {
     return urlFor(image).url();
   } catch (error) {
-    console.error('Error generating image URL:', error);
-    return '';
+    console.error("Error generating image URL:", error);
+    return "";
   }
 }
 
@@ -59,7 +58,7 @@ export async function createCheckoutSession(
 
     // Use environment variable or fallback to localhost
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    
+
     const sessionPayload: Stripe.Checkout.SessionCreateParams = {
       metadata: {
         orderNumber: metadata.orderNumber,
@@ -83,9 +82,9 @@ export async function createCheckoutSession(
           product_data: {
             name: item?.product?.name || "Unknown Product",
             description: item?.product?.description,
-            metadata: { 
+            metadata: {
               id: item?.product?._id,
-              size: item?.size || ""
+              size: item?.size || "",
             },
             images:
               item?.product?.images && item?.product?.images?.length > 0
