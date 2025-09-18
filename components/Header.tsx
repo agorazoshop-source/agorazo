@@ -74,6 +74,11 @@ const Header = () => {
                         count={wishlistCount}
                       />
                       <HeaderIconWithText
+                        href="/orders"
+                        icon={<Logs className="w-6 h-6" />}
+                        text="Orders"
+                      />
+                      <HeaderIconWithText
                         href="/cart"
                         icon={<ShoppingBag className="w-6 h-6" />}
                         text="My Cart"
@@ -91,6 +96,11 @@ const Header = () => {
                         href="/wishlist"
                         icon={<Heart className="w-6 h-6" />}
                         text="Favorites"
+                      />
+                      <HeaderIconWithText
+                        href="/orders"
+                        icon={<Logs className="w-6 h-6" />}
+                        text="Orders"
                       />
                       <HeaderIconWithText
                         href="/cart"

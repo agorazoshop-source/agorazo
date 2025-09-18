@@ -27,9 +27,7 @@ const ProductCard = ({ product }: { product: Product }) => {
     if (isProductInCart) {
       return (
         <Button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+          onClick={() => {
             router.push("/cart");
           }}
           className={cn(
@@ -41,19 +39,14 @@ const ProductCard = ({ product }: { product: Product }) => {
       );
     } else {
       return (
-        <div onClick={(e) => e.stopPropagation()}>
-          <AddToCartButton
-            product={product}
-            className="w-36 rounded-full mt-2"
-          />
-        </div>
+        <AddToCartButton product={product} className="w-36 rounded-full mt-2" />
       );
     }
   };
 
   return (
-    <Link href={`/product/${product?.slug?.current}`} className="block">
-      <div className="text-sm border-[1px] rounded-md border-darkBlue/20 group bg-white hover:shadow-md transition-shadow">
+    <div className="text-sm border-[1px] rounded-md border-darkBlue/20 group bg-white hover:shadow-md transition-shadow">
+      <Link href={`/product/${product?.slug?.current}`} className="block">
         <div className="relative group overflow-hidden bg-shop_light_bg">
           {product?.images && (
             <Image
@@ -108,25 +101,17 @@ const ProductCard = ({ product }: { product: Product }) => {
           </div>
           <Title className="text-sm line-clamp-1">{product?.name}</Title>
 
-          {/* <div className="flex items-center gap-2.5">
-            <p className="font-medium">In Stock</p>
-            <p
-              className={`${product?.stock === 0 ? "text-red-600" : "text-shop_dark_green/80 font-semibold"}`}
-            >
-              {(product?.stock as number) > 0 ? product?.stock : "unavailable"}
-            </p>
-          </div> */}
-
           <PriceView
             price={product?.price}
             discount={product?.discount}
             className="text-sm"
           />
-
-          {renderActionButton()}
         </div>
-      </div>
-    </Link>
+      </Link>
+
+      {/* Action buttons outside the link */}
+      <div className="p-2 pt-0">{renderActionButton()}</div>
+    </div>
   );
 };
 

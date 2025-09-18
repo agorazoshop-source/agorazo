@@ -12,7 +12,7 @@ interface OrderDataParams {
     code: string;
     discount: number;
   } | null;
-  paymentMethod: 'phonepe' | 'cod';
+  paymentMethod: "phonepe" | "cod" | "razorpay";
 }
 
 export const generateOrderData = ({
@@ -21,7 +21,7 @@ export const generateOrderData = ({
   groupedItems,
   subtotal,
   appliedCoupon,
-  paymentMethod
+  paymentMethod,
 }: OrderDataParams) => {
   // if (!selectedAddress) {
   //   throw new Error("Selected address is required");
@@ -32,7 +32,7 @@ export const generateOrderData = ({
     customer: {
       name: user?.fullName ?? selectedAddress?.fullName ?? "Unknown",
       email: user?.emailAddresses?.[0]?.emailAddress ?? "Unknown",
-      clerkUserId: user?.id
+      clerkUserId: user?.id,
     },
     shippingAddress: {
       name: selectedAddress?.fullName ?? "",
@@ -43,14 +43,14 @@ export const generateOrderData = ({
       zip: selectedAddress?.pincode ?? "",
       phoneNumber: selectedAddress?.phoneNumber ?? "",
     },
-    items: groupedItems.map(item => ({
-      _type: 'orderItem',
-      _key: `item_${item.product._id}_${item.size || 'default'}_${Date.now()}`,
+    items: groupedItems.map((item) => ({
+      _type: "orderItem",
+      _key: `item_${item.product._id}_${Date.now()}`,
       product: {
-            _type: 'reference',
-            _ref: item.product._id,
-          },
-      // product: paymentMethod === 'cod' 
+        _type: "reference",
+        _ref: item.product._id,
+      },
+      // product: paymentMethod === 'cod'
       //   ? {
       //       _id: item.product._id,
       //       price: item.product.price
@@ -61,7 +61,7 @@ export const generateOrderData = ({
       //     },
       quantity: item.quantity,
       size: item.size,
-      ...(paymentMethod === 'phonepe' && { price: item.product.price })
+      ...(paymentMethod === "phonepe" && { price: item.product.price }),
     })),
     totalAmount: subtotal - (appliedCoupon?.discount || 0),
     discountAmount: appliedCoupon?.discount || 0,
@@ -70,7 +70,7 @@ export const generateOrderData = ({
     orderStatus: "pending", // paymentMethod === 'cod' ? "confirmed" : "pending",
     paymentMethod: paymentMethod,
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
     // ...(paymentMethod === 'phonepe' && {
     //   createdAt: new Date().toISOString(),
     //   updatedAt: new Date().toISOString()
@@ -78,4 +78,4 @@ export const generateOrderData = ({
   };
 
   return baseOrderData;
-}; 
+};

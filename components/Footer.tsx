@@ -13,7 +13,7 @@ import WhatsAppLink from "./WhatsAppLink";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-gray-900 text-white pb-20">
       <Container>
         {/* Main Footer Content */}
         <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
@@ -39,7 +39,9 @@ const Footer = () => {
                 className="flex items-center gap-3 hover:opacity-80"
               >
                 <MessageCircle className="w-5 h-5 text-green-500" />
-                <span className="text-xl font-semibold">{siteConfig.contact.phone}</span>
+                <span className="text-xl font-semibold">
+                  {siteConfig.contact.phone}
+                </span>
               </WhatsAppLink>
             </div>
             <div className="space-y-3">
@@ -66,49 +68,26 @@ const Footer = () => {
               ))}
             </ul>
           </div>
-
-          {/* Other Links */}
-            {/* <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-gray-300">Other Links</h3>
-              <ul className="space-y-3">
-                <li><Link href="/offers" className="text-gray-400 hover:text-white transition-colors duration-200">Offers</Link></li>
-                <li><Link href="/account" className="text-gray-400 hover:text-white transition-colors duration-200">Membership</Link></li>
-                <li><Link href="/contact" className="text-gray-400 hover:text-white transition-colors duration-200">Support</Link></li>
-                <li><Link href="/blog" className="text-gray-400 hover:text-white transition-colors duration-200">Landing Pages</Link></li>
-              </ul>
-            </div> */}
-
-          {/* Newsletter Section */}
-          {/* <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-300">Newsletter</h3>
-            <p className="text-gray-400 text-sm">
-              Subscribe to our newsletter to receive updates and exclusive offers
-            </p>
-            <form className="space-y-3">
-              <Input 
-                placeholder="Enter your email" 
-                type="email" 
-                required 
-                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400 focus:border-shop_light_green"
-              />
-              <Button className="w-full bg-shop_light_green hover:bg-shop_dark_green">
-                Subscribe
-              </Button>
-            </form>
-          </div> */}
         </div>
 
         {/* Bottom Footer */}
         <div className="py-8 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-gray-400 text-sm">
-              {siteConfig.legal?.copyright || `© ${new Date().getFullYear()} ${siteConfig.name}. All rights reserved.`}
+              {siteConfig.legal?.copyright ||
+                `© ${new Date().getFullYear()} ${siteConfig.name}. All rights reserved.`}
             </div>
             <div className="flex items-center gap-6">
-              <Link href="/terms" className="text-gray-400 hover:text-white text-sm transition-colors duration-200">
+              <Link
+                href="/terms"
+                className="text-gray-400 hover:text-white text-sm transition-colors duration-200"
+              >
                 Terms of Service
               </Link>
-              <Link href="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors duration-200">
+              <Link
+                href="/privacy"
+                className="text-gray-400 hover:text-white text-sm transition-colors duration-200"
+              >
                 Privacy Policy
               </Link>
             </div>

@@ -7,12 +7,11 @@ export async function POST(req: Request) {
   try {
     const session = await auth();
     const user = await currentUser();
-    
+
     if (!session?.userId) {
-      return new NextResponse(
-        JSON.stringify({ error: "Unauthorized" }), 
-        { status: 401 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+      });
     }
 
     // Check if Sanity token is available
@@ -21,7 +20,7 @@ export async function POST(req: Request) {
     } catch (e) {
       console.error("Sanity token error:", e);
       return new NextResponse(
-        JSON.stringify({ error: "Server configuration error" }), 
+        JSON.stringify({ error: "Server configuration error" }),
         { status: 500 }
       );
     }
@@ -32,7 +31,7 @@ export async function POST(req: Request) {
       body = await req.json();
     } catch (e) {
       return new NextResponse(
-        JSON.stringify({ error: "Invalid request body" }), 
+        JSON.stringify({ error: "Invalid request body" }),
         { status: 400 }
       );
     }
@@ -46,20 +45,25 @@ export async function POST(req: Request) {
       couponCode,
       paymentMethod,
       paymentStatus,
-      orderStatus
+      orderStatus,
     } = body;
 
     // Validate required fields
-    if (!items?.length || !customer /* || !shippingAddress */ || totalAmount === undefined || totalAmount === null) {
+    if (
+      !items?.length ||
+      !customer /* || !shippingAddress */ ||
+      totalAmount === undefined ||
+      totalAmount === null
+    ) {
       return new NextResponse(
-        JSON.stringify({ error: "Missing required fields" }), 
+        JSON.stringify({ error: "Missing required fields" }),
         { status: 400 }
       );
     }
 
     // Create order document
     const order = {
-      _type: 'order',
+      _type: "order",
       orderNumber: `ORD-${Date.now()}-${uuidv4().substring(0, 6)}`,
       customer,
       shippingAddress,
@@ -67,35 +71,40 @@ export async function POST(req: Request) {
       totalAmount,
       discountAmount: discountAmount || 0,
       couponCode: couponCode || null,
-      paymentStatus: paymentStatus || 'pending',
-      orderStatus: orderStatus || 'pending',
-      paymentMethod: paymentMethod === 'cod' ? 'cod' : 'phonepe',
+      paymentStatus: paymentStatus || "pending",
+      orderStatus: orderStatus || "pending",
+      paymentMethod:
+        paymentMethod === "cod"
+          ? "cod"
+          : paymentMethod === "razorpay"
+            ? "razorpay"
+            : "phonepe",
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     try {
       const result = await backendClient.create(order);
-      return NextResponse.json({ 
-        success: true, 
-        orderId: result._id 
+      return NextResponse.json({
+        success: true,
+        orderId: result._id,
       });
     } catch (e: any) {
       console.error("Sanity error:", e);
       return new NextResponse(
-        JSON.stringify({ 
-          error: "Database error: " + (e.message || "Failed to create order")
-        }), 
+        JSON.stringify({
+          error: "Database error: " + (e.message || "Failed to create order"),
+        }),
         { status: 500 }
       );
     }
   } catch (error: any) {
     console.error("Error creating order:", error);
     return new NextResponse(
-      JSON.stringify({ 
-        error: error.message || "Failed to create order" 
-      }), 
+      JSON.stringify({
+        error: error.message || "Failed to create order",
+      }),
       { status: 500 }
     );
   }
-} 
+}

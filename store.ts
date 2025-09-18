@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 
 export interface CartItem {
   product: Product;
+  quantity?: number;
+  size?: string;
 }
 
 interface StoreState {
@@ -53,16 +55,22 @@ const useStore = create<StoreState>()(
       isCartPopupVisible: false,
       setHydrated: (state: boolean) => set({ isHydrated: state }),
       setGlobalMuted: (muted: boolean) => set({ globalMuted: muted }),
-      setCartPopupVisible: (visible: boolean) => set({ isCartPopupVisible: visible }),
+      setCartPopupVisible: (visible: boolean) =>
+        set({ isCartPopupVisible: visible }),
       isUserAuthenticated: async () => {
         try {
           // Make a request to an API endpoint that requires authentication
-          const response = await fetch('/api/auth-check');
+          const response = await fetch("/api/auth-check");
           const isAuthenticated = response.status === 200;
-          console.log("Auth check result:", isAuthenticated, "Status:", response.status);
+          console.log(
+            "Auth check result:",
+            isAuthenticated,
+            "Status:",
+            response.status
+          );
           return isAuthenticated;
         } catch (error) {
-          console.error('Error checking authentication status:', error);
+          console.error("Error checking authentication status:", error);
           return false;
         }
       },
@@ -73,7 +81,7 @@ const useStore = create<StoreState>()(
           const existingItem = state.items.find(
             (item) => item.product._id === product._id
           );
-          
+
           if (existingItem) {
             // Item already exists, show message
             toast.success("Product already in cart");
@@ -81,78 +89,94 @@ const useStore = create<StoreState>()(
           } else {
             // New item being added
             toast.success(`${product?.name?.substring(0, 12)} added to cart`);
-            return { 
-              items: [...state.items, { 
-                product
-              }] 
+            return {
+              items: [
+                ...state.items,
+                {
+                  product,
+                  quantity: 1,
+                  size: undefined,
+                },
+              ],
             };
           }
         });
-        
+
         // Show cart popup when item is added
         set({ isCartPopupVisible: true });
-        
+
         // Sync with server in the background
-        get().syncCartWithServer().catch(error => {
-          console.error("Failed to sync cart after adding item:", error);
-        });
+        get()
+          .syncCartWithServer()
+          .catch((error) => {
+            console.error("Failed to sync cart after adding item:", error);
+          });
       },
       removeItem: (productId) => {
         // Update local state immediately for instant UI feedback
         set((state) => {
           const itemToRemove = state.items.find(
-            item => item.product._id === productId
+            (item) => item.product._id === productId
           );
-          
+
           if (itemToRemove) {
-            toast.success(`${itemToRemove.product.name?.substring(0, 12)} removed`);
+            toast.success(
+              `${itemToRemove.product.name?.substring(0, 12)} removed`
+            );
           }
-          
+
           return {
-            items: state.items.filter(item => item.product._id !== productId),
+            items: state.items.filter((item) => item.product._id !== productId),
           };
         });
-        
+
         // Sync with server in the background
-        get().syncCartWithServer().catch(error => {
-          console.error("Failed to sync cart after removing item:", error);
-        });
+        get()
+          .syncCartWithServer()
+          .catch((error) => {
+            console.error("Failed to sync cart after removing item:", error);
+          });
       },
       deleteCartProduct: (productId) => {
         // Update local state immediately for instant UI feedback
         set((state) => {
           const itemToDelete = state.items.find(
-            item => item.product._id === productId
+            (item) => item.product._id === productId
           );
-          
+
           if (itemToDelete) {
-            toast.success(`${itemToDelete.product.name?.substring(0, 12)} removed from cart`);
+            toast.success(
+              `${itemToDelete.product.name?.substring(0, 12)} removed from cart`
+            );
           }
-          
+
           return {
-            items: state.items.filter(
-              (item) => item.product._id !== productId
-            ),
+            items: state.items.filter((item) => item.product._id !== productId),
           };
         });
-        
+
         // Sync with server in the background
-        get().syncCartWithServer().catch(error => {
-          console.error("Failed to sync cart after deleting product:", error);
-        });
+        get()
+          .syncCartWithServer()
+          .catch((error) => {
+            console.error("Failed to sync cart after deleting product:", error);
+          });
       },
       resetCart: () => {
         // Update local state immediately for instant UI feedback
         set({ items: [], isCartPopupVisible: false });
-        
+
         // Sync with server in the background
-        get().syncCartWithServer().catch(error => {
-          console.error("Failed to sync cart after reset:", error);
-        });
+        get()
+          .syncCartWithServer()
+          .catch((error) => {
+            console.error("Failed to sync cart after reset:", error);
+          });
       },
       getTotalPrice: () => {
         return get().items.reduce(
-          (total, item) => total + (item.product.price ?? 0),
+          (total, item) =>
+            total + (item.product.price ?? 0) * (item.quantity ?? 1),
           0
         );
       },
@@ -161,11 +185,14 @@ const useStore = create<StoreState>()(
           const price = item.product.price ?? 0;
           const discount = ((item.product.discount ?? 0) * price) / 100;
           const discountedPrice = price + discount;
-          return total + discountedPrice;
+          return total + discountedPrice * (item.quantity ?? 1);
         }, 0);
       },
       getItemCount: () => {
-        return get().items.length;
+        return get().items.reduce(
+          (total, item) => total + (item.quantity ?? 1),
+          0
+        );
       },
       getGroupedItems: () => {
         // Return items directly
@@ -179,30 +206,32 @@ const useStore = create<StoreState>()(
             console.log("User not authenticated, skipping cart sync");
             return { success: false, reason: "not_authenticated" };
           }
-          
+
           const items = get().items;
           console.log("Syncing cart with server...", items.length, "items");
-          
-          const response = await fetch('/api/user-cart', {
-            method: 'POST',
+
+          const response = await fetch("/api/user-cart", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
-              'Cache-Control': 'no-cache',
+              "Content-Type": "application/json",
+              "Cache-Control": "no-cache",
             },
             body: JSON.stringify({ items }),
           });
-          
+
           if (response.status === 401) {
             console.log("User not authenticated, skipping cart sync");
             return { success: false, reason: "not_authenticated" };
           }
-          
+
           if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+            const errorData = await response
+              .json()
+              .catch(() => ({ error: "Unknown error" }));
             console.error("Error syncing cart with server:", errorData);
             throw new Error(errorData.error || "Failed to sync cart");
           }
-          
+
           const data = await response.json();
           console.log("Cart sync successful:", data);
           return data;
@@ -219,38 +248,48 @@ const useStore = create<StoreState>()(
             console.log("User not authenticated, skipping cart load");
             return { success: false, reason: "not_authenticated" };
           }
-          
+
           console.log("Loading cart data from server...");
-          const response = await fetch('/api/user-cart', {
+          const response = await fetch("/api/user-cart", {
             headers: {
-              'Cache-Control': 'no-cache',
-            }
+              "Cache-Control": "no-cache",
+            },
           });
-          
+
           if (response.status === 401) {
             console.log("User not authenticated, skipping cart load");
             return { success: false, reason: "not_authenticated" };
           }
-          
+
           if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+            const errorData = await response
+              .json()
+              .catch(() => ({ error: "Unknown error" }));
             console.error("Error loading cart from server:", errorData);
             throw new Error(errorData.error || "Failed to load cart data");
           }
-          
+
           const data = await response.json();
           console.log("Cart data received:", data);
-          
+
           if (data.items && Array.isArray(data.items)) {
             // Filter out any items with missing product data
-            const validItems = data.items.filter((item: CartItem) => item.product && item.product._id);
-            
+            const validItems = data.items.filter(
+              (item: CartItem) => item.product && item.product._id
+            );
+
             if (validItems.length !== data.items.length) {
-              console.warn(`Filtered out ${data.items.length - validItems.length} invalid cart items`);
+              console.warn(
+                `Filtered out ${data.items.length - validItems.length} invalid cart items`
+              );
             }
-            
+
             set({ items: validItems });
-            console.log("Cart updated in store with", validItems.length, "items");
+            console.log(
+              "Cart updated in store with",
+              validItems.length,
+              "items"
+            );
             return validItems;
           } else {
             console.error("Invalid cart data format:", data);
@@ -266,37 +305,35 @@ const useStore = create<StoreState>()(
         // The component will handle the auth flow with SignInButton
         const isAuthenticated = await get().isUserAuthenticated();
         console.log("addToFavorite - isAuthenticated:", isAuthenticated);
-        
+
         if (!isAuthenticated) {
           console.log("User not authenticated, returning false");
           return false;
         }
-        
+
         // First update local state for immediate UI feedback
         let isAdded = false;
-        
+
         set((state: StoreState) => {
           const isFavorite = state.favoriteProduct.some(
             (item) => item._id === product._id
           );
-          
+
           isAdded = !isFavorite;
-          
+
           const newFavorites = isFavorite
-            ? state.favoriteProduct.filter(
-                (item) => item._id !== product._id
-              )
+            ? state.favoriteProduct.filter((item) => item._id !== product._id)
             : [...state.favoriteProduct, { ...product }];
-            
+
           return {
-            favoriteProduct: newFavorites
+            favoriteProduct: newFavorites,
           };
         });
-        
+
         // Sync with server
         try {
           await get().syncWishlistWithServer();
-         
+
           return true;
         } catch (error) {
           console.error("Error updating wishlist:", error);
@@ -306,37 +343,40 @@ const useStore = create<StoreState>()(
       },
       removeFromFavorite: (productId: string) => {
         // Check if user is authenticated first
-        get().isUserAuthenticated().then(isAuthenticated => {
-          if (!isAuthenticated) {
-            return false;
-          }
-          
-          set((state: StoreState) => ({
-            favoriteProduct: state.favoriteProduct.filter(
-              (item) => item?._id !== productId
-            ),
-          }));
-          
-          // Sync with server immediately
-          setTimeout(() => {
-            get().syncWishlistWithServer().then(() => {
-              toast.success("Removed from your wishlist");
-            });
-          }, 0);
-          
-          return true;
-        });
-        
+        get()
+          .isUserAuthenticated()
+          .then((isAuthenticated) => {
+            if (!isAuthenticated) {
+              return false;
+            }
+
+            set((state: StoreState) => ({
+              favoriteProduct: state.favoriteProduct.filter(
+                (item) => item?._id !== productId
+              ),
+            }));
+
+            // Sync with server immediately
+            setTimeout(() => {
+              get()
+                .syncWishlistWithServer()
+                .then(() => {
+                  toast.success("Removed from your wishlist");
+                });
+            }, 0);
+
+            return true;
+          });
+
         return false;
       },
       resetFavorite: () => {
         set({ favoriteProduct: [] });
-        
+
         // Sync with server
         setTimeout(() => {
           get().syncWishlistWithServer();
         }, 0);
-        
       },
       syncWishlistWithServer: async () => {
         try {
@@ -346,29 +386,31 @@ const useStore = create<StoreState>()(
             console.log("User not authenticated, skipping wishlist sync");
             return { success: false, reason: "not_authenticated" };
           }
-          
+
           const favoriteProducts = get().favoriteProduct;
-          console.log(`Syncing wishlist with server... ${favoriteProducts.length} items`);
-          
-          const response = await fetch('/api/user-wishlist', {
-            method: 'POST',
+          console.log(
+            `Syncing wishlist with server... ${favoriteProducts.length} items`
+          );
+
+          const response = await fetch("/api/user-wishlist", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({ items: favoriteProducts }),
           });
-          
+
           if (response.status === 401) {
             console.log("User not authenticated, skipping wishlist sync");
             return { success: false, reason: "not_authenticated" };
           }
-          
+
           if (!response.ok) {
             const errorData = await response.json();
             console.error("Error syncing wishlist with server:", errorData);
             throw new Error(errorData.error || "Failed to sync wishlist");
           }
-          
+
           const data = await response.json();
           console.log("Wishlist sync response:", data);
           return data;
@@ -385,22 +427,26 @@ const useStore = create<StoreState>()(
             console.log("User not authenticated, skipping wishlist load");
             return { success: false, reason: "not_authenticated" };
           }
-          
+
           console.log("Loading wishlist from server...");
-          const response = await fetch('/api/user-wishlist');
-          
+          const response = await fetch("/api/user-wishlist");
+
           if (response.status === 401) {
             console.log("User not authenticated, skipping wishlist load");
             return { success: false, reason: "not_authenticated" };
           }
-          
+
           if (response.ok) {
             const data = await response.json();
             console.log("Wishlist data received:", data);
-            
+
             if (data.favoriteProduct && Array.isArray(data.favoriteProduct)) {
               set({ favoriteProduct: data.favoriteProduct });
-              console.log("Wishlist updated in store with", data.favoriteProduct.length, "items");
+              console.log(
+                "Wishlist updated in store with",
+                data.favoriteProduct.length,
+                "items"
+              );
               return data.favoriteProduct;
             } else {
               console.error("Invalid wishlist data format:", data);
@@ -424,62 +470,62 @@ const useStore = create<StoreState>()(
           toast.error("Please sign in to like reels");
           return false;
         }
-        
+
         // First update local state for immediate UI feedback
         let isNowLiked = false;
         set((state) => {
           const isCurrentlyLiked = state.likedReels.includes(reelId);
           isNowLiked = !isCurrentlyLiked;
-          
+
           return {
             likedReels: isCurrentlyLiked
-              ? state.likedReels.filter(id => id !== reelId)
-              : [...state.likedReels, reelId]
+              ? state.likedReels.filter((id) => id !== reelId)
+              : [...state.likedReels, reelId],
           };
         });
-        
+
         try {
           // Then update the backend
-          const response = await fetch('/api/reel-like', {
-            method: 'POST',
+          const response = await fetch("/api/reel-like", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({ reelId }),
           });
-          
+
           if (!response.ok) {
             // If backend update fails, revert the local state
             set((state) => ({
               likedReels: isNowLiked
-                ? state.likedReels.filter(id => id !== reelId)
-                : [...state.likedReels, reelId]
+                ? state.likedReels.filter((id) => id !== reelId)
+                : [...state.likedReels, reelId],
             }));
-            
+
             // Parse error details
             const errorData = await response.json();
             if (errorData && errorData.error) {
               throw new Error(errorData.error);
             }
-            
+
             return false;
           }
-          
+
           // Show success message only when liking (not unliking)
           if (isNowLiked) {
             toast.success("Added to your likes");
           } else {
             toast.success("Removed from your likes");
           }
-          
+
           return true;
         } catch (error) {
           console.error("Error toggling reel like:", error);
           // Revert local state on error
           set((state) => ({
             likedReels: isNowLiked
-              ? state.likedReels.filter(id => id !== reelId)
-              : [...state.likedReels, reelId]
+              ? state.likedReels.filter((id) => id !== reelId)
+              : [...state.likedReels, reelId],
           }));
           throw error; // Re-throw to allow component to handle it
         }

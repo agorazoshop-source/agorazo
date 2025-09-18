@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Container from "@/components/Container";
@@ -15,8 +15,9 @@ import useStore, { CartItem } from "@/store";
 import PriceFormatter from "@/components/PriceFormatter";
 import CheckoutSkeleton from "@/components/skeletons/CheckoutSkeleton";
 import { client } from "@/sanity/lib/client";
-import imageUrlBuilder from '@sanity/image-url'
+import imageUrlBuilder from "@sanity/image-url";
 import { generateOrderData } from "@/lib/utils/orderUtils";
+import RazorpayPayment from "@/components/RazorpayPayment";
 
 const builder = imageUrlBuilder(client);
 
@@ -24,29 +25,36 @@ function urlFor(source: any) {
   return builder.image(source);
 }
 
-type PaymentMethod = 'cod' | 'prepaid';
+type PaymentMethod = "cod" | "prepaid" | "razorpay";
 
 interface AppliedCoupon {
   code: string;
   discount: number;
-  type: 'percentage' | 'fixed';
+  type: "percentage" | "fixed";
   value: number;
 }
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { user, isLoaded } = useUser();
-  const groupedItems = useStore((state) => state.getGroupedItems()) as CartItem[];
+  const groupedItems = useStore((state) =>
+    state.getGroupedItems()
+  ) as CartItem[];
   const isEmpty = useStore((state) => state.items.length === 0);
   const subtotal = useStore((state) => state.getTotalPrice());
-  const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(null);
+  const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(
+    null
+  );
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('prepaid');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("razorpay");
   const resetCart = useStore((state) => state.resetCart);
   const [couponCode, setCouponCode] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(
+    null
+  );
   const [isCouponLoading, setIsCouponLoading] = useState(false);
+  const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     // Redirect to cart if cart is empty
@@ -54,11 +62,6 @@ export default function CheckoutPage() {
       router.push("/cart");
     }
   }, [isLoaded, isEmpty, router]);
-
-  const handleSelectAddress = (address: UserAddress | null) => {
-    setSelectedAddress(address);
-    setError(null); // Clear any previous errors
-  };
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
@@ -75,16 +78,16 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           code: couponCode,
           cartAmount: subtotal,
-          items: groupedItems.map(item => ({
+          items: groupedItems.map((item) => ({
             ...item,
             product: {
               ...item.product,
               category: item.product.categories?.[0] || {
                 _ref: "",
-                _type: "reference"
-              }
-            }
-          }))
+                _type: "reference",
+              },
+            },
+          })),
         }),
       });
 
@@ -113,6 +116,78 @@ export default function CheckoutPage() {
     setError(null);
   };
 
+  const createOrderForPayment = async () => {
+    console.log("🔄 Creating order for payment...");
+    if (!user) {
+      console.log("❌ User not authenticated");
+      setError("User not authenticated");
+      return null;
+    }
+
+    try {
+      const orderPayload = generateOrderData({
+        user,
+        selectedAddress,
+        groupedItems,
+        subtotal,
+        appliedCoupon,
+        paymentMethod: "razorpay",
+      });
+
+      console.log("📦 Order payload:", orderPayload);
+
+      const orderResponse = await fetch("/api/orders/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderPayload),
+      });
+
+      console.log("📡 Order response status:", orderResponse.status);
+      const orderResult = await orderResponse.json();
+      console.log("📋 Order result:", orderResult);
+
+      if (!orderResponse.ok) {
+        console.log("❌ Order creation failed:", orderResult);
+        throw new Error(orderResult.error || "Failed to create order");
+      }
+
+      if (!orderResult.success || !orderResult.orderId) {
+        console.log("❌ Invalid order response:", orderResult);
+        throw new Error("Invalid order response");
+      }
+
+      console.log("✅ Order created successfully:", orderResult.orderId);
+      return orderResult.orderId;
+    } catch (error: any) {
+      console.error("Error creating order:", error);
+      setError(error.message || "Failed to create order");
+      return null;
+    }
+  };
+
+  const handleRazorpaySuccess = async (paymentId: string) => {
+    try {
+      // Clear cart and redirect to success page
+      resetCart();
+      toast.success("Payment successful! Order confirmed.");
+      router.push(
+        `/success?order_id=${createdOrderId}&payment_method=razorpay&payment_id=${paymentId}`
+      );
+    } catch (error: any) {
+      console.error("Error handling payment success:", error);
+      setError(
+        "Payment successful but there was an error processing your order. Please contact support."
+      );
+    }
+  };
+
+  const handleRazorpayError = (error: string) => {
+    setError(error);
+    setIsProcessing(false);
+  };
+
   const createCodOrder = async () => {
     // if (!selectedAddress) {
     //   setError("Please select a delivery address");
@@ -131,32 +206,92 @@ export default function CheckoutPage() {
         groupedItems,
         subtotal,
         appliedCoupon,
-        paymentMethod: 'cod'
+        paymentMethod: "cod",
       });
 
-      const response = await fetch('/api/orders/cod', {
-        method: 'POST',
+      const response = await fetch("/api/orders/cod", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(orderData),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create COD order');
+        throw new Error("Failed to create COD order");
       }
 
       const { orderId } = await response.json();
       resetCart();
       router.push(`/success?order_id=${orderId}&payment_method=cod`);
     } catch (error) {
-      console.error('Error creating COD order:', error);
+      console.error("Error creating COD order:", error);
       setError("Failed to create order. Please try again.");
       setIsProcessing(false);
     }
   };
 
   const handleCheckout = async () => {
+    if (!user) {
+      router.push("/sign-in");
+      return;
+    }
+
+    setIsProcessing(true);
+    setError(null);
+
+    try {
+      // For zero amount orders, handle directly
+      if (finalAmount === 0) {
+        const orderId = await createOrderForPayment();
+        if (orderId) {
+          // Update order status to success for zero amount
+          const updateResponse = await fetch(`/api/orders/update/${orderId}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              paymentStatus: "paid",
+              orderStatus: "confirmed",
+            }),
+          });
+
+          if (updateResponse.ok) {
+            resetCart();
+            toast.success("Order confirmed successfully!");
+            router.push(`/success?order_id=${orderId}&payment_method=razorpay`);
+          } else {
+            throw new Error("Failed to update order status");
+          }
+        }
+        return;
+      }
+
+      // For non-zero amount, create order and set it for Razorpay payment
+      const orderId = await createOrderForPayment();
+      if (orderId) {
+        // console.log("✅ Order created, setting createdOrderId:", orderId);
+        setCreatedOrderId(orderId);
+        setIsProcessing(false); // Reset processing state so RazorpayPayment can be clicked
+        // console.log(
+        //   "🔄 Processing state reset, RazorpayPayment should be clickable now"
+        // );
+        // The RazorpayPayment component will handle the payment
+      }
+    } catch (error: any) {
+      console.error("Checkout error:", error);
+      setError(
+        error.message ||
+          "An error occurred while processing your order. Please try again."
+      );
+      setIsProcessing(false);
+    }
+  };
+
+  // Commented out PhonePe integration - keeping for reference
+  /*
+  const handleCheckoutPhonePe = async () => {
     // if (!selectedAddress) {
     //   setError("Please select a delivery address");
     //   return;
@@ -269,6 +404,7 @@ export default function CheckoutPage() {
       setIsProcessing(false);
     }
   };
+  */
 
   if (!isLoaded || isEmpty) {
     return (
@@ -306,22 +442,30 @@ export default function CheckoutPage() {
               <h2 className="text-xl font-semibold mb-4">Payment Method</h2>
               <div className="space-y-3">
                 <button
-                  onClick={() => setPaymentMethod('prepaid')}
+                  onClick={() => setPaymentMethod("razorpay")}
                   className={`w-full flex items-center justify-between p-4 rounded-lg border ${
-                    paymentMethod === 'prepaid' 
-                      ? 'border-shop_dark_green bg-shop_dark_green/5' 
-                      : 'border-gray-200'
+                    paymentMethod === "razorpay"
+                      ? "border-shop_dark_green bg-shop_dark_green/5"
+                      : "border-gray-200"
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <CreditCard className={paymentMethod === 'prepaid' ? 'text-shop_dark_green' : 'text-gray-500'} />
+                    <CreditCard
+                      className={
+                        paymentMethod === "razorpay"
+                          ? "text-shop_dark_green"
+                          : "text-gray-500"
+                      }
+                    />
                     <div className="text-left">
-                      <p className="font-medium">Pay Online</p>
-                      <p className="text-sm text-gray-500">Pay securely with credit/debit card</p>
+                      <p className="font-medium">Pay Online (Razorpay)</p>
+                      <p className="text-sm text-gray-500">
+                        Pay securely with credit/debit card, UPI, net banking
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center justify-center w-6 h-6 border-2 rounded-full border-gray-300">
-                    {paymentMethod === 'prepaid' && (
+                    {paymentMethod === "razorpay" && (
                       <div className="w-3 h-3 bg-shop_dark_green rounded-full" />
                     )}
                   </div>
@@ -357,7 +501,7 @@ export default function CheckoutPage() {
           <div className="lg:col-span-1">
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h3 className="text-lg font-medium mb-4">Order Summary</h3>
-              
+
               <div className="space-y-4 mb-6">
                 {groupedItems.map((item: CartItem, index: number) => (
                   <div key={index} className="flex gap-4">
@@ -375,13 +519,9 @@ export default function CheckoutPage() {
                       <div className="flex justify-between">
                         <div>
                           <h4 className="font-medium">{item.product.name}</h4>
-                          <p className="text-sm text-gray-500">
-                            Qty: {item.quantity}
-                            {item.size && ` • Size: ${item.size}`}
-                          </p>
                         </div>
-                        <PriceFormatter 
-                          amount={(item.product.price || 0) * item.quantity} 
+                        <PriceFormatter
+                          amount={item.product.price || 0}
                           className="font-medium"
                         />
                       </div>
@@ -405,20 +545,18 @@ export default function CheckoutPage() {
                         onChange={(e) => setCouponCode(e.target.value)}
                         className="flex-1"
                       />
-                      <Button 
+                      <Button
                         onClick={handleApplyCoupon}
                         disabled={isCouponLoading || !couponCode.trim()}
                       >
                         {isCouponLoading ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
-                          'Apply'
+                          "Apply"
                         )}
                       </Button>
                     </div>
-                    {error && (
-                      <p className="text-sm text-red-500">{error}</p>
-                    )}
+                    {error && <p className="text-sm text-red-500">{error}</p>}
                   </div>
                 ) : (
                   <div className="flex items-center justify-between bg-green-50 p-2 rounded-md">
@@ -428,10 +566,9 @@ export default function CheckoutPage() {
                         {appliedCoupon.code}
                       </p>
                       <p className="text-sm text-green-600">
-                        {appliedCoupon.type === 'percentage' 
+                        {appliedCoupon.type === "percentage"
                           ? `${appliedCoupon.value}% off`
-                          : `₹${appliedCoupon.value} off`
-                        }
+                          : `₹${appliedCoupon.value} off`}
                       </p>
                     </div>
                     <button
@@ -449,11 +586,13 @@ export default function CheckoutPage() {
                   <span>Subtotal</span>
                   <PriceFormatter amount={subtotal} />
                 </div>
-                
+
                 {appliedCoupon && (
                   <div className="flex justify-between text-green-600">
                     <span>Discount</span>
-                    <span>-<PriceFormatter amount={appliedCoupon.discount} /></span>
+                    <span>
+                      -<PriceFormatter amount={appliedCoupon.discount} />
+                    </span>
                   </div>
                 )}
 
@@ -468,21 +607,43 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              <Button 
-                className="w-full mt-6" 
-                size="lg"
-                onClick={handleCheckout}
-                disabled={isProcessing /* || !selectedAddress */}
-              >
-                {isProcessing ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  paymentMethod === 'cod' ? 'Place Order' : 'Proceed to Payment'
-                )}
-              </Button>
+              {paymentMethod === "razorpay" && createdOrderId ? (
+                <RazorpayPayment
+                  amount={finalAmount}
+                  orderId={createdOrderId}
+                  onSuccess={handleRazorpaySuccess}
+                  onError={handleRazorpayError}
+                  disabled={isProcessing}
+                  className="w-full mt-6"
+                >
+                  {isProcessing ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Preparing Razorpay...
+                    </>
+                  ) : (
+                    "Opening Razorpay..."
+                  )}
+                </RazorpayPayment>
+              ) : (
+                <Button
+                  className="w-full mt-6"
+                  size="lg"
+                  onClick={handleCheckout}
+                  disabled={isProcessing /* || !selectedAddress */}
+                >
+                  {isProcessing ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : paymentMethod === "cod" ? (
+                    "Place Order"
+                  ) : (
+                    "Proceed to Payment"
+                  )}
+                </Button>
+              )}
 
               {/* {!selectedAddress && (
                 <p className="text-sm text-gray-500 mt-3 text-center">
@@ -491,7 +652,8 @@ export default function CheckoutPage() {
               )} */}
 
               <p className="text-xs text-gray-500 mt-4 text-center">
-                By proceeding, you agree to our Terms of Service and Privacy Policy
+                By proceeding, you agree to our Terms of Service and Privacy
+                Policy
               </p>
             </div>
           </div>
