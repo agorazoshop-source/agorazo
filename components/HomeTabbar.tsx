@@ -39,20 +39,8 @@ const HomeTabbar = ({ selectedTab, onTabSelect }: Props) => {
 
         const data = await client.fetch(query);
 
-        // Sort categories by title
-        const sortedCategories = data.sort(
-          (a: CategoryItem, b: CategoryItem) => {
-            return a.title.localeCompare(b.title);
-          }
-        );
-
-        setCategories(sortedCategories);
-
-        // If there are categories and no tab is selected, select the first one
-        if (sortedCategories.length > 0 && !selectedTab) {
-          console.log("Setting initial tab to:", sortedCategories[0].title);
-          onTabSelect(sortedCategories[0].title);
-        }
+        // Categories are already ordered by creation date from the query
+        setCategories(data);
       } catch (error) {
         console.error("Error loading categories:", error);
       } finally {
@@ -67,9 +55,10 @@ const HomeTabbar = ({ selectedTab, onTabSelect }: Props) => {
   const placeholderWidths = [100, 120, 90, 110, 95];
 
   return (
-    <div className="w-full overflow-x-auto scrollbar-hide">
-      <div className="flex items-center gap-2 md:gap-3 pb-1 justify-between min-w-max">
-        <div className="flex items-center gap-2 md:gap-3">
+    <div className="w-full">
+      {/* Categories */}
+      <div className="w-full overflow-x-auto scrollbar-hide">
+        <div className="flex items-center gap-2 md:gap-3 pb-1 min-w-max">
           {isLoading
             ? // Loading placeholders with fixed widths
               placeholderWidths.map((width, index) => (
@@ -86,44 +75,47 @@ const HomeTabbar = ({ selectedTab, onTabSelect }: Props) => {
                     <button
                       onClick={() => onTabSelect(item.title)}
                       key={item._id}
-                      className={`border-2 p-2 rounded-xl transition-all duration-300 transform hover:scale-105 flex flex-col items-center gap-2 min-w-[100px] shadow-md hover:shadow-lg ${
+                      className={`rounded-2xl transition-all duration-300 flex flex-col items-center gap-3 p-4 min-w-[140px]  ${
                         isSelected
-                          ? "border-shop_dark_green bg-shop_light_green/10"
-                          : "border-gray-200 bg-white hover:border-shop_light_green"
+                          ? "border-2 border-shop_light_green"
+                          : "border-2 border-transparent hover:border-gray-200 bg-gray-100"
                       }`}
                     >
-                      <div className="relative w-28 h-28">
-                        {item.image ? (
+                      <div className="relative w-20 h-20">
+                        {item.image &&
+                        item.image.asset &&
+                        !item.image._upload ? (
                           <Image
                             src={urlFor(item.image).url()}
                             alt={item.title}
                             fill
-                            className="object-cover rounded-lg"
+                            className="object-cover rounded-xl"
+                            onError={(e) => {
+                              e.currentTarget.src = "/digital.png";
+                            }}
                           />
                         ) : (
-                          <div className="w-full h-full bg-shop_light_green rounded-full flex items-center justify-center">
-                            <span className="text-white font-bold text-xs">
-                              {item.title.charAt(0).toUpperCase()}
-                            </span>
-                          </div>
+                          <Image
+                            src="/digital.png"
+                            alt={item.title}
+                            fill
+                            className="object-cover rounded-xl"
+                          />
                         )}
                       </div>
-                      <span className="text-xs font-medium text-center text-gray-700">
-                        {item.title}
-                      </span>
+                      <div className="text-center">
+                        <div className="text-sm font-bold text-gray-800 mb-1">
+                          {item.title}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {item.productCount || 0} products
+                        </div>
+                      </div>
                     </button>
                   );
                 })
               : null}
         </div>
-        <Link
-          href={"/products"}
-          className="border-2 p-2 rounded-xl flex flex-col items-center gap-2 min-w-[100px] border-green-200 bg-white hover:border-shop_light_green mr-1"
-        >
-          <span className="text-xs font-medium text-center text-gray-700">
-            View All
-          </span>
-        </Link>
       </div>
     </div>
   );

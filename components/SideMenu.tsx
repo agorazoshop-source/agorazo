@@ -16,13 +16,13 @@ const SideMenu: FC<SidebarProps> = ({ isOpen, onClose }) => {
   const sidebarRef = useOutsideClick<HTMLDivElement>(onClose);
   return (
     <div
-      className={`fixed inset-y-0 h-screen left-0 z-50 w-full bg-black/50 text-white/70 shadow-xl ${
-        isOpen ? "translate-x-0" : "-translate-x-full"
+      className={`fixed inset-y-0 h-screen right-0 z-50 w-full bg-black/50 text-white/70 shadow-xl ${
+        isOpen ? "translate-x-0" : "translate-x-full"
       } hoverEffect`}
     >
       <div
         ref={sidebarRef}
-        className="min-w-72 max-w-76 bg-black/50 backdrop-blur-sm h-screen p-10 border-r border-r-shop_light_green flex flex-col gap-6"
+        className="min-w-72 max-w-76 bg-black/50 backdrop-blur-sm h-screen p-10 border-l border-l-shop_light_green flex flex-col gap-6 ml-auto"
       >
         <div className="flex items-center justify-between gap-5">
           <Logo className="text-white" spanDesign="group-hover:text-white" />

@@ -30,13 +30,14 @@ const Home = async () => {
         <ProductGrid products={products} />
 
         {/* Dynamic Home Sections */}
-        {homeSections.map((section: any) => (
+        {homeSections.map((section: any, index: number) => (
           <HomeSection
             key={section._id}
             title={section.title}
             subtitle={section.subtitle}
             products={section.products}
             maxProducts={section.maxProducts}
+            sectionIndex={index}
           />
         ))}
       </Container>

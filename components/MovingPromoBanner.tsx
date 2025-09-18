@@ -20,7 +20,7 @@ const MovingPromoBanner: React.FC<MovingPromoBannerProps> = ({
   autoHide,
   icon = "emoji",
 }) => {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState<boolean>(true);
 
   // Auto hide functionality
   useEffect(() => {
@@ -35,15 +35,19 @@ const MovingPromoBanner: React.FC<MovingPromoBannerProps> = ({
 
   // Check if banner was previously dismissed (localStorage)
   useEffect(() => {
-    const dismissed = localStorage.getItem("promo-banner-dismissed");
-    if (dismissed === "true") {
-      setIsVisible(false);
+    if (typeof window !== "undefined") {
+      const dismissed = localStorage.getItem("promo-banner-dismissed");
+      if (dismissed === "true") {
+        setIsVisible(false);
+      }
     }
   }, []);
 
   const handleClose = () => {
     setIsVisible(false);
-    localStorage.setItem("promo-banner-dismissed", "true");
+    if (typeof window !== "undefined") {
+      localStorage.setItem("promo-banner-dismissed", "true");
+    }
   };
 
   if (!isVisible) return null;

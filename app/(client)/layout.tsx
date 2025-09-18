@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartPopup from "@/components/CartPopup";
+import MobileBottomNav from "@/components/MobileBottomNav";
 import { ClerkProvider } from "@clerk/nextjs";
 import StoreInitializer from "@/components/StoreInitializer";
 import { siteConfig } from "@/constants/data";
@@ -36,9 +37,10 @@ export default function RootLayout({
       <div className="flex flex-col min-h-screen">
         <StoreInitializer />
         <Header />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 pb-16 md:pb-0">{children}</main>
         <Footer />
         <CartPopup />
+        <MobileBottomNav />
       </div>
     </ClerkProvider>
   );

@@ -48,7 +48,7 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
   };
 
   return (
-    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-[100] max-h-96 overflow-y-auto">
       {loading ? (
         <div className="p-4 text-center">
           <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-shop_light_green"></div>

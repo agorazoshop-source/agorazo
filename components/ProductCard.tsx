@@ -27,9 +27,13 @@ const ProductCard = ({ product }: { product: Product }) => {
     if (isProductInCart) {
       return (
         <Button
-          onClick={() => router.push("/cart")}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            router.push("/cart");
+          }}
           className={cn(
-            "w-36 rounded-full mt-4 bg-shop_light_green text-white hover:bg-shop_dark_green transition-colors"
+            "w-36 rounded-full mt-2 bg-shop_light_green text-white hover:bg-shop_dark_green transition-colors"
           )}
         >
           <ShoppingBag className="mr-2" /> View Cart
@@ -37,83 +41,92 @@ const ProductCard = ({ product }: { product: Product }) => {
       );
     } else {
       return (
-        <AddToCartButton product={product} className="w-36 rounded-full mt-4" />
+        <div onClick={(e) => e.stopPropagation()}>
+          <AddToCartButton
+            product={product}
+            className="w-36 rounded-full mt-2"
+          />
+        </div>
       );
     }
   };
 
   return (
-    <div className="text-sm border-[1px] rounded-md border-darkBlue/20 group bg-white">
-      <div className="relative group overflow-hidden bg-shop_light_bg">
-        {product?.images && (
-          <Link href={`/product/${product?.slug?.current}`}>
+    <Link href={`/product/${product?.slug?.current}`} className="block">
+      <div className="text-sm border-[1px] rounded-md border-darkBlue/20 group bg-white hover:shadow-md transition-shadow">
+        <div className="relative group overflow-hidden bg-shop_light_bg">
+          {product?.images && (
             <Image
               src={urlFor(product.images[0]).url()}
               alt="productImage"
               width={500}
               height={500}
               priority
-              className={`w-full h-64 object-contain overflow-hidden transition-transform bg-shop_light_bg duration-500 `}
+              className={`w-full h-40 sm:h-44 md:h-48 object-cover overflow-hidden transition-transform rounded-t-md bg-shop_light_bg duration-500 `}
             />
-          </Link>
-        )}
-        <ProductSideMenu product={product} />
+          )}
+          <ProductSideMenu product={product} />
 
-        {/* Status Indicators */}
-        {product?.status === "sale" ? (
-          <div className="absolute top-2 left-2 z-10 flex items-center">
-            <div className="relative">
-              <div className="absolute inset-0 bg-red-500 rounded-full blur-[1px] opacity-20 animate-pulse"></div>
-              <div className="relative border border-red-500/70 bg-red-500/70  p-1 rounded-full group-hover:border-red-500 hover:bg-red-500/30 transition-all duration-300">
-                <Percent
-                  size={18}
-                  className="text-white group-hover:text-white transition-colors"
-                />
+          {/* Status Indicators */}
+          {product?.status === "sale" ? (
+            <div className="absolute top-2 left-2 z-10 flex items-center">
+              <div className="relative">
+                <div className="absolute inset-0 bg-red-500 rounded-full blur-[1px] opacity-20 animate-pulse"></div>
+                <div className="relative border border-red-500/70 bg-red-500/70  p-1 rounded-full group-hover:border-red-500 hover:bg-red-500/30 transition-all duration-300">
+                  <Percent
+                    size={18}
+                    className="text-white group-hover:text-white transition-colors"
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        ) : product?.status === "hot" ? (
-          <Link href={"/deal"} className="absolute top-2 left-2 z-10">
-            <div className="rounded-full bg-shop_orange/20 border border-shop_orange/70 p-1 backdrop-blur-sm group-hover:bg-shop_orange/30 transition-all">
-              <Flame size={18} className="text-shop_orange" fill="#fb6c08" />
+          ) : product?.status === "hot" ? (
+            <Link href={"/deal"} className="absolute top-2 left-2 z-10">
+              <div className="rounded-full bg-shop_orange/20 border border-shop_orange/70 p-1 backdrop-blur-sm group-hover:bg-shop_orange/30 transition-all">
+                <Flame size={18} className="text-shop_orange" fill="#fb6c08" />
+              </div>
+            </Link>
+          ) : product?.status === "new" ? (
+            <div className="absolute top-2 left-2 z-10">
+              <div className="rounded-full bg-shop_light_green/20 border border-shop_light_green/70 p-1 backdrop-blur-sm group-hover:bg-shop_light_green/30 transition-all">
+                <Tag size={18} className="text-shop_light_green" />
+              </div>
             </div>
-          </Link>
-        ) : product?.status === "new" ? (
-          <div className="absolute top-2 left-2 z-10">
-            <div className="rounded-full bg-shop_light_green/20 border border-shop_light_green/70 p-1 backdrop-blur-sm group-hover:bg-shop_light_green/30 transition-all">
-              <Tag size={18} className="text-shop_light_green" />
-            </div>
-          </div>
-        ) : null}
-      </div>
-      <div className="p-3 flex flex-col gap-1">
-        <div className="flex justify-between">
-          {product?.categories && (
-            <p className="uppercase line-clamp-1 text-xs font-medium text-lightText">
-              {product.categories.map((cat) => cat).join(", ")}
-            </p>
-          )}
+          ) : null}
         </div>
-        <Title className="text-sm line-clamp-1">{product?.name}</Title>
+        <div className="p-2 flex flex-col gap-1">
+          <div className="flex justify-between">
+            {product?.categories && (
+              <p className="uppercase line-clamp-1 text-xs font-medium text-lightText">
+                {product.categories
+                  .map((cat) =>
+                    typeof cat === "string" ? cat : (cat as any).title
+                  )
+                  .join(", ")}
+              </p>
+            )}
+          </div>
+          <Title className="text-sm line-clamp-1">{product?.name}</Title>
 
-        {/* <div className="flex items-center gap-2.5">
-          <p className="font-medium">In Stock</p>
-          <p
-            className={`${product?.stock === 0 ? "text-red-600" : "text-shop_dark_green/80 font-semibold"}`}
-          >
-            {(product?.stock as number) > 0 ? product?.stock : "unavailable"}
-          </p>
-        </div> */}
+          {/* <div className="flex items-center gap-2.5">
+            <p className="font-medium">In Stock</p>
+            <p
+              className={`${product?.stock === 0 ? "text-red-600" : "text-shop_dark_green/80 font-semibold"}`}
+            >
+              {(product?.stock as number) > 0 ? product?.stock : "unavailable"}
+            </p>
+          </div> */}
 
-        <PriceView
-          price={product?.price}
-          discount={product?.discount}
-          className="text-sm"
-        />
+          <PriceView
+            price={product?.price}
+            discount={product?.discount}
+            className="text-sm"
+          />
 
-        {renderActionButton()}
+          {renderActionButton()}
+        </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

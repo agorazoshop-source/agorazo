@@ -59,7 +59,7 @@ const ProductSideMenu = ({
       className={`p-2.5 rounded-full hover:bg-shop_dark_green/80 hover:text-white hoverEffect ${
         existingProduct
           ? "bg-shop_dark_green/80 text-white"
-          : "bg-lightColor/10 text-white"
+          : "bg-lightColor/60 text-white"
       }`}
     >
       <Heart size={15} fill={existingProduct ? "#ef4444" : "none"} />
