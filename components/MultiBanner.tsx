@@ -44,7 +44,7 @@ const MultiBanner = () => {
         </div>
 
         {/* Middle Banner - Agorazo Bundles (smaller) */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 hidden lg:block">
           <div className="bg-gradient-to-br from-shop_light_green via-emerald-500 to-shop_dark_green text-white rounded-2xl p-4 md:p-6 h-full min-h-[180px] md:min-h-[350px] flex flex-col justify-center relative overflow-hidden shadow-lg">
             <div className="space-y-2 md:space-y-4 z-10">
               <Package className="w-8 h-8 md:w-10 md:h-10 text-white drop-shadow-lg" />
@@ -78,7 +78,7 @@ const MultiBanner = () => {
         </div>
 
         {/* Right Column - Two stacked banners (takes 2 columns) */}
-        <div className="lg:col-span-2 space-y-3 md:space-y-6">
+        <div className="lg:col-span-2 space-y-3 md:space-y-6 hidden lg:block">
           {/* Landing Pages Banner */}
           <div className="bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 text-gray-800 rounded-2xl p-4 md:p-6 min-h-[180px] md:min-h-[160px] flex flex-col justify-between relative overflow-hidden shadow-md">
             <div className="space-y-2 md:space-y-4 z-10">

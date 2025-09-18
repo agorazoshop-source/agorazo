@@ -10,6 +10,10 @@ import { activeBanner } from "@/constants/bannerConfig";
 
 import React from "react";
 
+// Force dynamic rendering to prevent caching issues
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const Home = async () => {
   const categories = await getCategories(6);
   const products = await getProducts();

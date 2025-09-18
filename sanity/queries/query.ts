@@ -72,7 +72,8 @@ const MY_ORDERS_QUERY =
       name,
       images,
       price,
-      slug
+      slug,
+      productLink
     }
   }
 }`);

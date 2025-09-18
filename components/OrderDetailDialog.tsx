@@ -31,73 +31,25 @@ const OrderDetailDialog: React.FC<OrderDetailsDialogProps> = ({
 }) => {
   if (!order) return null;
 
-  const getOrderStatusFromTracking = (tracking: any) => {
-    if (!tracking?.updates || tracking.updates.length === 0) {
-      return null;
-    }
-    return tracking.updates[tracking.updates.length - 1].status;
-  };
-
   const getOrderStatusDisplay = (order: MY_ORDERS_QUERYResult[number]) => {
-    // First check tracking status
-    const trackingStatus = getOrderStatusFromTracking(order.tracking);
-    if (trackingStatus) {
-      return trackingStatus;
-    }
-
-    // If no tracking, handle initial order status
-    if (order.orderStatus === "pending") {
-      if (order.paymentStatus === "paid" || order.paymentStatus === "cod") {
-        return "Confirmed";
-      }
+    // For digital products, status is based on payment status
+    if (order.paymentStatus === "paid") {
+      return "Delivered";
+    } else if (order.paymentStatus === "failed") {
+      return "Cancelled";
+    } else {
       return "Pending";
     }
-
-    return order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1);
   };
 
   const getStatusColor = (order: MY_ORDERS_QUERYResult[number]) => {
-    // First check tracking status
-    const trackingStatus = getOrderStatusFromTracking(order.tracking);
-    
-    if (trackingStatus) {
-      switch (trackingStatus) {
-        case "Delivered":
-          return "text-green-600";
-        case "Out for Delivery":
-          return "text-blue-600";
-        case "Shipped":
-          return "text-blue-600";
-        case "Processing":
-          return "text-yellow-600";
-        case "Packed":
-          return "text-yellow-600";
-        default:
-          return "text-gray-600";
-      }
-    }
-
-    // If no tracking status, handle basic order status
-    if (order.orderStatus === "pending") {
-      if (order.paymentStatus === "paid" || order.paymentStatus === "cod") {
-        return "text-green-600";
-      }
-      return "text-gray-600";
-    }
-
-    switch (order.orderStatus as 'pending' | 'confirmed' | 'shipped' | 'out for delivery' | 'delivered' | 'cancelled') {
-      case "delivered":
-        return "text-green-600";
-      case "shipped":
-        return "text-blue-600";
-      case "out for delivery":
-        return "text-blue-600";
-      case "confirmed":
-        return "text-green-600";
-      case "cancelled":
-        return "text-red-600";
-      default:
-        return "text-gray-600";
+    // For digital products, color based on payment status
+    if (order.paymentStatus === "paid") {
+      return "text-green-600";
+    } else if (order.paymentStatus === "failed") {
+      return "text-red-600";
+    } else {
+      return "text-yellow-600";
     }
   };
 
@@ -113,47 +65,47 @@ const OrderDetailDialog: React.FC<OrderDetailsDialogProps> = ({
             <div className="space-y-2">
               <h3 className="font-semibold">Order Information</h3>
               <p>
-                <span className="font-medium">Customer:</span> {order.customer.name}
+                <span className="font-medium">Customer:</span>{" "}
+                {order.customer?.name || "N/A"}
               </p>
               <p>
-                <span className="font-medium">Email:</span> {order.customer.email}
+                <span className="font-medium">Email:</span>{" "}
+                {order.customer?.email || "N/A"}
               </p>
               <p>
                 <span className="font-medium">Date:</span>{" "}
-                {order.createdAt && new Date(order.createdAt).toLocaleDateString()}
+                {order.createdAt &&
+                  new Date(order.createdAt).toLocaleDateString()}
               </p>
+            </div>
+
+            {/* Payment & Order Status */}
+            <div className="space-y-2">
+              <h3 className="font-semibold">Status Information</h3>
               <p>
                 <span className="font-medium">Payment Status:</span>{" "}
-                <span className={`capitalize font-medium ${
-                  order.paymentStatus === 'paid' ? 'text-green-600' :
-                  order.paymentStatus === 'cod' ? 'text-blue-600' :
-                  order.paymentStatus === 'pending' ? 'text-yellow-600' :
-                  order.paymentStatus === 'failed' ? 'text-red-600' :
-                  'text-gray-600'
-                }`}>
+                <span
+                  className={`capitalize font-medium ${
+                    order.paymentStatus === "paid"
+                      ? "text-green-600"
+                      : order.paymentStatus === "pending"
+                        ? "text-yellow-600"
+                        : order.paymentStatus === "failed"
+                          ? "text-red-600"
+                          : "text-gray-600"
+                  }`}
+                >
                   {order.paymentStatus}
                 </span>
               </p>
               <p>
                 <span className="font-medium">Order Status:</span>{" "}
-                <span className={`capitalize font-medium ${getStatusColor(order)}`}>
+                <span
+                  className={`capitalize font-medium ${getStatusColor(order)}`}
+                >
                   {getOrderStatusDisplay(order)}
                 </span>
               </p>
-            </div>
-
-            {/* Shipping Address */}
-            <div className="space-y-2">
-              <h3 className="font-semibold">Shipping Address</h3>
-              <p>{order.shippingAddress.name}</p>
-              <p>{order.shippingAddress.address}</p>
-              {order.shippingAddress.addressLine2 && (
-                <p>{order.shippingAddress.addressLine2}</p>
-              )}
-              <p>
-                {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zip}
-              </p>
-              <p>Phone: {order.shippingAddress.phoneNumber}</p>
             </div>
           </div>
 
@@ -164,46 +116,64 @@ const OrderDetailDialog: React.FC<OrderDetailsDialogProps> = ({
               <TableHeader>
                 <TableRow>
                   <TableHead>Product</TableHead>
-                  <TableHead>Size</TableHead>
-                  <TableHead>Quantity</TableHead>
                   <TableHead>Price</TableHead>
-                  <TableHead>Total</TableHead>
+                  <TableHead>Product Link</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {order.items.map((item, index) => (
+                {order.items?.map((item, index) => (
                   <TableRow key={index}>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        {item.product.images && item.product.images[0] && (
+                        {item.product?.images && item.product.images[0] && (
                           <Image
                             src={urlFor(item.product.images[0]).url()}
-                            alt={item.product.name}
+                            alt={item.product.name || "Product"}
                             width={50}
                             height={50}
                             className="rounded-md object-cover"
                           />
                         )}
                         <Link
-                          href={`/product/${item.product.slug.current}`}
+                          href={`/product/${item.product?.slug?.current || "#"}`}
                           className="hover:text-shop_dark_green hover:underline"
                         >
-                          {item.product.name}
+                          {item.product?.name || "Product"}
                         </Link>
                       </div>
                     </TableCell>
-                    <TableCell>{item.size || "N/A"}</TableCell>
-                    <TableCell>{item.quantity}</TableCell>
                     <TableCell>
                       <PriceFormatter amount={item.price} />
                     </TableCell>
                     <TableCell>
-                      <PriceFormatter amount={item.price * item.quantity} />
+                      {order.paymentStatus === "paid" ? (
+                        <div className="space-y-2">
+                          {item.product?.productLink ? (
+                            <a
+                              href={item.product.productLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition-colors text-sm font-medium"
+                            >
+                              <span>🔗</span>
+                              Product Link
+                            </a>
+                          ) : (
+                            <span className="text-gray-500 text-sm">
+                              Link not available
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-gray-400 text-sm italic">
+                          Complete payment to access link
+                        </span>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
                 <TableRow>
-                  <TableCell colSpan={4} className="text-right font-semibold">
+                  <TableCell colSpan={2} className="text-right font-semibold">
                     Total Amount:
                   </TableCell>
                   <TableCell className="font-semibold">
@@ -214,32 +184,9 @@ const OrderDetailDialog: React.FC<OrderDetailsDialogProps> = ({
             </Table>
           </div>
 
-          {/* Invoice Information */}
-          {order.stripeInvoiceId && (
-            <div className="space-y-2">
-              <h3 className="font-semibold">Invoice Information</h3>
-              <p>
-                <span className="font-medium">Invoice Number:</span>{" "}
-                {order.stripeInvoiceId}
-              </p>
-              {order.stripeInvoiceUrl && (
-                <Button asChild variant="outline" size="sm">
-                  <Link href={order.stripeInvoiceUrl} target="_blank">
-                    View Invoice
-                  </Link>
-                </Button>
-              )}
-            </div>
-          )}
-
           {/* Contact Support Button */}
           <div className="flex justify-center pt-4 border-t">
-            <Button 
-              variant="outline" 
-              size="lg"
-              className="gap-2"
-              asChild
-            >
+            <Button variant="outline" size="lg" className="gap-2" asChild>
               <Link href="/contact">
                 <HelpCircle className="h-5 w-5" />
                 Have issues with order? Contact us

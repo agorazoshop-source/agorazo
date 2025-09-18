@@ -509,7 +509,7 @@ export type SanityAssetSourceData = {
 
 export type AllSanitySchemaTypes = Coupon | UserCart | UserWishlist | ProductReel | Blogcategory | Blog | Author | OrderItem | Order | Product | BlockContent | Category | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
 export declare const internalGroqTypeReferenceTo: unique symbol;
-// Source: ./app/(reels)/reel/[slug]/page.tsx
+// Source: ./app/(reels)/video/[slug]/page.tsx
 // Variable: reelsQuery
 // Query: *[_type == "productReel"] {  _id,  video {    "url": asset->url  },  product-> {    _id,    name,    description,    images[] {      "url": asset->url    },    stock,    price,    hasSizes,    sizes,    slug {      current    },    discount  },  likes,  views,  tags} | order(_createdAt desc)
 export type ReelsQueryResult = Array<{
@@ -751,7 +751,7 @@ export type BRAND_QUERYResult = Array<{
   brandName: null;
 }>;
 // Variable: MY_ORDERS_QUERY
-// Query: *[_type == 'order' && customer.clerkUserId == $userId] | order(createdAt desc) {  ...,  items[] {    ...,    product-> {      _id,      name,      images,      price,      slug    }  }}
+// Query: *[_type == 'order' && customer.clerkUserId == $userId] | order(createdAt desc) {  ...,  items[] {    ...,    product-> {      _id,      name,      images,      price,      slug,      productLink    }  }}
 export type MY_ORDERS_QUERYResult = Array<{
   _id: string;
   _type: "order";
@@ -794,6 +794,7 @@ export type MY_ORDERS_QUERYResult = Array<{
       }> | null;
       price: number | null;
       slug: Slug | null;
+      productLink: string | null;
     } | null;
     quantity?: number;
     size?: string;
@@ -1051,6 +1052,9 @@ export type GET_USER_CARTResult = {
 // Variable: GET_USER_ADDRESSES
 // Query: *[_type == "userAddresses" && clerkUserId == $userId][0] {  _id,  _type,  clerkUserId,  addresses[] {    _key,    addressName,    fullName,    phoneNumber,    addressLine1,    addressLine2,    city,    state,    pincode,    isDefault  }}
 export type GET_USER_ADDRESSESResult = null;
+// Variable: HOME_SECTIONS_QUERY
+// Query: *[_type == "homeSection" && isActive == true] | order(coalesce(displayOrder, 999) asc) {    _id,    title,    subtitle,    displayOrder,    maxProducts,    "products": products[]->{      _id,      name,      slug,      images,      price,      discount,      status,      productLink,      categories[]->{        _id,        title,        slug      }    }  }
+export type HOME_SECTIONS_QUERYResult = Array<never>;
 
 // Query TypeMap
 import "@sanity/client";
@@ -1065,7 +1069,7 @@ declare module "@sanity/client" {
     "*[_type == \"product\" && slug.current == $slug] | order(name asc) [0] {\n    ...,\n    \"images\": images[]{\n      ...,\n      \"url\": asset->url\n    },\n    \"categories\": categories[]->{\n      _id,\n      title,\n      slug\n    },\n    \"brand\": brand->{\n      title,\n      description\n    },\n    \"colorGroup\": *[_type == \"colorGroup\" && references(^._id)][0] {\n      _id,\n      name,\n      \"products\": products[]-> {\n        _id,\n        name,\n        slug,\n        images,\n        stock\n      }\n    }\n  }": PRODUCT_BY_SLUG_QUERYResult;
     "*[_type == \"productReel\" && product->slug.current == $slug][0] {\n    _id,\n    video {\n      \"url\": asset->url\n    }\n  }": REEL_BY_PRODUCT_SLUG_QUERYResult;
     "*[_type == \"product\" && slug.current == $slug]{\n  \"brandName\": brand->title\n}": BRAND_QUERYResult;
-    "*[_type == 'order' && customer.clerkUserId == $userId] | order(createdAt desc) {\n  ...,\n  items[] {\n    ...,\n    product-> {\n      _id,\n      name,\n      images,\n      price,\n      slug\n    }\n  }\n}": MY_ORDERS_QUERYResult;
+    "*[_type == 'order' && customer.clerkUserId == $userId] | order(createdAt desc) {\n  ...,\n  items[] {\n    ...,\n    product-> {\n      _id,\n      name,\n      images,\n      price,\n      slug,\n      productLink\n    }\n  }\n}": MY_ORDERS_QUERYResult;
     "*[_type == 'blog'] | order(publishedAt desc)[0...$quantity]{\n  ...,  \n     blogcategories[]->{\n    title\n}\n    }\n  ": GET_ALL_BLOGResult;
     "*[_type == \"blog\" && slug.current == $slug][0]{\n  ..., \n  blogcategories[]->{\n    title,\n    \"slug\": slug.current,\n  },\n}": SINGLE_BLOG_QUERYResult;
     "*[_type == \"blog\"]{\n     blogcategories[]->{\n    ...\n    }\n  }": BLOG_CATEGORIESResult;
@@ -1073,5 +1077,6 @@ declare module "@sanity/client" {
     "*[_type == \"userWishlist\" && userId == $userId][0] {\n  ...,\n  items[] {\n    ...,\n    product-> {\n      _id,\n      name,\n      images,\n    }\n  }\n}": GET_USER_WISHLISTResult;
     "*[_type == \"userCart\" && clerkUserId == $userId][0]{\n    _id,\n    clerkUserId,\n    items[] {\n      _key,\n      product->{\n        _id,\n        _type,\n        name,\n        slug,\n        images,\n        description,\n        price,\n        discount,\n        categories,\n        status,\n        productLink\n      }\n    }\n  }": GET_USER_CARTResult;
     "*[_type == \"userAddresses\" && clerkUserId == $userId][0] {\n  _id,\n  _type,\n  clerkUserId,\n  addresses[] {\n    _key,\n    addressName,\n    fullName,\n    phoneNumber,\n    addressLine1,\n    addressLine2,\n    city,\n    state,\n    pincode,\n    isDefault\n  }\n}": GET_USER_ADDRESSESResult;
+    "*[_type == \"homeSection\" && isActive == true] | order(coalesce(displayOrder, 999) asc) {\n    _id,\n    title,\n    subtitle,\n    displayOrder,\n    maxProducts,\n    \"products\": products[]->{\n      _id,\n      name,\n      slug,\n      images,\n      price,\n      discount,\n      status,\n      productLink,\n      categories[]->{\n        _id,\n        title,\n        slug\n      }\n    }\n  }": HOME_SECTIONS_QUERYResult;
   }
 }
