@@ -24,20 +24,6 @@ export const orderType = defineType({
       ],
     }),
     defineField({
-      name: "shippingAddress",
-      title: "Shipping Address",
-      type: "object",
-      fields: [
-        { name: "name", type: "string", title: "Full Name" },
-        { name: "address", type: "string", title: "Address" },
-        { name: "addressLine2", type: "string", title: "Address Line 2" },
-        { name: "city", type: "string", title: "City" },
-        { name: "state", type: "string", title: "State" },
-        { name: "zip", type: "string", title: "ZIP Code" },
-        { name: "phoneNumber", type: "string", title: "Phone Number" },
-      ],
-    }),
-    defineField({
       name: "items",
       title: "Order Items",
       type: "array",
@@ -99,6 +85,7 @@ export const orderType = defineType({
       type: "string",
       options: {
         list: [
+          { title: "Razorpay", value: "razorpay" },
           { title: "PhonePe", value: "phonepe" },
           // { title: "Cash on Delivery", value: "cod" },
         ],
@@ -110,15 +97,30 @@ export const orderType = defineType({
       title: "Payment Details",
       type: "object",
       fields: [
-        { 
-          name: "merchantTransactionId", 
-          type: "string", 
-          title: "Merchant Transaction ID"
+        {
+          name: "merchantTransactionId",
+          type: "string",
+          title: "Merchant Transaction ID",
         },
-        { 
-          name: "transactionId", 
-          type: "string", 
-          title: "Transaction ID"
+        {
+          name: "transactionId",
+          type: "string",
+          title: "Transaction ID",
+        },
+        {
+          name: "razorpayOrderId",
+          type: "string",
+          title: "Razorpay Order ID",
+        },
+        {
+          name: "razorpayPaymentId",
+          type: "string",
+          title: "Razorpay Payment ID",
+        },
+        {
+          name: "razorpaySignature",
+          type: "string",
+          title: "Razorpay Signature",
         },
         {
           name: "paymentInstrument",
@@ -126,14 +128,22 @@ export const orderType = defineType({
           title: "Payment Instrument",
           fields: [
             { name: "type", type: "string", title: "Type" },
-            { name: "accountHolderName", type: "string", title: "Account Holder Name" },
+            {
+              name: "accountHolderName",
+              type: "string",
+              title: "Account Holder Name",
+            },
             { name: "accountType", type: "string", title: "Account Type" },
             { name: "cardNetwork", type: "string", title: "Card Network" },
-            { name: "upiTransactionId", type: "string", title: "UPI Transaction ID" },
-            { name: "utr", type: "string", title: "UTR" }
-          ]
-        }
-      ]
+            {
+              name: "upiTransactionId",
+              type: "string",
+              title: "UPI Transaction ID",
+            },
+            { name: "utr", type: "string", title: "UTR" },
+          ],
+        },
+      ],
     }),
     defineField({
       name: "createdAt",
@@ -148,8 +158,8 @@ export const orderType = defineType({
   ],
   preview: {
     select: {
-      title: 'orderNumber',
-      subtitle: 'orderStatus',
+      title: "customer.email",
+      subtitle: "orderNumber",
     },
   },
 });

@@ -22,15 +22,6 @@ export async function POST(req: NextRequest) {
         email: orderData.customerEmail,
         clerkUserId: orderData.clerkUserId,
       },
-      shippingAddress: {
-        name: orderData.address.name,
-        address: orderData.address.address,
-        addressLine2: orderData.address.addressLine2,
-        city: orderData.address.city,
-        state: orderData.address.state,
-        zip: orderData.address.zip,
-        phoneNumber: orderData.address.phoneNumber,
-      },
       items: orderData.items.map((item: any) => ({
         _type: "orderItem",
         _key: nanoid(),

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { client } from "@/sanity/lib/client";
 import { backendClient } from "@/sanity/lib/backendClient";
 import { getUserWishlist } from "@/sanity/queries";
@@ -52,6 +52,7 @@ export async function POST(req: Request) {
   try {
     // Authenticate user
     const { userId } = await auth();
+    const user = await currentUser();
 
     if (!userId) {
       return NextResponse.json(
@@ -105,6 +106,7 @@ export async function POST(req: Request) {
         _type: "userWishlist",
         _id: wishlistDocId,
         userId: userId,
+        userEmail: user?.primaryEmailAddress?.emailAddress || "Unknown",
         items: sanityWishlistItems,
         updatedAt: new Date().toISOString(),
       });
@@ -136,6 +138,7 @@ export async function PUT(req: Request) {
   try {
     // Authenticate user
     const { userId } = await auth();
+    const user = await currentUser();
 
     if (!userId) {
       return NextResponse.json(
@@ -225,6 +228,7 @@ export async function PUT(req: Request) {
         _type: "userWishlist",
         _id: wishlistDocId,
         userId: userId,
+        userEmail: user?.primaryEmailAddress?.emailAddress || "Unknown",
         items: updatedItems,
         updatedAt: new Date().toISOString(),
       });

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { backendClient } from "@/sanity/lib/backendClient";
 import { CartItem } from "@/store";
 import { getUserCart } from "@/sanity/queries";
@@ -44,6 +44,7 @@ export async function POST(req: Request) {
   try {
     // Authenticate user
     const { userId } = await auth();
+    const user = await currentUser();
 
     if (!userId) {
       return NextResponse.json(
@@ -105,6 +106,7 @@ export async function POST(req: Request) {
         _type: "userCart",
         _id: cartDocId,
         clerkUserId: userId,
+        userEmail: user?.primaryEmailAddress?.emailAddress || "Unknown",
         items: sanityCartItems,
         updatedAt: new Date().toISOString(),
       });

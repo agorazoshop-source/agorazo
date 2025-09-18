@@ -38,7 +38,6 @@ export async function POST(req: Request) {
     const {
       items,
       customer,
-      shippingAddress,
       totalAmount,
       discountAmount,
       couponCode,
@@ -65,7 +64,6 @@ export async function POST(req: Request) {
       _type: "order",
       orderNumber: `ORD-${Date.now()}-${uuidv4().substring(0, 6)}`,
       customer,
-      shippingAddress,
       items,
       totalAmount,
       discountAmount: discountAmount || 0,

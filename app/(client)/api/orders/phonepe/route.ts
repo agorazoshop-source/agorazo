@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   try {
     const session = await auth();
     const user = await currentUser();
-    
+
     if (!session?.userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
@@ -22,41 +22,28 @@ export async function POST(req: Request) {
       merchantTransactionId,
       transactionId,
       providerReferenceId,
-      paymentInstrument
+      paymentInstrument,
     } = paymentDetails;
 
-    const {
-      amount,
-      address,
-      items,
-      couponCode,
-      discountAmount
-    } = orderDetails;
+    const { amount, address, items, couponCode, discountAmount } = orderDetails;
 
     // Create order document
     const order = {
-      _type: 'order',
+      _type: "order",
       orderNumber: `ORD-${Date.now()}-${uuidv4().substring(0, 6)}`,
-      customerName: user?.fullName ?? address?.fullName ?? "Unknown",
-      customerEmail: user?.primaryEmailAddress?.emailAddress ?? "Unknown",
-      clerkUserId: user?.id,
-      address: {
-        name: address?.fullName ?? "",
-        address: address?.addressLine1 ?? "",
-        addressLine2: address?.addressLine2 ?? "",
-        city: address?.city ?? "",
-        state: address?.state?.title ?? "",
-        zip: address?.pincode ?? "",
-        phoneNumber: address?.phoneNumber ?? "",
+      customer: {
+        name: user?.fullName ?? address?.fullName ?? "Unknown",
+        email: user?.primaryEmailAddress?.emailAddress ?? "Unknown",
+        clerkUserId: user?.id,
       },
       items: items.map((item: any) => ({
         product: {
-          _type: 'reference',
-          _ref: item.product._id
+          _type: "reference",
+          _ref: item.product._id,
         },
         quantity: item.quantity,
         size: item.size,
-        price: item.product.price
+        price: item.product.price,
       })),
       totalAmount: amount,
       discountAmount: discountAmount || 0,
@@ -73,26 +60,26 @@ export async function POST(req: Request) {
           accountType: paymentInstrument.accountType,
           cardNetwork: paymentInstrument.cardNetwork,
           upiTransactionId: paymentInstrument.upiTransactionId,
-          utr: paymentInstrument.utr
-        }
+          utr: paymentInstrument.utr,
+        },
       },
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     const result = await backendClient.create(order);
 
-    return NextResponse.json({ 
-      success: true, 
-      orderId: result._id 
+    return NextResponse.json({
+      success: true,
+      orderId: result._id,
     });
   } catch (error) {
     console.error("Error creating PhonePe order:", error);
     return new NextResponse(
-      JSON.stringify({ 
-        error: "Failed to create order" 
-      }), 
+      JSON.stringify({
+        error: "Failed to create order",
+      }),
       { status: 500 }
     );
   }
-} 
+}

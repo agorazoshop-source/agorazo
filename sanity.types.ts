@@ -165,37 +165,40 @@ export type Blog = {
   }>;
   publishedAt?: string;
   isLatest?: boolean;
-  body?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: "span";
-      _key: string;
-    }>;
-    style?: "normal" | "h1" | "h2" | "h3" | "h4" | "blockquote";
-    listItem?: "bullet";
-    markDefs?: Array<{
-      href?: string;
-      _type: "link";
-      _key: string;
-    }>;
-    level?: number;
-    _type: "block";
-    _key: string;
-  } | {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
-    _key: string;
-  }>;
+  body?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: "span";
+          _key: string;
+        }>;
+        style?: "normal" | "h1" | "h2" | "h3" | "h4" | "blockquote";
+        listItem?: "bullet";
+        markDefs?: Array<{
+          href?: string;
+          _type: "link";
+          _key: string;
+        }>;
+        level?: number;
+        _type: "block";
+        _key: string;
+      }
+    | {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+        _key: string;
+      }
+  >;
 };
 
 export type Author = {
@@ -263,27 +266,23 @@ export type Order = {
     email?: string;
     clerkUserId?: string;
   };
-  shippingAddress?: {
-    name?: string;
-    address?: string;
-    addressLine2?: string;
-    city?: string;
-    state?: string;
-    zip?: string;
-    phoneNumber?: string;
-  };
-  items?: Array<{
-    _key: string;
-  } & OrderItem>;
+  items?: Array<
+    {
+      _key: string;
+    } & OrderItem
+  >;
   totalAmount?: number;
   discountAmount?: number;
   couponCode?: string;
   paymentStatus?: "pending" | "paid" | "failed";
-  orderStatus?: "pending" | "confirmed" | "processing" | "packed" | "shipped" | "out for delivery" | "delivered" | "cancelled";
-  paymentMethod?: "phonepe";
+  orderStatus?: "pending" | "confirmed" | "delivered" | "cancelled";
+  paymentMethod?: "razorpay" | "phonepe";
   paymentDetails?: {
     merchantTransactionId?: string;
     transactionId?: string;
+    razorpayOrderId?: string;
+    razorpayPaymentId?: string;
+    razorpaySignature?: string;
     paymentInstrument?: {
       type?: string;
       accountHolderName?: string;
@@ -332,37 +331,40 @@ export type Product = {
   status?: "new" | "hot" | "sale";
 };
 
-export type BlockContent = Array<{
-  children?: Array<{
-    marks?: Array<string>;
-    text?: string;
-    _type: "span";
-    _key: string;
-  }>;
-  style?: "normal" | "h1" | "h2" | "h3" | "h4" | "blockquote";
-  listItem?: "bullet";
-  markDefs?: Array<{
-    href?: string;
-    _type: "link";
-    _key: string;
-  }>;
-  level?: number;
-  _type: "block";
-  _key: string;
-} | {
-  asset?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-  };
-  media?: unknown;
-  hotspot?: SanityImageHotspot;
-  crop?: SanityImageCrop;
-  alt?: string;
-  _type: "image";
-  _key: string;
-}>;
+export type BlockContent = Array<
+  | {
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "normal" | "h1" | "h2" | "h3" | "h4" | "blockquote";
+      listItem?: "bullet";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }
+  | {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+      _key: string;
+    }
+>;
 
 export type Category = {
   _id: string;
@@ -507,7 +509,30 @@ export type SanityAssetSourceData = {
   url?: string;
 };
 
-export type AllSanitySchemaTypes = Coupon | UserCart | UserWishlist | ProductReel | Blogcategory | Blog | Author | OrderItem | Order | Product | BlockContent | Category | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
+export type AllSanitySchemaTypes =
+  | Coupon
+  | UserCart
+  | UserWishlist
+  | ProductReel
+  | Blogcategory
+  | Blog
+  | Author
+  | OrderItem
+  | Order
+  | Product
+  | BlockContent
+  | Category
+  | SanityImagePaletteSwatch
+  | SanityImagePalette
+  | SanityImageDimensions
+  | SanityImageHotspot
+  | SanityImageCrop
+  | SanityFileAsset
+  | SanityImageAsset
+  | SanityImageMetadata
+  | Geopoint
+  | Slug
+  | SanityAssetSourceData;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./app/(reels)/video/[slug]/page.tsx
 // Variable: reelsQuery
@@ -638,37 +663,40 @@ export type LATEST_BLOG_QUERYResult = Array<{
   }> | null;
   publishedAt?: string;
   isLatest?: boolean;
-  body?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: "span";
-      _key: string;
-    }>;
-    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "normal";
-    listItem?: "bullet";
-    markDefs?: Array<{
-      href?: string;
-      _type: "link";
-      _key: string;
-    }>;
-    level?: number;
-    _type: "block";
-    _key: string;
-  } | {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
-    _key: string;
-  }>;
+  body?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: "span";
+          _key: string;
+        }>;
+        style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "normal";
+        listItem?: "bullet";
+        markDefs?: Array<{
+          href?: string;
+          _type: "link";
+          _key: string;
+        }>;
+        level?: number;
+        _type: "block";
+        _key: string;
+      }
+    | {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+        _key: string;
+      }
+  >;
 }>;
 // Variable: DEAL_PRODUCTS
 // Query: *[_type == 'product' && status == 'hot'] | order(name asc){    ...,"categories": categories[]->title  }
@@ -804,11 +832,22 @@ export type MY_ORDERS_QUERYResult = Array<{
   discountAmount?: number;
   couponCode?: string;
   paymentStatus?: "failed" | "paid" | "pending";
-  orderStatus?: "cancelled" | "confirmed" | "delivered" | "out for delivery" | "packed" | "pending" | "processing" | "shipped";
-  paymentMethod?: "phonepe";
+  orderStatus?:
+    | "cancelled"
+    | "confirmed"
+    | "delivered"
+    | "out for delivery"
+    | "packed"
+    | "pending"
+    | "processing"
+    | "shipped";
+  paymentMethod?: "razorpay" | "phonepe";
   paymentDetails?: {
     merchantTransactionId?: string;
     transactionId?: string;
+    razorpayOrderId?: string;
+    razorpayPaymentId?: string;
+    razorpaySignature?: string;
     paymentInstrument?: {
       type?: string;
       accountHolderName?: string;
@@ -854,37 +893,40 @@ export type GET_ALL_BLOGResult = Array<{
   }> | null;
   publishedAt?: string;
   isLatest?: boolean;
-  body?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: "span";
-      _key: string;
-    }>;
-    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "normal";
-    listItem?: "bullet";
-    markDefs?: Array<{
-      href?: string;
-      _type: "link";
-      _key: string;
-    }>;
-    level?: number;
-    _type: "block";
-    _key: string;
-  } | {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
-    _key: string;
-  }>;
+  body?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: "span";
+          _key: string;
+        }>;
+        style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "normal";
+        listItem?: "bullet";
+        markDefs?: Array<{
+          href?: string;
+          _type: "link";
+          _key: string;
+        }>;
+        level?: number;
+        _type: "block";
+        _key: string;
+      }
+    | {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+        _key: string;
+      }
+  >;
 }>;
 // Variable: SINGLE_BLOG_QUERY
 // Query: *[_type == "blog" && slug.current == $slug][0]{  ...,   blogcategories[]->{    title,    "slug": slug.current,  },}
@@ -920,37 +962,40 @@ export type SINGLE_BLOG_QUERYResult = {
   }> | null;
   publishedAt?: string;
   isLatest?: boolean;
-  body?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: "span";
-      _key: string;
-    }>;
-    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "normal";
-    listItem?: "bullet";
-    markDefs?: Array<{
-      href?: string;
-      _type: "link";
-      _key: string;
-    }>;
-    level?: number;
-    _type: "block";
-    _key: string;
-  } | {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
-    _key: string;
-  }>;
+  body?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: "span";
+          _key: string;
+        }>;
+        style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "normal";
+        listItem?: "bullet";
+        markDefs?: Array<{
+          href?: string;
+          _type: "link";
+          _key: string;
+        }>;
+        level?: number;
+        _type: "block";
+        _key: string;
+      }
+    | {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+        _key: string;
+      }
+  >;
 } | null;
 // Variable: BLOG_CATEGORIES
 // Query: *[_type == "blog"]{     blogcategories[]->{    ...    }  }
@@ -1060,23 +1105,23 @@ export type HOME_SECTIONS_QUERYResult = Array<never>;
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "*[_type == \"productReel\"] {\n  _id,\n  video {\n    \"url\": asset->url\n  },\n  product-> {\n    _id,\n    name,\n    description,\n    images[] {\n      \"url\": asset->url\n    },\n    stock,\n    price,\n    hasSizes,\n    sizes,\n    slug {\n      current\n    },\n    discount\n  },\n  likes,\n  views,\n  tags\n} | order(_createdAt desc)": ReelsQueryResult;
-    "*[_type == \"productReel\" && product->slug.current == $slug][0] {\n  _id,\n  video {\n    \"url\": asset->url\n  },\n  product-> {\n    _id,\n    name,\n    description,\n    images[] {\n      \"url\": asset->url\n    },\n    stock,\n    price,\n    hasSizes,\n    sizes,\n    slug {\n      current\n    },\n    discount\n  },\n  likes,\n  views,\n  tags\n}": ReelBySlugQueryResult;
-    "*[_type == \"product\"] | order(name asc) ": PRODUCTS_QUERYResult;
+    '*[_type == "productReel"] {\n  _id,\n  video {\n    "url": asset->url\n  },\n  product-> {\n    _id,\n    name,\n    description,\n    images[] {\n      "url": asset->url\n    },\n    stock,\n    price,\n    hasSizes,\n    sizes,\n    slug {\n      current\n    },\n    discount\n  },\n  likes,\n  views,\n  tags\n} | order(_createdAt desc)': ReelsQueryResult;
+    '*[_type == "productReel" && product->slug.current == $slug][0] {\n  _id,\n  video {\n    "url": asset->url\n  },\n  product-> {\n    _id,\n    name,\n    description,\n    images[] {\n      "url": asset->url\n    },\n    stock,\n    price,\n    hasSizes,\n    sizes,\n    slug {\n      current\n    },\n    discount\n  },\n  likes,\n  views,\n  tags\n}': ReelBySlugQueryResult;
+    '*[_type == "product"] | order(name asc) ': PRODUCTS_QUERYResult;
     "*[_type=='brand'] | order(name asc) ": BRANDS_QUERYResult;
     " *[_type == 'blog' && isLatest == true]|order(name asc){\n      ...,\n      blogcategories[]->{\n      title\n    }\n    }": LATEST_BLOG_QUERYResult;
     "*[_type == 'product' && status == 'hot'] | order(name asc){\n    ...,\"categories\": categories[]->title\n  }": DEAL_PRODUCTSResult;
-    "*[_type == \"product\" && slug.current == $slug] | order(name asc) [0] {\n    ...,\n    \"images\": images[]{\n      ...,\n      \"url\": asset->url\n    },\n    \"categories\": categories[]->{\n      _id,\n      title,\n      slug\n    },\n    \"brand\": brand->{\n      title,\n      description\n    },\n    \"colorGroup\": *[_type == \"colorGroup\" && references(^._id)][0] {\n      _id,\n      name,\n      \"products\": products[]-> {\n        _id,\n        name,\n        slug,\n        images,\n        stock\n      }\n    }\n  }": PRODUCT_BY_SLUG_QUERYResult;
-    "*[_type == \"productReel\" && product->slug.current == $slug][0] {\n    _id,\n    video {\n      \"url\": asset->url\n    }\n  }": REEL_BY_PRODUCT_SLUG_QUERYResult;
-    "*[_type == \"product\" && slug.current == $slug]{\n  \"brandName\": brand->title\n}": BRAND_QUERYResult;
+    '*[_type == "product" && slug.current == $slug] | order(name asc) [0] {\n    ...,\n    "images": images[]{\n      ...,\n      "url": asset->url\n    },\n    "categories": categories[]->{\n      _id,\n      title,\n      slug\n    },\n    "brand": brand->{\n      title,\n      description\n    },\n    "colorGroup": *[_type == "colorGroup" && references(^._id)][0] {\n      _id,\n      name,\n      "products": products[]-> {\n        _id,\n        name,\n        slug,\n        images,\n        stock\n      }\n    }\n  }': PRODUCT_BY_SLUG_QUERYResult;
+    '*[_type == "productReel" && product->slug.current == $slug][0] {\n    _id,\n    video {\n      "url": asset->url\n    }\n  }': REEL_BY_PRODUCT_SLUG_QUERYResult;
+    '*[_type == "product" && slug.current == $slug]{\n  "brandName": brand->title\n}': BRAND_QUERYResult;
     "*[_type == 'order' && customer.clerkUserId == $userId] | order(createdAt desc) {\n  ...,\n  items[] {\n    ...,\n    product-> {\n      _id,\n      name,\n      images,\n      price,\n      slug,\n      productLink\n    }\n  }\n}": MY_ORDERS_QUERYResult;
     "*[_type == 'blog'] | order(publishedAt desc)[0...$quantity]{\n  ...,  \n     blogcategories[]->{\n    title\n}\n    }\n  ": GET_ALL_BLOGResult;
-    "*[_type == \"blog\" && slug.current == $slug][0]{\n  ..., \n  blogcategories[]->{\n    title,\n    \"slug\": slug.current,\n  },\n}": SINGLE_BLOG_QUERYResult;
-    "*[_type == \"blog\"]{\n     blogcategories[]->{\n    ...\n    }\n  }": BLOG_CATEGORIESResult;
-    "*[\n  _type == \"blog\"\n  && defined(slug.current)\n  && slug.current != $slug\n]|order(publishedAt desc)[0...$quantity]{\n...\n  publishedAt,\n  title,\n  mainImage,\n  slug,\n  author,\n  categories[]->{\n    title,\n    \"slug\": slug.current,\n  }\n}": OTHERS_BLOG_QUERYResult;
-    "*[_type == \"userWishlist\" && userId == $userId][0] {\n  ...,\n  items[] {\n    ...,\n    product-> {\n      _id,\n      name,\n      images,\n    }\n  }\n}": GET_USER_WISHLISTResult;
-    "*[_type == \"userCart\" && clerkUserId == $userId][0]{\n    _id,\n    clerkUserId,\n    items[] {\n      _key,\n      product->{\n        _id,\n        _type,\n        name,\n        slug,\n        images,\n        description,\n        price,\n        discount,\n        categories,\n        status,\n        productLink\n      }\n    }\n  }": GET_USER_CARTResult;
-    "*[_type == \"userAddresses\" && clerkUserId == $userId][0] {\n  _id,\n  _type,\n  clerkUserId,\n  addresses[] {\n    _key,\n    addressName,\n    fullName,\n    phoneNumber,\n    addressLine1,\n    addressLine2,\n    city,\n    state,\n    pincode,\n    isDefault\n  }\n}": GET_USER_ADDRESSESResult;
-    "*[_type == \"homeSection\" && isActive == true] | order(coalesce(displayOrder, 999) asc) {\n    _id,\n    title,\n    subtitle,\n    displayOrder,\n    maxProducts,\n    \"products\": products[]->{\n      _id,\n      name,\n      slug,\n      images,\n      price,\n      discount,\n      status,\n      productLink,\n      categories[]->{\n        _id,\n        title,\n        slug\n      }\n    }\n  }": HOME_SECTIONS_QUERYResult;
+    '*[_type == "blog" && slug.current == $slug][0]{\n  ..., \n  blogcategories[]->{\n    title,\n    "slug": slug.current,\n  },\n}': SINGLE_BLOG_QUERYResult;
+    '*[_type == "blog"]{\n     blogcategories[]->{\n    ...\n    }\n  }': BLOG_CATEGORIESResult;
+    '*[\n  _type == "blog"\n  && defined(slug.current)\n  && slug.current != $slug\n]|order(publishedAt desc)[0...$quantity]{\n...\n  publishedAt,\n  title,\n  mainImage,\n  slug,\n  author,\n  categories[]->{\n    title,\n    "slug": slug.current,\n  }\n}': OTHERS_BLOG_QUERYResult;
+    '*[_type == "userWishlist" && userId == $userId][0] {\n  ...,\n  items[] {\n    ...,\n    product-> {\n      _id,\n      name,\n      images,\n    }\n  }\n}': GET_USER_WISHLISTResult;
+    '*[_type == "userCart" && clerkUserId == $userId][0]{\n    _id,\n    clerkUserId,\n    items[] {\n      _key,\n      product->{\n        _id,\n        _type,\n        name,\n        slug,\n        images,\n        description,\n        price,\n        discount,\n        categories,\n        status,\n        productLink\n      }\n    }\n  }': GET_USER_CARTResult;
+    '*[_type == "userAddresses" && clerkUserId == $userId][0] {\n  _id,\n  _type,\n  clerkUserId,\n  addresses[] {\n    _key,\n    addressName,\n    fullName,\n    phoneNumber,\n    addressLine1,\n    addressLine2,\n    city,\n    state,\n    pincode,\n    isDefault\n  }\n}': GET_USER_ADDRESSESResult;
+    '*[_type == "homeSection" && isActive == true] | order(coalesce(displayOrder, 999) asc) {\n    _id,\n    title,\n    subtitle,\n    displayOrder,\n    maxProducts,\n    "products": products[]->{\n      _id,\n      name,\n      slug,\n      images,\n      price,\n      discount,\n      status,\n      productLink,\n      categories[]->{\n        _id,\n        title,\n        slug\n      }\n    }\n  }': HOME_SECTIONS_QUERYResult;
   }
 }

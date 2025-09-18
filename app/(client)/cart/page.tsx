@@ -108,8 +108,8 @@ const CartPage = () => {
                                 <p className="text-sm capitalize">
                                   Category:{" "}
                                   <span className="font-semibold">
-                                    {product?.categories?.[0]?.title ||
-                                      "Standard"}
+                                    {(product?.categories as any)?.[0]?.title ||
+                                      "Digital Product"}
                                   </span>
                                 </p>
                                 <p className="text-sm capitalize">
