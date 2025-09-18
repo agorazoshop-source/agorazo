@@ -39,7 +39,6 @@ const CategoriesDropdown = () => {
         const data = await client.fetch(query);
         setCategories(data || []);
       } catch (error) {
-        console.error("Error loading categories:", error);
         setCategories([]);
       } finally {
         setIsLoading(false);

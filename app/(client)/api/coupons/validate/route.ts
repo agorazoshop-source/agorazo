@@ -28,7 +28,6 @@ export async function POST(req: Request) {
       items,
     }: { code: string; cartAmount: number; items: CartItem[] } =
       await req.json();
-    console.log("Validating coupon:", { code, cartAmount, items });
 
     // Fetch coupon from Sanity
     const coupon = await client.fetch(
@@ -39,10 +38,7 @@ export async function POST(req: Request) {
       { code }
     );
 
-    console.log("Found coupon:", coupon);
-
     if (!coupon) {
-      console.log("No coupon found with code:", code);
       return NextResponse.json(
         { error: "Invalid coupon code" },
         { status: 400 }
@@ -54,10 +50,7 @@ export async function POST(req: Request) {
     const validFrom = new Date(coupon.validFrom);
     const validUntil = new Date(coupon.validUntil);
 
-    console.log("Date validation:", { now, validFrom, validUntil });
-
     if (now < validFrom || now > validUntil) {
-      console.log("Coupon expired");
       return NextResponse.json(
         { error: "Coupon has expired" },
         { status: 400 }
@@ -66,10 +59,6 @@ export async function POST(req: Request) {
 
     // Check minimum cart amount
     if (cartAmount < coupon.minimumAmount) {
-      console.log("Cart amount too low:", {
-        cartAmount,
-        minimumRequired: coupon.minimumAmount,
-      });
       return NextResponse.json(
         {
           error: `Minimum cart amount should be ₹${coupon.minimumAmount} to use this coupon`,
@@ -93,13 +82,6 @@ export async function POST(req: Request) {
 
     // Check if coupon is applicable to all items
     if (coupon.categories && coupon.categories.length > 0) {
-      console.log("Category-specific coupon:", {
-        couponCategories: coupon.categories,
-        cartItemCategories: items.map(
-          (item) => item.product.categories?.[0]?._ref
-        ),
-      });
-
       const applicableAmount = items.reduce((total: number, item: CartItem) => {
         const categoryId = item.product.categories?.[0]?._ref;
         if (categoryId && coupon.categories.includes(categoryId)) {
@@ -109,7 +91,6 @@ export async function POST(req: Request) {
       }, 0);
 
       if (applicableAmount === 0) {
-        console.log("No applicable items found for category-specific coupon");
         return NextResponse.json(
           { error: "Coupon is not applicable to any items in cart" },
           { status: 400 }
@@ -122,13 +103,6 @@ export async function POST(req: Request) {
       }
     }
 
-    console.log("Coupon validation successful:", {
-      discountAmount,
-      code: coupon.code,
-      type: coupon.discountType,
-      value: coupon.discountValue,
-    });
-
     return NextResponse.json({
       valid: true,
       discount: discountAmount,
@@ -137,7 +111,6 @@ export async function POST(req: Request) {
       value: coupon.discountValue,
     });
   } catch (error) {
-    console.error("[COUPON_VALIDATE]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }

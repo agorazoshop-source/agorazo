@@ -17,13 +17,10 @@ export async function GET(req: Request) {
       );
     }
 
-    console.log("Fetching wishlist for user:", userId);
-
     // Check if user has a wishlist in Sanity
     const userWishlist = await getUserWishlist(userId);
 
     if (!userWishlist) {
-      console.log(`No wishlist found for user ${userId}`);
       return NextResponse.json({ favoriteProduct: [] });
     }
 
@@ -41,13 +38,8 @@ export async function GET(req: Request) {
       )?.addedAt,
     }));
 
-    console.log(
-      `Found ${wishlistWithProducts.length} products in wishlist for user ${userId}`
-    );
-
     return NextResponse.json({ favoriteProduct: wishlistWithProducts });
   } catch (error) {
-    console.error("Error fetching user wishlist:", error);
     return NextResponse.json(
       { error: "Failed to fetch wishlist" },
       { status: 500 }
@@ -69,23 +61,18 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    console.log(`Received wishlist update request for user ${userId}:`, body);
 
     const { items } = body;
 
     if (!Array.isArray(items)) {
-      console.error("Invalid wishlist data format:", body);
       return NextResponse.json(
         { error: "Invalid wishlist data. Items must be an array." },
         { status: 400 }
       );
     }
 
-    console.log(`Processing ${items.length} wishlist items for user ${userId}`);
-
     // Check if token exists
     if (!process.env.SANITY_API_TOKEN) {
-      console.error("Missing SANITY_API_TOKEN environment variable");
       return NextResponse.json(
         {
           error: "Server is not configured properly. Please add a write token.",
@@ -99,7 +86,6 @@ export async function POST(req: Request) {
       // Format wishlist items for Sanity with _key property
       const sanityWishlistItems = items.map((product: any, index: number) => {
         if (!product || !product._id) {
-          console.error("Invalid product in wishlist items:", product);
           throw new Error("Invalid product data in wishlist items");
         }
 
@@ -110,10 +96,6 @@ export async function POST(req: Request) {
           addedAt: new Date().toISOString(),
         };
       });
-
-      console.log(
-        `Formatted ${sanityWishlistItems.length} wishlist items for user ${userId}`
-      );
 
       // Create a document ID that's deterministic based on the user ID
       const wishlistDocId = `wishlist_${userId}`;
@@ -127,18 +109,12 @@ export async function POST(req: Request) {
         updatedAt: new Date().toISOString(),
       });
 
-      console.log(
-        `Wishlist operation successful for user ${userId}:`,
-        result._id
-      );
-
       return NextResponse.json({
         success: true,
         itemCount: sanityWishlistItems.length,
         userId: userId,
       });
     } catch (error) {
-      console.error(`Sanity write error for user ${userId}:`, error);
       return NextResponse.json(
         {
           error: "Failed to update wishlist. Your token may be read-only.",
@@ -148,7 +124,6 @@ export async function POST(req: Request) {
       );
     }
   } catch (error) {
-    console.error("Error updating user wishlist:", error);
     return NextResponse.json(
       { error: "Failed to update wishlist" },
       { status: 500 }
@@ -254,8 +229,6 @@ export async function PUT(req: Request) {
         updatedAt: new Date().toISOString(),
       });
 
-      console.log(`Wishlist toggle successful for user ${userId}:`, result._id);
-
       return NextResponse.json({
         success: true,
         itemCount: updatedItems.length,
@@ -265,7 +238,6 @@ export async function PUT(req: Request) {
         ),
       });
     } catch (error) {
-      console.error(`Sanity write error for user ${userId}:`, error);
       return NextResponse.json(
         {
           error: "Failed to toggle wishlist item. Your token may be read-only.",
@@ -275,7 +247,6 @@ export async function PUT(req: Request) {
       );
     }
   } catch (error) {
-    console.error("Error toggling wishlist item:", error);
     return NextResponse.json(
       { error: "Failed to toggle wishlist item" },
       { status: 500 }

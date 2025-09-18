@@ -58,7 +58,6 @@ const CartPage = () => {
     try {
       router.push("/checkout");
     } catch (error) {
-      console.error("Error navigating to checkout:", error);
       toast.error("Failed to proceed to checkout. Please try again.");
     } finally {
       setLoading(false);

@@ -39,7 +39,6 @@ function getImageUrl(image: any): string {
   try {
     return urlFor(image).url();
   } catch (error) {
-    console.error("Error generating image URL:", error);
     return "";
   }
 }
@@ -104,7 +103,6 @@ export async function createCheckoutSession(
     const session = await stripe.checkout.sessions.create(sessionPayload);
     return session.url;
   } catch (error) {
-    console.error("Error creating Checkout Session", error);
     throw error;
   }
 }

@@ -47,7 +47,6 @@ const ProductSideMenu = ({
         );
         await addToFavorite(product);
       } catch (error) {
-        console.error("Error handling favorite:", error);
       } finally {
         setIsProcessing(false);
       }

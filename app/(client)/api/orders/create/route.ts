@@ -18,7 +18,6 @@ export async function POST(req: Request) {
     try {
       checkToken();
     } catch (e) {
-      console.error("Sanity token error:", e);
       return new NextResponse(
         JSON.stringify({ error: "Server configuration error" }),
         { status: 500 }
@@ -90,7 +89,6 @@ export async function POST(req: Request) {
         orderId: result._id,
       });
     } catch (e: any) {
-      console.error("Sanity error:", e);
       return new NextResponse(
         JSON.stringify({
           error: "Database error: " + (e.message || "Failed to create order"),
@@ -99,7 +97,6 @@ export async function POST(req: Request) {
       );
     }
   } catch (error: any) {
-    console.error("Error creating order:", error);
     return new NextResponse(
       JSON.stringify({
         error: error.message || "Failed to create order",

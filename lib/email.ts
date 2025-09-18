@@ -36,13 +36,10 @@ export const sendOrderConfirmationEmail = async ({
   orderStatus = "confirmed",
 }: OrderEmailProps) => {
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    console.error("Email credentials not configured");
     return { success: false, error: "Email service not configured" };
   }
 
   try {
-    console.log("Sending email to", customerEmail, "using Gmail SMTP");
-
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: customerEmail,
@@ -132,11 +129,9 @@ export const sendOrderConfirmationEmail = async ({
     };
 
     const result = await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully:", result.messageId);
 
     return { success: true, data: { messageId: result.messageId } };
   } catch (error) {
-    console.error("Error sending order confirmation email:", error);
     return { success: false, error };
   }
 };

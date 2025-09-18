@@ -20,19 +20,11 @@ export type RazorpayOrderBody = {
 };
 
 export async function POST(request: NextRequest) {
-  console.log("🔄 Razorpay order creation API called");
   try {
     const { amount, currency, orderId }: RazorpayOrderBody =
       await request.json();
 
-    console.log("📊 Request data:", { amount, currency, orderId });
-    console.log("🔑 Server keys:", {
-      key_id: key_id ? "Present" : "Missing",
-      key_secret: key_secret ? "Present" : "Missing",
-    });
-
     if (!amount) {
-      console.log("❌ Amount missing");
       return NextResponse.json(
         { message: "Amount is required" },
         { status: 400 }
@@ -48,11 +40,7 @@ export async function POST(request: NextRequest) {
       },
     };
 
-    console.log("⚙️ Razorpay options:", options);
-    console.log("🔄 Creating Razorpay order...");
-
     const order = await razorpay.orders.create(options);
-    console.log("✅ Razorpay Order Created Successfully:", order.id);
 
     return NextResponse.json(
       {
@@ -64,7 +52,6 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
   } catch (error: any) {
-    console.error("Razorpay order creation error:", error);
     return NextResponse.json(
       { message: "Server Error", error: error.message },
       { status: 500 }

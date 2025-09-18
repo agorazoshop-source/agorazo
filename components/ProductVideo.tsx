@@ -44,9 +44,7 @@ export default function ProductVideo({
             setPlaying(true);
             wasInView.current = true;
           })
-          .catch((e) => {
-            console.log("Playback error:", e);
-          });
+          .catch(() => {});
       } else {
         videoRef.current.pause();
         setPlaying(false);
@@ -63,7 +61,7 @@ export default function ProductVideo({
       if (playing) {
         videoRef.current.pause();
       } else {
-        videoRef.current.play().catch((e) => console.log(e));
+        videoRef.current.play().catch((e) => {});
       }
       setPlaying(!playing);
     }

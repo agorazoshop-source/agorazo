@@ -31,14 +31,15 @@ export default function CheckoutStatusPage() {
         }
 
         // Check payment status
-        const response = await fetch(`/api/payments/status?transactionId=${transactionId}`);
+        const response = await fetch(
+          `/api/payments/status?transactionId=${transactionId}`
+        );
         const data = await response.json();
-        console.log('Payment status response:', data); // Debug log
 
         if (!response.ok) {
           // If payment is still pending and we haven't exceeded retries
-          if (data.code === 'PAYMENT_PENDING' && retryCount < MAX_RETRIES) {
-            setRetryCount(prev => prev + 1);
+          if (data.code === "PAYMENT_PENDING" && retryCount < MAX_RETRIES) {
+            setRetryCount((prev) => prev + 1);
             setTimeout(updateOrderStatus, RETRY_DELAY);
             return;
           }
@@ -48,16 +49,17 @@ export default function CheckoutStatusPage() {
 
         if (data.success) {
           // Clear stored order ID
-          localStorage.removeItem('pending_order_id');
-          
+          localStorage.removeItem("pending_order_id");
+
           setIsSuccess(true);
           resetCart();
         } else {
           throw new Error(data.error || "Payment verification failed");
         }
       } catch (error: any) {
-        console.error("Payment verification error:", error);
-        setError(error.message || "An error occurred while processing your payment");
+        setError(
+          error.message || "An error occurred while processing your payment"
+        );
       } finally {
         setIsLoading(false);
       }
@@ -69,12 +71,12 @@ export default function CheckoutStatusPage() {
 
   const handleTryAgain = () => {
     // Clear any stale data
-    localStorage.removeItem('pending_order_id');
-    router.push('/checkout');
+    localStorage.removeItem("pending_order_id");
+    router.push("/checkout");
   };
 
   const handleViewOrders = () => {
-    router.push('/orders');
+    router.push("/orders");
   };
 
   return (
@@ -98,10 +100,7 @@ export default function CheckoutStatusPage() {
               <p className="mt-2 text-gray-600">
                 Thank you for your order. We'll start processing it right away.
               </p>
-              <Button
-                className="mt-6 w-full"
-                onClick={handleViewOrders}
-              >
+              <Button className="mt-6 w-full" onClick={handleViewOrders}>
                 View Orders
               </Button>
             </div>
@@ -114,10 +113,7 @@ export default function CheckoutStatusPage() {
               <p className="mt-2 text-gray-600">
                 {error || "Something went wrong with your payment."}
               </p>
-              <Button
-                className="mt-6 w-full"
-                onClick={handleTryAgain}
-              >
+              <Button className="mt-6 w-full" onClick={handleTryAgain}>
                 Try Again
               </Button>
             </div>
@@ -126,4 +122,4 @@ export default function CheckoutStatusPage() {
       </div>
     </Container>
   );
-} 
+}

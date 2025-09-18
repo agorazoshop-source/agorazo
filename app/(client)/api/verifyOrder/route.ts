@@ -53,10 +53,7 @@ export async function POST(request: NextRequest) {
               updatedAt: new Date().toISOString(),
             })
             .commit();
-
-          console.log("Order updated successfully:", orderId);
         } catch (error: any) {
-          console.error("Error updating order:", error);
           // Don't fail the verification if order update fails
         }
       }

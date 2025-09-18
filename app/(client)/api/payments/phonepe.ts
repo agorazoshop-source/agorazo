@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { initiatePhonePePayment, generateTransactionId } from '@/lib/phonepe';
-import { backendClient } from '@/sanity/lib/backendClient';
+import { initiatePhonePePayment, generateTransactionId } from "@/lib/phonepe";
+import { backendClient } from "@/sanity/lib/backendClient";
 
 type PhonePeSuccessResponse = {
   success: true;
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
 
     if (!amount || !orderId) {
       return new NextResponse(
-        JSON.stringify({ error: "Amount and order ID are required" }), 
+        JSON.stringify({ error: "Amount and order ID are required" }),
         { status: 400 }
       );
     }
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
 
     if (!order) {
       return new NextResponse(
-        JSON.stringify({ error: "Invalid or expired order" }), 
+        JSON.stringify({ error: "Invalid or expired order" }),
         { status: 400 }
       );
     }
@@ -58,34 +58,34 @@ export async function POST(req: Request) {
     await backendClient
       .patch(orderId)
       .set({
-        'paymentDetails.merchantTransactionId': transactionId,
-        updatedAt: new Date().toISOString()
+        "paymentDetails.merchantTransactionId": transactionId,
+        updatedAt: new Date().toISOString(),
       })
       .commit();
 
     // Initiate payment with PhonePe
-    const paymentResponse = await initiatePhonePePayment(
+    const paymentResponse = (await initiatePhonePePayment(
       amount,
       transactionId,
       session.userId
-    ) as PhonePeResponse;
+    )) as PhonePeResponse;
 
     if (!paymentResponse.success) {
       // Update order status to failed
       await backendClient
         .patch(orderId)
         .set({
-          paymentStatus: 'failed',
-          orderStatus: 'cancelled',
-          updatedAt: new Date().toISOString()
+          paymentStatus: "failed",
+          orderStatus: "cancelled",
+          updatedAt: new Date().toISOString(),
         })
         .commit();
 
       return new NextResponse(
-        JSON.stringify({ 
+        JSON.stringify({
           error: paymentResponse.error || "Payment initiation failed",
-          code: paymentResponse.code || 'UNKNOWN_ERROR'
-        }), 
+          code: paymentResponse.code || "UNKNOWN_ERROR",
+        }),
         { status: 400 }
       );
     }
@@ -93,16 +93,15 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       redirectUrl: paymentResponse.data.instrumentResponse.redirectInfo.url,
-      transactionId
+      transactionId,
     });
   } catch (error: any) {
-    console.error('[PAYMENT_INITIATION_ERROR]', error);
     return new NextResponse(
-      JSON.stringify({ 
+      JSON.stringify({
         error: error.message || "Payment initiation failed",
-        code: error.code || 'UNKNOWN_ERROR'
-      }), 
+        code: error.code || "UNKNOWN_ERROR",
+      }),
       { status: 500 }
     );
   }
-} 
+}

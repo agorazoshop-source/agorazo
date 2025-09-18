@@ -19,7 +19,7 @@ interface AddressCardProps {
   isManageable?: boolean;
 }
 
-const   AddressCard: React.FC<AddressCardProps> = ({
+const AddressCard: React.FC<AddressCardProps> = ({
   address,
   onSelect,
   isSelected = false,
@@ -28,7 +28,6 @@ const   AddressCard: React.FC<AddressCardProps> = ({
   onDelete,
   isManageable = true,
 }) => {
-  console.log('AddressCard received address:', JSON.stringify(address, null, 2));
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -47,9 +46,9 @@ const   AddressCard: React.FC<AddressCardProps> = ({
       setIsDeleting(true);
 
       try {
-      if (onDelete) {
+        if (onDelete) {
           await onDelete(address._key);
-      } else {
+        } else {
           const response = await fetch(`/api/addresses?key=${address._key}`, {
             method: "DELETE",
           });
@@ -60,11 +59,12 @@ const   AddressCard: React.FC<AddressCardProps> = ({
 
           router.refresh();
         }
-        } catch (error) {
-          console.error("Error deleting address:", error);
-          alert("An error occurred while deleting the address. Please try again.");
-        } finally {
-          setIsDeleting(false);
+      } catch (error) {
+        alert(
+          "An error occurred while deleting the address. Please try again."
+        );
+      } finally {
+        setIsDeleting(false);
       }
     }
   };
@@ -84,52 +84,47 @@ const   AddressCard: React.FC<AddressCardProps> = ({
       )}
       onClick={isSelectable ? handleSelect : undefined}
     >
-        <div className="flex justify-between items-start">
-            <div>
+      <div className="flex justify-between items-start">
+        <div>
           <div className="flex items-center gap-2">
             <h3 className="font-medium">{address.addressName}</h3>
-                {address.isDefault && (
+            {address.isDefault && (
               <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">
-                    Default
-                  </span>
-                )}
-              </div>
+                Default
+              </span>
+            )}
+          </div>
           <p className="text-sm text-gray-600 mt-1">{address.fullName}</p>
           <p className="text-sm text-gray-600">{address.phoneNumber}</p>
           <p className="text-sm text-gray-600 mt-2">
             {address.addressLine1}
             {address.addressLine2 && <>, {address.addressLine2}</>}
-                </p>
+          </p>
           <p className="text-sm text-gray-600">
             {address.city}, {address.state.title} - {address.pincode}
-                </p>
-          </div>
+          </p>
+        </div>
 
         {isManageable && (
           <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              asChild
-              className="h-8 w-8"
-            >
+            <Button variant="outline" size="icon" asChild className="h-8 w-8">
               <Link href={`/account/addresses/edit/${address._key}`}>
                 <Edit className="h-4 w-4" />
               </Link>
             </Button>
-              <Button
+            <Button
               variant="outline"
               size="icon"
               className="h-8 w-8"
-                onClick={handleDelete}
-                disabled={isDeleting}
-              >
-                {isDeleting ? (
-                  <Loader2 className="h-4 w-4 animate-spin text-gray-500" />
-                ) : (
-                  <Trash2 className="h-4 w-4 text-gray-500 hover:text-red-500" />
-                )}
-              </Button>
+              onClick={handleDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <Loader2 className="h-4 w-4 animate-spin text-gray-500" />
+              ) : (
+                <Trash2 className="h-4 w-4 text-gray-500 hover:text-red-500" />
+              )}
+            </Button>
           </div>
         )}
       </div>
@@ -137,4 +132,4 @@ const   AddressCard: React.FC<AddressCardProps> = ({
   );
 };
 
-export default AddressCard; 
+export default AddressCard;

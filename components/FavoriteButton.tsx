@@ -22,9 +22,7 @@ const FavoriteButton = ({
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Debug authentication status
-  useEffect(() => {
-    console.log("Auth status:", { isSignedIn, isLoaded });
-  }, [isSignedIn, isLoaded]);
+  useEffect(() => {}, [isSignedIn, isLoaded]);
 
   useEffect(() => {
     if (isSignedIn) {
@@ -58,7 +56,6 @@ const FavoriteButton = ({
 
         await addToFavorite(product);
       } catch (error) {
-        console.error("Error handling favorite:", error);
       } finally {
         setIsProcessing(false);
       }

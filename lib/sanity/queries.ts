@@ -13,7 +13,6 @@ export async function getCategories(): Promise<any[]> {
     const categories = await response.json();
     return categories;
   } catch (error) {
-    console.error("Error fetching categories:", error);
     return [];
   }
 }

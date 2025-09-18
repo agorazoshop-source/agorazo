@@ -21,19 +21,10 @@ const HomeSection = ({
   maxProducts = 8,
   sectionIndex = 0,
 }: HomeSectionProps) => {
-  // Debug logging
-  console.log("HomeSection received:", {
-    title,
-    subtitle,
-    products,
-    maxProducts,
-  });
-
   // Limit products based on maxProducts
   const displayProducts = products?.slice(0, maxProducts) || [];
 
   if (!displayProducts.length) {
-    console.log("No products to display for section:", title);
     return null;
   }
 

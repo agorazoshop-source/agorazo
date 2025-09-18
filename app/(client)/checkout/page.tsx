@@ -117,9 +117,7 @@ export default function CheckoutPage() {
   };
 
   const createOrderForPayment = async () => {
-    console.log("🔄 Creating order for payment...");
     if (!user) {
-      console.log("❌ User not authenticated");
       setError("User not authenticated");
       return null;
     }
@@ -134,8 +132,6 @@ export default function CheckoutPage() {
         paymentMethod: "razorpay",
       });
 
-      console.log("📦 Order payload:", orderPayload);
-
       const orderResponse = await fetch("/api/orders/create", {
         method: "POST",
         headers: {
@@ -144,24 +140,18 @@ export default function CheckoutPage() {
         body: JSON.stringify(orderPayload),
       });
 
-      console.log("📡 Order response status:", orderResponse.status);
       const orderResult = await orderResponse.json();
-      console.log("📋 Order result:", orderResult);
 
       if (!orderResponse.ok) {
-        console.log("❌ Order creation failed:", orderResult);
         throw new Error(orderResult.error || "Failed to create order");
       }
 
       if (!orderResult.success || !orderResult.orderId) {
-        console.log("❌ Invalid order response:", orderResult);
         throw new Error("Invalid order response");
       }
 
-      console.log("✅ Order created successfully:", orderResult.orderId);
       return orderResult.orderId;
     } catch (error: any) {
-      console.error("Error creating order:", error);
       setError(error.message || "Failed to create order");
       return null;
     }
@@ -176,7 +166,6 @@ export default function CheckoutPage() {
         `/success?order_id=${createdOrderId}&payment_method=razorpay&payment_id=${paymentId}`
       );
     } catch (error: any) {
-      console.error("Error handling payment success:", error);
       setError(
         "Payment successful but there was an error processing your order. Please contact support."
       );
@@ -186,49 +175,6 @@ export default function CheckoutPage() {
   const handleRazorpayError = (error: string) => {
     setError(error);
     setIsProcessing(false);
-  };
-
-  const createCodOrder = async () => {
-    // if (!selectedAddress) {
-    //   setError("Please select a delivery address");
-    //   return;
-    // }
-
-    if (!user) {
-      setError("User not authenticated");
-      return;
-    }
-
-    try {
-      const orderData = generateOrderData({
-        user,
-        selectedAddress,
-        groupedItems,
-        subtotal,
-        appliedCoupon,
-        paymentMethod: "cod",
-      });
-
-      const response = await fetch("/api/orders/cod", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(orderData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to create COD order");
-      }
-
-      const { orderId } = await response.json();
-      resetCart();
-      router.push(`/success?order_id=${orderId}&payment_method=cod`);
-    } catch (error) {
-      console.error("Error creating COD order:", error);
-      setError("Failed to create order. Please try again.");
-      setIsProcessing(false);
-    }
   };
 
   const handleCheckout = async () => {
@@ -280,7 +226,6 @@ export default function CheckoutPage() {
         // The RazorpayPayment component will handle the payment
       }
     } catch (error: any) {
-      console.error("Checkout error:", error);
       setError(
         error.message ||
           "An error occurred while processing your order. Please try again."

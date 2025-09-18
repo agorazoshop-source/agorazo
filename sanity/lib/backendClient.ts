@@ -2,11 +2,6 @@ import { createClient } from "next-sanity";
 
 import { apiVersion, dataset, projectId } from "../env";
 
-// Check if the Sanity API token is available
-if (!process.env.SANITY_API_TOKEN) {
-  console.warn("SANITY_API_TOKEN is not set in environment variables. Write operations will fail.");
-}
-
 export const backendClient = createClient({
   projectId,
   dataset,

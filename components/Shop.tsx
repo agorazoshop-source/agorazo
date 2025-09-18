@@ -24,12 +24,6 @@ const Shop = ({ categories }: Props) => {
     categoryParams || null
   );
 
-  // Debug URL parameters
-  console.log("Shop component URL params:", {
-    categoryParams,
-    searchQuery,
-    selectedCategory,
-  });
   const fetchProducts = async () => {
     setLoading(true);
     try {
@@ -43,21 +37,14 @@ const Shop = ({ categories }: Props) => {
           {},
           { next: { revalidate: 0 } }
         );
-        console.log("All products fetched:", data);
         setProducts(data);
         return;
       }
-
-      console.log("Applying category filter:", {
-        selectedCategory,
-      });
 
       // Only filter by category when a category is selected
       const query = `*[_type == 'product' && references(*[_type == "category" && slug.current == $selectedCategory]._id)] | order(name asc) {
         ...,"categories": categories[]->title
       }`;
-
-      console.log("Generated GROQ query:", query);
 
       const data = await client.fetch(
         query,
@@ -67,10 +54,8 @@ const Shop = ({ categories }: Props) => {
         { next: { revalidate: 0 } }
       );
 
-      console.log("Filtered products:", data);
       setProducts(data);
     } catch (error) {
-      console.log("Shop product fetching Error", error);
     } finally {
       setLoading(false);
     }

@@ -42,7 +42,6 @@ export default function RazorpayPayment({
   // Auto-trigger payment when component is ready
   useEffect(() => {
     if (isScriptLoaded && !isLoading && !disabled && amount && orderId) {
-      console.log("🚀 Auto-triggering Razorpay payment...");
       // Small delay to ensure script is fully loaded
       setTimeout(() => {
         handlePayment();
@@ -51,26 +50,19 @@ export default function RazorpayPayment({
   }, [isScriptLoaded, isLoading, disabled, amount, orderId]);
 
   const handlePayment = async () => {
-    console.log("🚀 Starting payment process...");
-    console.log("📊 Payment details:", { amount, orderId, user: !!user });
-
     if (!isScriptLoaded) {
-      console.log("❌ Script not loaded");
       onError("Payment system is not ready. Please try again.");
       return;
     }
 
     if (!user) {
-      console.log("❌ User not authenticated");
       onError("Please sign in to continue with payment.");
       return;
     }
 
     setIsLoading(true);
-    console.log("⏳ Loading state set to true");
 
     try {
-      console.log("🔄 Creating Razorpay order...");
       // Create Razorpay order
       const orderResponse = await fetch("/api/payments/razorpay", {
         method: "POST",
@@ -84,21 +76,11 @@ export default function RazorpayPayment({
         }),
       });
 
-      console.log("📡 Order response status:", orderResponse.status);
       const orderData = await orderResponse.json();
-      console.log("📦 Order data:", orderData);
 
       if (!orderResponse.ok) {
-        console.log("❌ Order creation failed:", orderData);
         throw new Error(orderData.message || "Failed to create payment order");
       }
-
-      console.log(
-        "🔑 Razorpay key:",
-        process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ? "Present" : "Missing"
-      );
-      console.log("💰 Amount:", orderData.amount);
-      console.log("🆔 Order ID:", orderData.orderId);
 
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
@@ -134,7 +116,6 @@ export default function RazorpayPayment({
               );
             }
           } catch (error: any) {
-            console.error("Payment verification error:", error);
             onError("Payment verification failed. Please contact support.");
           }
         },
@@ -152,37 +133,21 @@ export default function RazorpayPayment({
         },
       };
 
-      console.log("🎯 Creating Razorpay instance...");
-      console.log("⚙️ Options:", options);
-
       const razorpay = new (window as any).Razorpay(options);
-      console.log("✅ Razorpay instance created");
 
       razorpay.on("payment.failed", function (response: any) {
-        console.error("❌ Payment failed:", response.error);
         onError(
           `Payment failed: ${response.error.description || "Unknown error"}`
         );
         setIsLoading(false);
       });
 
-      console.log("🚀 Opening Razorpay modal...");
       razorpay.open();
-      console.log("🎉 Razorpay modal opened");
     } catch (error: any) {
-      console.error("Payment initiation error:", error);
       onError(error.message || "Payment failed. Please try again.");
       setIsLoading(false);
     }
   };
-
-  console.log("🎨 RazorpayPayment render:", {
-    isLoading,
-    disabled,
-    isScriptLoaded,
-    amount,
-    orderId,
-  });
 
   return (
     <>

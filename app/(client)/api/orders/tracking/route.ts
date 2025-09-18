@@ -5,16 +5,13 @@ import { backendClient } from "@/sanity/lib/backendClient";
 export async function GET(req: NextRequest) {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { searchParams } = new URL(req.url);
-    const orderId = searchParams.get('orderId');
+    const orderId = searchParams.get("orderId");
 
     if (!orderId) {
       return NextResponse.json(
@@ -34,23 +31,19 @@ export async function GET(req: NextRequest) {
     );
 
     if (!order) {
-      return NextResponse.json(
-        { error: "Order not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       tracking: order.tracking,
       orderStatus: order.orderStatus,
-      orderNumber: order.orderNumber
+      orderNumber: order.orderNumber,
     });
   } catch (error) {
-    console.error('Error fetching order tracking:', error);
     return NextResponse.json(
       { error: "Failed to fetch tracking information" },
       { status: 500 }
     );
   }
-} 
+}

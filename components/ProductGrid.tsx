@@ -39,7 +39,6 @@ const ProductGrid = ({
         const response = await client.fetch(query, { category: selectedTab });
         setProducts(response);
       } catch (error) {
-        console.log("Product fetching Error", error);
       } finally {
         setLoading(false);
       }

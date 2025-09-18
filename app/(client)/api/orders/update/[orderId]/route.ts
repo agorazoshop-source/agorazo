@@ -19,7 +19,6 @@ export async function POST(
     try {
       checkToken();
     } catch (e) {
-      console.error("Sanity token error:", e);
       return new NextResponse(
         JSON.stringify({ error: "Server configuration error" }),
         { status: 500 }
@@ -108,7 +107,6 @@ export async function POST(
           });
           emailStatus = emailResult.success ? "success" : "failed";
         } catch (emailError) {
-          console.error("Failed to send confirmation email:", emailError);
           emailStatus = "failed";
         }
       }
@@ -119,7 +117,6 @@ export async function POST(
         emailStatus,
       });
     } catch (e: any) {
-      console.error("Sanity error:", e);
       return new NextResponse(
         JSON.stringify({
           error: "Database error: " + (e.message || "Failed to update order"),
@@ -128,7 +125,6 @@ export async function POST(
       );
     }
   } catch (error: any) {
-    console.error("Error updating order:", error);
     return new NextResponse(
       JSON.stringify({
         error: error.message || "Failed to update order",

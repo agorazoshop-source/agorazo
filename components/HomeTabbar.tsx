@@ -52,7 +52,6 @@ const HomeTabbar = ({
           onTabSelect(data[0].title);
         }
       } catch (error) {
-        console.error("Error loading categories:", error);
       } finally {
         setIsLoading(false);
       }
