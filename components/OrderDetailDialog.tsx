@@ -2,7 +2,13 @@
 
 import { MY_ORDERS_QUERYResult } from "@/sanity.types";
 import React from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "./ui/dialog";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import {
@@ -60,6 +66,9 @@ const OrderDetailDialog: React.FC<OrderDetailsDialogProps> = ({
           <DialogTitle className="text-base sm:text-lg text-start">
             Order Details - {order?.orderNumber}
           </DialogTitle>
+          <DialogDescription className="text-sm text-start">
+            View your order details, payment status, and product information.
+          </DialogDescription>
         </DialogHeader>
         <div className="mt-4 space-y-6">
           {/* Order Information */}
@@ -125,6 +134,7 @@ const OrderDetailDialog: React.FC<OrderDetailsDialogProps> = ({
                         width={72}
                         height={72}
                         className="rounded-md object-cover flex-shrink-0"
+                        style={{ width: "auto", height: "auto" }}
                       />
                     )}
                     <div className="flex-1 min-w-0">
