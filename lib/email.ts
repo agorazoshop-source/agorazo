@@ -1,13 +1,7 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-// Initialize Nodemailer transporter
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+// Initialize Resend client
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 interface OrderEmailProps {
   orderId: string;
@@ -33,13 +27,13 @@ export const sendOrderConfirmationEmail = async ({
   items,
   orderStatus = "confirmed",
 }: OrderEmailProps) => {
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    return { success: false, error: "Email service not configured" };
+  if (!process.env.RESEND_API_KEY) {
+    return { success: false, error: "Resend API key not configured" };
   }
 
   try {
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
+    const emailData = {
+      from: process.env.FROM_EMAIL || "noreply@yourdomain.com",
       to: customerEmail,
       subject: `Order Confirmation #${orderId}`,
       html: `
@@ -126,9 +120,9 @@ export const sendOrderConfirmationEmail = async ({
       `,
     };
 
-    const result = await transporter.sendMail(mailOptions);
+    const result = await resend.emails.send(emailData);
 
-    return { success: true, data: { messageId: result.messageId } };
+    return { success: true, data: { messageId: result.data?.id } };
   } catch (error) {
     return { success: false, error };
   }
