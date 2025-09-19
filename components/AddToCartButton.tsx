@@ -4,11 +4,11 @@ import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { ShoppingBag } from "lucide-react";
 import useStore from "@/store";
-import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { SignInButton } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { trackAddToCart } from "@/lib/facebook-pixel";
 
 interface Props {
   product: Product;
@@ -19,20 +19,29 @@ interface Props {
 const AddToCartButton = ({ product, className, disabled }: Props) => {
   const { addItem, items } = useStore();
   const { isSignedIn, isLoaded } = useUser();
-  const isInCart = items.some(item => item.product._id === product._id);
+  const isInCart = items.some((item) => item.product._id === product._id);
   const router = useRouter();
 
-  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleAddToCart = () => {
     if (!isLoaded || !isSignedIn) return;
-    
+
     addItem(product);
+
+    // Track AddToCart event for Facebook Pixel
+    trackAddToCart(
+      product.price || 0,
+      "INR",
+      product.name || "Unknown Product"
+    );
+
+    toast.success(`${product.name} added to cart!`);
   };
-  
+
   // Show view cart button if this specific item is in cart
   if (isInCart && isSignedIn) {
     return (
       <Button
-        onClick={() => router.push('/cart')}
+        onClick={() => router.push("/cart")}
         className={cn(
           "w-full bg-shop_light_green text-white hover:bg-shop_dark_green transition-colors",
           className
@@ -42,7 +51,7 @@ const AddToCartButton = ({ product, className, disabled }: Props) => {
       </Button>
     );
   }
-  
+
   // Show sign-in button if user is not authenticated
   if (!isSignedIn) {
     return (

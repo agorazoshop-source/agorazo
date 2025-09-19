@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { trackPurchase } from "./facebook-pixel";
 
 // Initialize Resend client
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -135,6 +136,9 @@ export const sendOrderConfirmationEmail = async ({
     if (result.error) {
       return { success: false, error: result.error };
     }
+
+    // Track purchase event for Facebook Pixel
+    trackPurchase(totalAmount, "INR", orderId);
 
     return { success: true, data: { messageId: result.data?.id } };
   } catch (error) {

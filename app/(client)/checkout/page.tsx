@@ -8,9 +8,7 @@ import Image from "next/image";
 import Container from "@/components/Container";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, CreditCard, Wallet, Tag, X } from "lucide-react";
-import AddressSelector from "@/components/address/AddressSelector";
-import { UserAddress } from "@/types";
+import { Loader2, CreditCard, Tag, X } from "lucide-react";
 import useStore, { CartItem } from "@/store";
 import PriceFormatter from "@/components/PriceFormatter";
 import CheckoutSkeleton from "@/components/skeletons/CheckoutSkeleton";
@@ -18,11 +16,13 @@ import { client } from "@/sanity/lib/client";
 import imageUrlBuilder from "@sanity/image-url";
 import { generateOrderData } from "@/lib/utils/orderUtils";
 import RazorpayPayment from "@/components/RazorpayPayment";
+import { trackInitiateCheckout } from "@/lib/facebook-pixel";
+import { SanityImageSource } from "@sanity/image-url/lib/types/types";
 
 const builder = imageUrlBuilder(client);
 
-function urlFor(source: any) {
-  return builder.image(source);
+function urlFor(source: SanityImageSource) {
+  return builder.image(source as SanityImageSource);
 }
 
 type PaymentMethod = "cod" | "prepaid" | "razorpay";
@@ -42,9 +42,6 @@ export default function CheckoutPage() {
   ) as CartItem[];
   const isEmpty = useStore((state) => state.items.length === 0);
   const subtotal = useStore((state) => state.getTotalPrice());
-  const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(
-    null
-  );
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("razorpay");
@@ -62,7 +59,12 @@ export default function CheckoutPage() {
     if (isLoaded && isEmpty && !isPaymentSuccess) {
       router.push("/cart");
     }
-  }, [isLoaded, isEmpty, router, isPaymentSuccess]);
+
+    // Track checkout initiation for Facebook Pixel
+    if (isLoaded && !isEmpty && subtotal > 0) {
+      trackInitiateCheckout(subtotal, "INR");
+    }
+  }, [isLoaded, isEmpty, router, isPaymentSuccess, subtotal]);
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
@@ -102,7 +104,7 @@ export default function CheckoutPage() {
       setAppliedCoupon(data);
       toast.success("Coupon applied successfully!");
       setCouponCode("");
-    } catch (error) {
+    } catch {
       setError("Failed to apply coupon");
       setAppliedCoupon(null);
     } finally {
@@ -125,7 +127,7 @@ export default function CheckoutPage() {
     try {
       const orderPayload = generateOrderData({
         user,
-        selectedAddress,
+        selectedAddress: null,
         groupedItems,
         subtotal,
         appliedCoupon,
@@ -151,8 +153,10 @@ export default function CheckoutPage() {
       }
 
       return orderResult.orderId;
-    } catch (error: any) {
-      setError(error.message || "Failed to create order");
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to create order";
+      setError(errorMessage);
       return null;
     }
   };
@@ -167,7 +171,7 @@ export default function CheckoutPage() {
       router.push(
         `/success?order_id=${createdOrderId}&payment_method=razorpay&payment_id=${paymentId}`
       );
-    } catch (error: any) {
+    } catch {
       setError(
         "Payment successful but there was an error processing your order. Please contact support."
       );
@@ -228,11 +232,12 @@ export default function CheckoutPage() {
         // );
         // The RazorpayPayment component will handle the payment
       }
-    } catch (error: any) {
-      setError(
-        error.message ||
-          "An error occurred while processing your order. Please try again."
-      );
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "An error occurred while processing your order. Please try again.";
+      setError(errorMessage);
       setIsProcessing(false);
     }
   };
@@ -240,11 +245,6 @@ export default function CheckoutPage() {
   // Commented out PhonePe integration - keeping for reference
   /*
   const handleCheckoutPhonePe = async () => {
-    // if (!selectedAddress) {
-    //   setError("Please select a delivery address");
-    //   return;
-    // }
-
     if (!user) {
       router.push("/sign-in");
       return;
@@ -257,7 +257,7 @@ export default function CheckoutPage() {
       // Create order first
       const orderPayload = generateOrderData({
         user,
-        selectedAddress,
+        selectedAddress: null,
         groupedItems,
         subtotal,
         appliedCoupon,
@@ -374,17 +374,8 @@ export default function CheckoutPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left column - Address selection */}
+          {/* Left column - Payment Method */}
           <div className="lg:col-span-2">
-            {/* <div className="bg-white rounded-lg shadow-sm p-6">
-              <AddressSelector 
-                onSelectAddress={handleSelectAddress}
-                selectedAddress={selectedAddress}
-                showAddButton={true}
-                isCheckout={true}
-              />
-            </div> */}
-
             {/* Payment Method Selection */}
             <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
               <h2 className="text-xl font-semibold mb-4">Payment Method</h2>
@@ -570,7 +561,7 @@ export default function CheckoutPage() {
                       Preparing Razorpay...
                     </>
                   ) : (
-                    "Opening Razorpay..."
+                    "Open Razorpay..."
                   )}
                 </RazorpayPayment>
               ) : (
@@ -578,7 +569,7 @@ export default function CheckoutPage() {
                   className="w-full mt-6"
                   size="lg"
                   onClick={handleCheckout}
-                  disabled={isProcessing /* || !selectedAddress */}
+                  disabled={isProcessing}
                 >
                   {isProcessing ? (
                     <>
@@ -592,12 +583,6 @@ export default function CheckoutPage() {
                   )}
                 </Button>
               )}
-
-              {/* {!selectedAddress && (
-                <p className="text-sm text-gray-500 mt-3 text-center">
-                  Please select a delivery address to continue
-                </p>
-              )} */}
 
               <p className="text-xs text-gray-500 mt-4 text-center">
                 By proceeding, you agree to our Terms of Service and Privacy
