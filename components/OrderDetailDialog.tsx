@@ -11,14 +11,7 @@ import {
 } from "./ui/dialog";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "./ui/table";
+
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 import PriceFormatter from "./PriceFormatter";
@@ -145,7 +138,9 @@ const OrderDetailDialog: React.FC<OrderDetailsDialogProps> = ({
                           {item.product?.name || "Product"}
                         </Link>
                         <div className="font-semibold text-base mb-3">
-                          <PriceFormatter amount={item.price} />
+                          <PriceFormatter
+                            amount={item.price ?? item.product?.price ?? 0}
+                          />
                         </div>
                       </div>
                       {order.paymentStatus === "paid" ? (

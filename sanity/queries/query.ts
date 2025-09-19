@@ -82,6 +82,7 @@ const MY_ORDERS_QUERY =
   ...,
   items[] {
     ...,
+    price,
     product-> {
       _id,
       name,

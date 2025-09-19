@@ -50,16 +50,7 @@ export const generateOrderData = ({
         _type: "reference",
         _ref: item.product._id,
       },
-      // product: paymentMethod === 'cod'
-      //   ? {
-      //       _id: item.product._id,
-      //       price: item.product.price
-      //     }
-      //   : {
-      //       _type: 'reference',
-      //       _ref: item.product._id,
-      //     },
-      ...(paymentMethod === "phonepe" && { price: item.product.price }),
+      price: item.product.price, // Always store price in order items
     })),
     totalAmount: subtotal - (appliedCoupon?.discount || 0),
     discountAmount: appliedCoupon?.discount || 0,
