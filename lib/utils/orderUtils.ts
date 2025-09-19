@@ -59,8 +59,6 @@ export const generateOrderData = ({
       //       _type: 'reference',
       //       _ref: item.product._id,
       //     },
-      quantity: item.quantity,
-      size: item.size,
       ...(paymentMethod === "phonepe" && { price: item.product.price }),
     })),
     totalAmount: subtotal - (appliedCoupon?.discount || 0),

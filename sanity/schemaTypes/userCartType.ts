@@ -32,30 +32,16 @@ export const userCartType = defineType({
               to: [{ type: "product" }],
               validation: (Rule: any) => Rule.required(),
             }),
-            defineField({
-              name: "quantity",
-              title: "Quantity",
-              type: "number",
-              validation: (Rule: any) => Rule.required().min(1),
-            }),
-            defineField({
-              name: "size",
-              title: "Size",
-              type: "string",
-              description: "Selected size for the product (if applicable)",
-            }),
           ],
           preview: {
             select: {
               productName: "product.name",
-              quantity: "quantity",
-              size: "size",
               productImage: "product.images.0",
             },
-            prepare({ productName, quantity, size, productImage }) {
+            prepare({ productName, productImage }) {
               return {
                 title: productName || "Unknown Product",
-                subtitle: `Qty: ${quantity || 0}${size ? ` - Size: ${size}` : ""}`,
+                subtitle: "Digital Product",
                 media: productImage,
               };
             },

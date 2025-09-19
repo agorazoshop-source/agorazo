@@ -5,8 +5,6 @@ import toast from "react-hot-toast";
 
 export interface CartItem {
   product: Product;
-  quantity?: number;
-  size?: string;
 }
 
 interface StoreState {
@@ -87,8 +85,6 @@ const useStore = create<StoreState>()(
                 ...state.items,
                 {
                   product,
-                  quantity: 1,
-                  size: undefined,
                 },
               ],
             };
@@ -160,8 +156,7 @@ const useStore = create<StoreState>()(
       },
       getTotalPrice: () => {
         return get().items.reduce(
-          (total, item) =>
-            total + (item.product.price ?? 0) * (item.quantity ?? 1),
+          (total, item) => total + (item.product.price ?? 0),
           0
         );
       },
@@ -170,14 +165,11 @@ const useStore = create<StoreState>()(
           const price = item.product.price ?? 0;
           const discount = ((item.product.discount ?? 0) * price) / 100;
           const discountedPrice = price + discount;
-          return total + discountedPrice * (item.quantity ?? 1);
+          return total + discountedPrice;
         }, 0);
       },
       getItemCount: () => {
-        return get().items.reduce(
-          (total, item) => total + (item.quantity ?? 1),
-          0
-        );
+        return get().items.length;
       },
       getGroupedItems: () => {
         // Return items directly

@@ -21,8 +21,6 @@ interface OrderEmailProps {
       productLink?: string;
       slug?: string;
     };
-    quantity: number;
-    size?: string;
   }>;
   orderStatus?: string;
 }

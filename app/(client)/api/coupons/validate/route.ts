@@ -11,8 +11,6 @@ interface CartItem {
     }>;
     price?: number;
   };
-  quantity: number;
-  size?: string;
 }
 
 export async function POST(req: Request) {
@@ -28,6 +26,21 @@ export async function POST(req: Request) {
       items,
     }: { code: string; cartAmount: number; items: CartItem[] } =
       await req.json();
+
+    // Validate items structure
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return NextResponse.json({ error: "No items in cart" }, { status: 400 });
+    }
+
+    // Ensure all items have required fields
+    const validatedItems = items.map((item) => ({
+      ...item,
+      product: {
+        ...item.product,
+        price: typeof item.product.price === "number" ? item.product.price : 0,
+        categories: item.product.categories || [],
+      },
+    }));
 
     // Fetch coupon from Sanity
     const coupon = await client.fetch(
@@ -80,15 +93,26 @@ export async function POST(req: Request) {
       discountAmount = coupon.maximumDiscount;
     }
 
-    // Check if coupon is applicable to all items
+    // Check if coupon is applicable to specific categories
     if (coupon.categories && coupon.categories.length > 0) {
-      const applicableAmount = items.reduce((total: number, item: CartItem) => {
-        const categoryId = item.product.categories?.[0]?._ref;
-        if (categoryId && coupon.categories.includes(categoryId)) {
-          return total + (item.product.price || 0) * item.quantity;
-        }
-        return total;
-      }, 0);
+      const applicableAmount = validatedItems.reduce(
+        (total: number, item: CartItem) => {
+          const categoryId = item.product.categories?.[0]?._ref;
+          const isApplicable =
+            categoryId && coupon.categories.includes(categoryId);
+
+          // Handle price safely - check if it's a valid number
+          const productPrice =
+            typeof item.product.price === "number" ? item.product.price : 0;
+          const itemTotal = productPrice;
+
+          if (isApplicable) {
+            return total + itemTotal;
+          }
+          return total;
+        },
+        0
+      );
 
       if (applicableAmount === 0) {
         return NextResponse.json(
@@ -100,6 +124,24 @@ export async function POST(req: Request) {
       // Recalculate discount based on applicable items
       if (coupon.discountType === "percentage") {
         discountAmount = (applicableAmount * coupon.discountValue) / 100;
+      } else {
+        discountAmount = coupon.discountValue;
+      }
+    } else {
+      // Recalculate discount based on all items to ensure we have valid numbers
+      const totalCartAmount = validatedItems.reduce(
+        (total: number, item: CartItem) => {
+          const productPrice =
+            typeof item.product.price === "number" ? item.product.price : 0;
+          return total + productPrice;
+        },
+        0
+      );
+
+      if (coupon.discountType === "percentage") {
+        discountAmount = (totalCartAmount * coupon.discountValue) / 100;
+      } else {
+        discountAmount = coupon.discountValue;
       }
     }
 

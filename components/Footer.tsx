@@ -13,7 +13,7 @@ import WhatsAppLink from "./WhatsAppLink";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white pb-20">
+    <footer className="bg-gray-900 text-white pb-20 sm:pb-0">
       <Container>
         {/* Main Footer Content */}
         <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">

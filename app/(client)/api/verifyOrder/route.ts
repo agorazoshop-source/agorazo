@@ -55,9 +55,7 @@ export async function POST(request: NextRequest) {
                   productLink,
                   slug
                 },
-                price,
-                quantity,
-                size
+                price
               }
             }`,
             { orderId }
@@ -91,8 +89,6 @@ export async function POST(request: NextRequest) {
                     productLink: item.product?.productLink,
                     slug: item.product?.slug,
                   },
-                  quantity: item.quantity,
-                  size: item.size,
                 })),
               });
             } catch (emailError) {

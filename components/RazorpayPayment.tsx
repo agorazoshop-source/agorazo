@@ -26,6 +26,7 @@ export default function RazorpayPayment({
 }: RazorpayPaymentProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
+  const [hasUserExited, setHasUserExited] = useState(false);
   const { user } = useUser();
 
   useEffect(() => {
@@ -39,15 +40,22 @@ export default function RazorpayPayment({
     setIsScriptLoaded(true);
   };
 
-  // Auto-trigger payment when component is ready
+  // Auto-trigger payment when component is ready (only if user hasn't exited)
   useEffect(() => {
-    if (isScriptLoaded && !isLoading && !disabled && amount && orderId) {
+    if (
+      isScriptLoaded &&
+      !isLoading &&
+      !disabled &&
+      amount &&
+      orderId &&
+      !hasUserExited
+    ) {
       // Small delay to ensure script is fully loaded
       setTimeout(() => {
         handlePayment();
       }, 100);
     }
-  }, [isScriptLoaded, isLoading, disabled, amount, orderId]);
+  }, [isScriptLoaded, isLoading, disabled, amount, orderId, hasUserExited]);
 
   const handlePayment = async () => {
     if (!isScriptLoaded) {
@@ -129,6 +137,7 @@ export default function RazorpayPayment({
         modal: {
           ondismiss: function () {
             setIsLoading(false);
+            setHasUserExited(true); // Track that user has exited
           },
         },
       };
@@ -157,7 +166,10 @@ export default function RazorpayPayment({
             ? "bg-gray-300 text-gray-500 cursor-not-allowed"
             : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg"
         } ${className}`}
-        onClick={handlePayment}
+        onClick={() => {
+          setHasUserExited(false); // Reset exit state when user manually clicks
+          handlePayment();
+        }}
         disabled={disabled || isLoading || !isScriptLoaded}
       >
         {isLoading ? (

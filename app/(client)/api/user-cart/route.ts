@@ -83,9 +83,8 @@ export async function POST(req: Request) {
           throw new Error("Invalid item data in cart items");
         }
 
-        // Generate a unique key that includes size information if available
-        const sizeInfo = item.size ? `_${item.size}` : "";
-        const uniqueKey = `${item.product._id}${sizeInfo}_${index}`;
+        // Generate a unique key for each item
+        const uniqueKey = `${item.product._id}_${index}`;
 
         return {
           _key: uniqueKey,
@@ -93,8 +92,6 @@ export async function POST(req: Request) {
             _type: "reference",
             _ref: item.product._id,
           },
-          quantity: item.quantity,
-          size: item.size || undefined,
         };
       });
 

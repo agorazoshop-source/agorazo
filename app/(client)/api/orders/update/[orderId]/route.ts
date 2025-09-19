@@ -101,8 +101,6 @@ export async function POST(
                 productLink: item.product.productLink,
                 slug: item.product.slug,
               },
-              quantity: item.quantity,
-              size: item.size,
             })),
           });
           emailStatus = emailResult.success ? "success" : "failed";

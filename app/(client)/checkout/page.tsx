@@ -71,25 +71,24 @@ export default function CheckoutPage() {
     setError(null);
 
     try {
+      const requestData = {
+        code: couponCode,
+        cartAmount: subtotal,
+        items: groupedItems.map((item) => ({
+          ...item,
+          product: {
+            ...item.product,
+            categories: item.product.categories || [],
+          },
+        })),
+      };
+
       const response = await fetch("/api/coupons/validate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          code: couponCode,
-          cartAmount: subtotal,
-          items: groupedItems.map((item) => ({
-            ...item,
-            product: {
-              ...item.product,
-              category: item.product.categories?.[0] || {
-                _ref: "",
-                _type: "reference",
-              },
-            },
-          })),
-        }),
+        body: JSON.stringify(requestData),
       });
 
       const data = await response.json();

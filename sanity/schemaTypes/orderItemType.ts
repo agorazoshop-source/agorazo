@@ -12,32 +12,21 @@ export const orderItemType = defineType({
       to: [{ type: "product" }],
     },
     {
-      name: "quantity",
-      title: "Quantity",
-      type: "number",
-    },
-    {
-      name: "size",
-      title: "Size",
-      type: "string",
-    },
-    {
       name: "price",
       title: "Price",
       type: "number",
-    }
+    },
   ],
   preview: {
     select: {
-      title: 'product.name',
-      quantity: 'quantity',
-      price: 'price'
+      title: "product.name",
+      price: "price",
     },
-    prepare({ title, quantity, price }) {
+    prepare({ title, price }) {
       return {
-        title: title || 'No product name',
-        subtitle: `Qty: ${quantity || 0} • Price: ₹${price || 0}`
-      }
-    }
-  }
-}); 
+        title: title || "No product name",
+        subtitle: `Digital Product • Price: ₹${price || 0}`,
+      };
+    },
+  },
+});
