@@ -27,29 +27,25 @@ export const sendOrderConfirmationEmail = async ({
   items,
   orderStatus = "confirmed",
 }: OrderEmailProps) => {
-  console.log("📧 Email sending attempt:", {
-    orderId,
-    customerName,
-    customerEmail,
-    totalAmount,
-    hasApiKey: !!process.env.RESEND_API_KEY,
-    fromEmail: process.env.FROM_EMAIL || "noreply@agorazo.shop",
-  });
-
   if (!process.env.RESEND_API_KEY) {
-    console.error("❌ RESEND_API_KEY not configured");
     return { success: false, error: "Resend API key not configured" };
   }
 
   try {
     // Try different FROM_EMAIL formats
     const fromEmail = process.env.FROM_EMAIL || "noreply@agorazo.shop";
-    console.log("📧 Using FROM_EMAIL:", fromEmail);
 
     const emailData = {
       from: fromEmail,
       to: customerEmail,
       subject: `Order Confirmation #${orderId}`,
+      headers: {
+        "X-Priority": "1",
+        "X-MSMail-Priority": "High",
+        Importance: "high",
+        "List-Unsubscribe": "<mailto:unsubscribe@agorazo.shop>",
+        "X-Mailer": "Agorazo E-commerce Platform",
+      },
       html: `
         <!DOCTYPE html>
         <html>
@@ -134,25 +130,14 @@ export const sendOrderConfirmationEmail = async ({
       `,
     };
 
-    console.log("📤 Sending email with data:", {
-      from: emailData.from,
-      to: emailData.to,
-      subject: emailData.subject,
-    });
-
     const result = await resend.emails.send(emailData);
 
-    console.log("📬 Resend response:", result);
-
     if (result.error) {
-      console.error("❌ Resend error:", result.error);
       return { success: false, error: result.error };
     }
 
-    console.log("✅ Email sent successfully:", result.data?.id);
     return { success: true, data: { messageId: result.data?.id } };
   } catch (error) {
-    console.error("❌ Email sending failed:", error);
     return { success: false, error };
   }
 };
