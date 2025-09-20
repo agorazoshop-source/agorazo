@@ -8,6 +8,7 @@ import { useUser } from "@clerk/nextjs";
 import { SignInButton } from "@clerk/nextjs";
 import { Button } from "./ui/button";
 import toast from "react-hot-toast";
+import { trackAddToWishlist } from "@/lib/facebook-pixel";
 
 const FavoriteButton = ({
   showProduct = false,
@@ -53,6 +54,15 @@ const FavoriteButton = ({
             ? "Product removed from wishlist"
             : "Product added to wishlist"
         );
+
+        // Track wishlist addition with Facebook Pixel
+        if (!existingProduct && product) {
+          trackAddToWishlist(
+            product.name || "Unknown Product",
+            product.price || 0,
+            "INR"
+          );
+        }
 
         await addToFavorite(product);
       } catch (error) {

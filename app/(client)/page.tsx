@@ -1,11 +1,11 @@
 import Container from "@/components/Container";
 
 import MultiBanner from "@/components/MultiBanner";
-import HomeCategories from "@/components/HomeCategories";
 import ProductGrid from "@/components/ProductGrid";
 import HomeSection from "@/components/HomeSection";
 import MovingPromoBanner from "@/components/MovingPromoBanner";
-import { getCategories, getProducts, getHomeSections } from "@/sanity/queries";
+import HomePageTracker from "@/components/HomePageTracker";
+import { getProducts, getHomeSections } from "@/sanity/queries";
 import { activeBanner } from "@/constants/bannerConfig";
 
 import React from "react";
@@ -15,12 +15,12 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 const Home = async () => {
-  const categories = await getCategories(6);
   const products = await getProducts();
   const homeSections = await getHomeSections();
 
   return (
     <div className="bg-shop-light-pink">
+      <HomePageTracker />
       <Container>
         <MovingPromoBanner {...activeBanner} />
         {/* Multi Banner Section */}
@@ -30,6 +30,7 @@ const Home = async () => {
         <ProductGrid products={products} autoSelectFirstCategory={true} />
 
         {/* Dynamic Home Sections */}
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         {homeSections.map((section: any, index: number) => (
           <HomeSection
             key={section._id}

@@ -57,6 +57,12 @@ export default function RootLayout({
           <link rel="icon" href="/icon.png" type="image/png" />
           <link rel="apple-touch-icon" href="/apple-icon.png" />
 
+          {/* Facebook Domain Verification */}
+          <meta
+            name="facebook-domain-verification"
+            content="gyecunzqi3y3ukbgem93rjrj71wez6"
+          />
+
           {/* Facebook Pixel Code */}
           <script
             dangerouslySetInnerHTML={{
@@ -80,6 +86,7 @@ export default function RootLayout({
               width="1"
               style={{ display: "none" }}
               src="https://www.facebook.com/tr?id=1894949054409733&ev=PageView&noscript=1"
+              alt=""
             />
           </noscript>
         </head>

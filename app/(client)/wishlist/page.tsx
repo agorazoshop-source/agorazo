@@ -1,5 +1,6 @@
 import NoAccess from "@/components/NoAccess";
 import WishListProducts from "@/components/WishListProducts";
+import WishlistTracker from "@/components/WishlistTracker";
 import { currentUser } from "@clerk/nextjs/server";
 import React from "react";
 
@@ -7,10 +8,11 @@ const WishListPage = async () => {
   const user = await currentUser();
   return (
     <>
+      <WishlistTracker />
       {user ? (
         <WishListProducts />
       ) : (
-        <NoAccess details="Log in to view your wishlist items. Don’t miss out on your cart products to make the payment!" />
+        <NoAccess details="Log in to view your wishlist items. Don't miss out on your cart products to make the payment!" />
       )}
     </>
   );

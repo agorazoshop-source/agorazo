@@ -5,6 +5,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchSuggestions } from "@/hooks/useSearchSuggestions";
 import SearchSuggestions from "./SearchSuggestions";
+import { trackSearch } from "@/lib/facebook-pixel";
 
 interface CollapsibleSearchBarProps {
   isSearchOpen: boolean;
@@ -31,6 +32,9 @@ const CollapsibleSearchBar: React.FC<CollapsibleSearchBarProps> = ({
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
+      // Track search with Facebook Pixel
+      trackSearch(searchQuery.trim());
+
       router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
       setShowSuggestions(false);
       setIsFocused(false);

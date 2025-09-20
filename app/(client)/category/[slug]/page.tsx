@@ -1,6 +1,7 @@
 import CategoryProducts from "@/components/CategoryProducts";
 import Container from "@/components/Container";
 import Title from "@/components/Title";
+import CategoryTracker from "@/components/CategoryTracker";
 import { getCategories } from "@/sanity/queries";
 import React from "react";
 
@@ -13,6 +14,7 @@ const CategoryPage = async ({
   const { slug } = await params;
   return (
     <div className="py-10">
+      <CategoryTracker categoryName={slug} />
       <Container>
         <Title>
           Products by Category:{" "}
