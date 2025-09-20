@@ -36,13 +36,13 @@ export const siteConfig = {
     // { title: "Github", href: "https://www.github.com/agorazo", icon: "Github" },
     {
       title: "Linkedin",
-      href: "https://www.linkedin.com/company/agorazo",
+      href: "https://www.linkedin.com/company/agorazo-shop/",
       icon: "Linkedin",
     },
     // { title: "Facebook", href: "https://www.facebook.com/agorazo", icon: "Facebook" },
     {
       title: "Instagram",
-      href: "https://www.instagram.com/agorazo",
+      href: "https://www.instagram.com/agorazo.digital/",
       icon: "Instagram",
     },
   ],

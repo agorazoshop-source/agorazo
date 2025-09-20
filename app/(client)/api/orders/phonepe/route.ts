@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     const {
       merchantTransactionId,
       transactionId,
-      providerReferenceId,
+      // providerReferenceId, // Not used in this implementation
       paymentInstrument,
     } = paymentDetails;
 
@@ -36,13 +36,12 @@ export async function POST(req: Request) {
         email: user?.primaryEmailAddress?.emailAddress ?? "Unknown",
         clerkUserId: user?.id,
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       items: items.map((item: any) => ({
         product: {
           _type: "reference",
           _ref: item.product._id,
         },
-        quantity: item.quantity,
-        size: item.size,
         price: item.product.price,
       })),
       totalAmount: amount,

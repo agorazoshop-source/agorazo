@@ -1,12 +1,6 @@
 import { TrolleyIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 
-// Define the document type for TypeScript
-interface SanityDocument {
-  hasSizes?: boolean;
-  [key: string]: any;
-}
-
 export const productType = defineType({
   name: "product",
   title: "Products",
@@ -85,7 +79,13 @@ export const productType = defineType({
       name: "recommendedProducts",
       title: "Recommended Products",
       type: "array",
-      of: [{ type: "reference", to: { type: "product" } }],
+      of: [
+        {
+          type: "reference",
+          to: { type: "product" },
+          weak: true, // Make it weak so products can be deleted
+        },
+      ],
       description:
         "Select products to recommend to customers viewing this product",
       validation: (Rule) =>
@@ -103,7 +103,7 @@ export const productType = defineType({
       const image = media && media[0];
       return {
         title: title,
-        subtitle: `$${subtitle}`,
+        subtitle: `₹${subtitle}`,
         media: image,
       };
     },

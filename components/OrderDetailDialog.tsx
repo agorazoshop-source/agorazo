@@ -16,6 +16,10 @@ import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 import PriceFormatter from "./PriceFormatter";
 import { HelpCircle } from "lucide-react";
+import {
+  getProductFromOrderItem,
+  isProductDeleted,
+} from "@/lib/utils/productSnapshot";
 
 interface OrderDetailsDialogProps {
   order: MY_ORDERS_QUERYResult[number] | null;
@@ -117,59 +121,78 @@ const OrderDetailDialog: React.FC<OrderDetailsDialogProps> = ({
           <div>
             <h3 className="font-semibold mb-3">Order Items</h3>
             <div className="space-y-4">
-              {order.items?.map((item, index) => (
-                <div key={index} className="bg-white border rounded-lg p-4">
-                  <div className="flex items-start gap-3">
-                    {item.product?.images && item.product.images[0] && (
-                      <Image
-                        src={urlFor(item.product.images[0]).url()}
-                        alt={item.product.name || "Product"}
-                        width={72}
-                        height={72}
-                        className="rounded-md object-cover flex-shrink-0 w-[72px] h-[72px]"
-                      />
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between">
-                        <Link
-                          href={`/product/${item.product?.slug?.current || "#"}`}
-                          className="hover:text-shop_dark_green hover:underline font-semibold text-base block mb-1"
-                        >
-                          {item.product?.name || "Product"}
-                        </Link>
-                        <div className="font-semibold text-base mb-3">
-                          <PriceFormatter
-                            amount={item.price ?? item.product?.price ?? 0}
-                          />
-                        </div>
-                      </div>
-                      {order.paymentStatus === "paid" ? (
-                        <div>
-                          {item.product?.productLink ? (
-                            <a
-                              href={item.product.productLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-2 px-3 py-2 bg-green-200 text-green-700 rounded-md hover:bg-green-100 transition-colors text-sm font-medium w-full justify-center"
-                            >
-                              <span>🔗</span>
-                              Product Link
-                            </a>
-                          ) : (
-                            <span className="text-gray-500 text-sm">
-                              Link not available
-                            </span>
-                          )}
-                        </div>
-                      ) : (
-                        <span className="text-gray-400 text-sm italic">
-                          Complete payment to access link
-                        </span>
+              {order.items?.map((item, index) => {
+                // Get product data from snapshot or reference
+                const productData = getProductFromOrderItem(item);
+                const isDeleted = isProductDeleted(item);
+
+                return (
+                  <div key={index} className="bg-white border rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      {productData.images && productData.images[0] && (
+                        <Image
+                          src={urlFor(productData.images[0]).url()}
+                          alt={productData.name || "Product"}
+                          width={72}
+                          height={72}
+                          className="rounded-md object-cover flex-shrink-0 w-[72px] h-[72px]"
+                        />
                       )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between">
+                          {isDeleted ? (
+                            <span className="font-semibold text-base block mb-1 text-gray-500">
+                              {productData.name} (Product Deleted)
+                            </span>
+                          ) : (
+                            <Link
+                              href={`/product/${productData.slug?.current || "#"}`}
+                              className="hover:text-shop_dark_green hover:underline font-semibold text-base block mb-1"
+                            >
+                              {productData.name}
+                            </Link>
+                          )}
+                          <div className="font-semibold text-base mb-3">
+                            <PriceFormatter
+                              amount={item.price ?? productData.price ?? 0}
+                            />
+                          </div>
+                        </div>
+                        {order.paymentStatus === "paid" ? (
+                          <div>
+                            {productData.productLink ? (
+                              <a
+                                href={productData.productLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 px-3 py-2 bg-green-200 text-green-700 rounded-md hover:bg-green-100 transition-colors text-sm font-medium w-full justify-center"
+                              >
+                                <span>🔗</span>
+                                Product Link
+                              </a>
+                            ) : (
+                              <span className="text-gray-500 text-sm">
+                                Link not available
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-gray-400 text-sm italic">
+                            Complete payment to access link
+                          </span>
+                        )}
+                        {isDeleted && (
+                          <div className="mt-2">
+                            <span className="text-xs text-orange-600 bg-orange-100 px-2 py-1 rounded">
+                              This product is no longer available in our store
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
               {/* Total Amount */}
               <div className="bg-gray-50 border rounded-lg p-4">

@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
               customer,
               totalAmount,
               items[] {
-                product-> {
+                productSnapshot {
                   name,
                   productLink,
                   slug
@@ -82,12 +82,13 @@ export async function POST(request: NextRequest) {
                 customerName: order.customer.name,
                 customerEmail: order.customer.email,
                 totalAmount: order.totalAmount,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 items: order.items.map((item: any) => ({
                   product: {
-                    name: item.product?.name || "Unknown Product",
+                    name: item.productSnapshot?.name || "Unknown Product",
                     price: item.price,
-                    productLink: item.product?.productLink,
-                    slug: item.product?.slug,
+                    productLink: item.productSnapshot?.productLink,
+                    slug: item.productSnapshot?.slug,
                   },
                 })),
               });
@@ -96,6 +97,7 @@ export async function POST(request: NextRequest) {
               // Don't fail the payment verification if email fails
             }
           }
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           console.error("Order update failed:", error);
           // Don't fail the verification if order update fails
@@ -112,6 +114,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Payment verification error:", error);
     return NextResponse.json(

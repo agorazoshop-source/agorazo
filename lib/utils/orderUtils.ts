@@ -46,11 +46,24 @@ export const generateOrderData = ({
     items: groupedItems.map((item) => ({
       _type: "orderItem",
       _key: `item_${item.product._id}_${Date.now()}`,
+      // Keep weak reference to original product for optional linking
       product: {
         _type: "reference",
         _ref: item.product._id,
+        _weak: true, // Make it weak so product can be deleted
       },
-      price: item.product.price, // Always store price in order items
+      // Create complete product snapshot
+      productSnapshot: {
+        name: item.product.name,
+        slug: item.product.slug,
+        description: item.product.description,
+        images: item.product.images || [],
+        price: item.product.price,
+        discount: item.product.discount || 0,
+        productLink: item.product.productLink,
+        status: item.product.status,
+      },
+      price: item.product.price, // Price at time of order
     })),
     totalAmount: subtotal - (appliedCoupon?.discount || 0),
     discountAmount: appliedCoupon?.discount || 0,

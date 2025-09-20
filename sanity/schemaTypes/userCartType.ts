@@ -9,13 +9,13 @@ export const userCartType = defineType({
       name: "clerkUserId",
       title: "Clerk User ID",
       type: "string",
-      validation: (Rule: any) => Rule.required(),
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "userEmail",
       title: "User Email",
       type: "string",
-      validation: (Rule: any) => Rule.required(),
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "items",
@@ -30,7 +30,8 @@ export const userCartType = defineType({
               title: "Product",
               type: "reference",
               to: [{ type: "product" }],
-              validation: (Rule: any) => Rule.required(),
+              weak: true, // Make it weak so products can be deleted
+              validation: (Rule) => Rule.required(),
             }),
           ],
           preview: {
@@ -61,7 +62,7 @@ export const userCartType = defineType({
       title: "userEmail",
       items: "items",
     },
-    prepare(selection: Record<string, any>) {
+    prepare(selection) {
       const { title, items } = selection;
       return {
         title: title || "Unknown Email",

@@ -22,16 +22,28 @@ export async function POST(req: NextRequest) {
         email: orderData.customerEmail,
         clerkUserId: orderData.clerkUserId,
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       items: orderData.items.map((item: any) => ({
         _type: "orderItem",
         _key: nanoid(),
+        // Keep weak reference to original product
         product: {
           _type: "reference",
           _ref: item.product._id,
+          _weak: true, // Make it weak so product can be deleted
         },
-        quantity: item.quantity,
-        size: item.size,
-        price: item.product.price,
+        // Create complete product snapshot
+        productSnapshot: {
+          name: item.product.name,
+          slug: item.product.slug,
+          description: item.product.description,
+          images: item.product.images || [],
+          price: item.product.price,
+          discount: item.product.discount || 0,
+          productLink: item.product.productLink,
+          status: item.product.status,
+        },
+        price: item.product.price, // Price at time of order
       })),
       totalAmount: orderData.totalAmount,
       discountAmount: orderData.discountAmount || 0,
@@ -46,7 +58,7 @@ export async function POST(req: NextRequest) {
       success: true,
       orderId: order._id,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to create order" },
       { status: 500 }
